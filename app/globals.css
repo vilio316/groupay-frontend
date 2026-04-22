@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+:root {
+  --green: #49c635;
+  --aqua: #54defd;
+  --white: #fffbfa;
+  --teal: #00bd9d;
+  --mist: #8bd7d2;
+  --forest: #0d2b1f;
+  --ink: #1a1a1a;
+  --ink-mid: #4a5568;
+  --card-border: rgba(139, 215, 210, 0.35);
+}
+
+.hero-bg {
+  background:
+    radial-gradient(
+      ellipse 80% 60% at 50% 0%,
+      rgba(84, 222, 253, 0.25) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 60% 40% at 20% 80%,
+      rgba(73, 198, 53, 0.25) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 50% 40% at 80% 80%,
+      rgba(0, 189, 157, 0.25) 0%,
+      transparent 60%
+    );
+}
+
+@theme inline {
+  --color-green: var(--green);
+  --color-aqua: var(--aqua);
+  --color-white: var(--white);
+  --color-teal: var(--teal);
+  --color-mist: var(--mist);
+  --color-ink: var(--ink);
+  --color-forest: var(--forest);
+  --color-ink-mid: var(--ink-mid);
+  --color-card-border: var(--card-border);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}

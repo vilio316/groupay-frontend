@@ -4,7 +4,6 @@ import Link from "next/link";
 import { inter, sora } from "./fonts";
 import "./globals.css";
 import { AirplaneIcon, ForkKnifeIcon, HouseIcon } from "@phosphor-icons/react";
-import { Dorsa } from "next/font/google";
 export default function HomePage() {
   return (
     <div>
@@ -23,23 +22,20 @@ export default function HomePage() {
           </Link>
           <div className="nav-links flex items-center gap-x-4">
             <Link
-              href="#how-it-works"
+              href="/#how-it-works"
               className="hover:text-forest text-ink-mid"
             >
               How it Works
             </Link>
-            <Link href="#features" className="hover:text-forest text-ink-mid">
+            <Link href="/#features" className="hover:text-forest text-ink-mid">
               Features
             </Link>
-            <Link
+            {/* <Link
               href="#testimonials"
               className="hover:text-forest text-ink-mid"
             >
               Reviews
-            </Link>
-            <Link href="/pricing" className="hover:text-forest text-ink-mid">
-              Pricing
-            </Link>
+            </Link> */}
           </div>
           <div className="flex items-center gap-3">
             <a
@@ -348,7 +344,10 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="section features-bg py-24 px-6 bg-forest text-white">
+        <section
+          className="section features-bg pt-24 pb-12 px-6 bg-forest text-white"
+          id="features"
+        >
           <div className="container grid ">
             <div className="section-label text-sm uppercase my-2 text-teal">
               Everything you need
@@ -360,7 +359,7 @@ export default function HomePage() {
               From spontaneous dinners to year-long savings goals, GrouPay
               handles every kind of shared money moment.
             </p>
-            <div className="features-grid grid grid-cols-3 justify-self-center w-4/5 gap-4">
+            <div className="features-grid grid grid-cols-3 justify-self-center w-4/5 gap-4 md:py-6">
               <div className="feature-card bg-white/5 border border-solid border-white/20 p-7 transition-all hover:bg-white/10 rounded-xl">
                 <div className="feature-icon">💸</div>
                 <h3 className={`${sora.className} text-bold`}>

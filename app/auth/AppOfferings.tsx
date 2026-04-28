@@ -30,7 +30,7 @@ export function AppOfferings() {
 
   return (
     <div
-      className="flex flex-col justify-between
+      className="hidden md:flex flex-col justify-between
     relative overflow-hidden items-center bg-forest text-white p-12 before:absolute before:w-125 before:h-125 before:-top-25 before:-right-25 after:absolute after:w-87.5 after:h-87.5 after:-bottom-20 after:-left-20 before:bg-radial before:from-green/15 before:to-transparent before:to-70% after:bg-radial after:from-teal/10 after:to-transparent after:to-70% min-h-screen"
     >
       <div className="h-full content-center">
@@ -60,6 +60,7 @@ export function AppOfferings() {
           <div className="benefitList flex flex-col gap-3.5">
             {benefitList.map((benefit) => (
               <Benefit
+                key={benefit}
                 icon={
                   <CheckCircleIcon
                     weight="fill"

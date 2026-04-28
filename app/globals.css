@@ -10,6 +10,8 @@
   --ink: #1a1a1a;
   --ink-mid: #4a5568;
   --card-border: rgba(139, 215, 210, 0.35);
+  --red: #e5373a;
+  --greener: #3db029;
 }
 
 .hero-bg {
@@ -41,6 +43,8 @@
   --color-forest: var(--forest);
   --color-ink-mid: var(--ink-mid);
   --color-card-border: var(--card-border);
+  --color-red: var(--red);
+  --color-greener: var(--greener);
 }
 
 body {

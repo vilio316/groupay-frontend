@@ -488,12 +488,12 @@ export default function HomePage() {
           <p className="text-ink-mid md:mb-9">
             Join 2.4 million people who've made shared money simple.
           </p>
-          <a
-            href="/"
+          <Link
+            href="/auth/sign-up"
             className="inline-flex items-center gap-2 py-3 px-7 bg-green rounded-full transition-all cursor-pointer font-semibold hover:bg-[#3db029] hover:translate-y-0.5 hover:shadow-lg"
           >
             Create your free account →
-          </a>
+          </Link>
         </section>
 
         <footer className="bg-forest text-mist md:pt-14 md:pb-8 md:px-6">

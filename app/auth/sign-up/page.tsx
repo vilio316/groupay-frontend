@@ -20,7 +20,7 @@ export default function SignUpPage() {
           </p>
         </div>
 
-        <div className="oauth-buttons flex md:gap-3 mb-4 md:mb-6">
+        <div className="oauth-buttons flex gap-3 my-4 md:mb-6">
           <button className="oauth-btn flex-1 flex items-center justify-center gap-2 rounded-[10px] border border-solid border-card-border font-semibold text-ink cursor-pointer hover:border-mist transition-all hover: shadow-sm hover:shadow-teal/25 p-3">
             <svg viewBox="0 0 24 24" className="h-4.5 w-4.5">
               <path
@@ -60,7 +60,7 @@ export default function SignUpPage() {
         </div>
 
         <form id="signUp">
-          <div className="grid grid-cols-2 gap-x-2">
+          <div className="grid md:grid-cols-2 gap-x-2">
             <div className="mb-4">
               <label
                 htmlFor="firstName"

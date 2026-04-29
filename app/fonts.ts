@@ -6,4 +6,5 @@ export const sora = Sora({
 
 export const inter = Inter({
   subsets: ["latin"],
+  weight: "500",
 });

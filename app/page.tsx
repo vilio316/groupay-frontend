@@ -37,16 +37,16 @@ export default function HomePage() {
               Reviews
             </Link> */}
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <a
               href="groupay-signup.html"
-              className="text-[14px] font-semibold text-forest hover:text-teal"
+              className="text-[14px] font-semibold text-forest hover:text-teal py-3"
             >
               Log In
             </a>
             <a
               href="groupay-signup.html"
-              className={`bg-green hover:bg-teal text-white inline-flex center gap-2 py-3 px-6 rounded-full font-semibold cursor-pointer transition-all`}
+              className={`bg-green hover:bg-greener text-white inline-flex center gap-2 py-3 px-6 rounded-full font-semibold cursor-pointer transition-all`}
             >
               Get Started
             </a>

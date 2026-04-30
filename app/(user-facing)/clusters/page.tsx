@@ -1,12 +1,12 @@
 import ClusterCard from "@/app/components/ClusterCard";
-import { sora } from "@/app/fonts";
+import { soraClass } from "@/app/fonts";
 import { PlusIcon, UsersThreeIcon } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 
 export default function ClustersPage() {
   return (
     <div className="min-h-full">
-      <p className={`${sora.className} font-bold text-green text-3xl my-3`}>
+      <p className={`${soraClass} font-bold text-green text-3xl my-3`}>
         Your Clusters
       </p>{" "}
       <div className="clusterBody mx-auto p-4 border border-card-border grid justify-center text-center rounded-lg">

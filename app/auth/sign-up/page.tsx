@@ -1,15 +1,13 @@
 import { EyeIcon, ShieldIcon, UsersIcon } from "@phosphor-icons/react/dist/ssr";
 import { CreditCardIcon } from "@phosphor-icons/react/dist/ssr";
-import { sora } from "@/app/fonts";
+import { soraClass } from "@/app/fonts";
 import Link from "next/link";
 export default function SignUpPage() {
   return (
     <div className="flex flex-col items-center justify-center py-12 px-10">
       <div className="w-full max-w-125 ">
         <div className="md:mb-8 mb:mt-4">
-          <p
-            className={`text-3xl ${sora.className} font-bold text-forest mb-2`}
-          >
+          <p className={`text-3xl ${soraClass} font-bold text-forest mb-2`}>
             Create Account
           </p>
           <p className="font-semibold text-ink-mid">

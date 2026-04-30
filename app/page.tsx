@@ -11,7 +11,7 @@ export default function HomePage() {
         <div className="nav-inner flex items-center justify-between w-screen mx-auto px-6 h-16">
           <Link
             href="/"
-            className={`logo ${sora.className} font-bold text-forest flex items-center gap-2 text-xl`}
+            className={`logo ${soraClass} font-bold text-forest flex items-center gap-2 text-xl`}
           >
             <div className="bg-green h-8 w-8 rounded-lg flex items-center justify-center">
               <svg viewBox="0 0 20 20" className="fill-white h-4 w-4">
@@ -78,7 +78,7 @@ export default function HomePage() {
               New features available!
             </div>
             <p
-              className={`${sora.className} text-[48px] font-bold max-w-195 text-forest my-0 md:mx-6 tracking-tight`}
+              className={`${soraClass} text-[48px] font-bold max-w-195 text-forest my-0 md:mx-6 tracking-tight`}
               style={{
                 margin: "0 auto 24px",
               }}
@@ -116,7 +116,7 @@ export default function HomePage() {
             <div className="hero-stats md:gap-12 md:my-18 flex justify-center flex-wrap">
               <div className="stat text-center">
                 <div
-                  className={`${sora.className} text-[32px] font-bold text-forest`}
+                  className={`${soraClass} text-[32px] font-bold text-forest`}
                 >
                   2.4<span className="text-green">M+</span>
                 </div>
@@ -124,7 +124,7 @@ export default function HomePage() {
               </div>
               <div className="stat text-center">
                 <div
-                  className={`${sora.className} text-[32px] font-bold text-forest`}
+                  className={`${soraClass} text-[32px] font-bold text-forest`}
                 >
                   ₦<span className="text-green">480B</span>
                 </div>
@@ -138,7 +138,7 @@ export default function HomePage() {
               </div> */}
               <div className="stat text-center">
                 <div
-                  className={`${sora.className} text-[32px] font-bold text-forest`}
+                  className={`${soraClass} text-[32px] font-bold text-forest`}
                 >
                   0<span className="text-green">%</span>
                 </div>
@@ -152,7 +152,7 @@ export default function HomePage() {
           <div className="mockup-card bg-white border border-card-border rounded-2xl p-7 max-w-215 w-full shadow-xl">
             <div className="mockup-header flex items-center justify-between md:mb-5">
               <div
-                className={`mockup-title ${sora.className} font-bold text-forest`}
+                className={`mockup-title ${soraClass} font-bold text-forest`}
               >
                 🏖️ Zanzibar Trip — June 2026
               </div>
@@ -175,7 +175,7 @@ export default function HomePage() {
                 </div>
                 <div className="text-right">
                   <div
-                    className={`expense-amount ${sora.className} font-bold text-forest text-right`}
+                    className={`expense-amount ${soraClass} font-bold text-forest text-right`}
                   >
                     ₦285,000
                   </div>
@@ -201,7 +201,7 @@ export default function HomePage() {
                 </div>
                 <div className="text-right">
                   <div
-                    className={`expense-amount ${sora.className} font-bold text-forest text-right`}
+                    className={`expense-amount ${soraClass} font-bold text-forest text-right`}
                   >
                     ₦360,000
                   </div>
@@ -227,7 +227,7 @@ export default function HomePage() {
                 </div>
                 <div className="text-right">
                   <div
-                    className={`expense-amount ${sora.className} font-bold text-forest text-right`}
+                    className={`expense-amount ${soraClass} font-bold text-forest text-right`}
                   >
                     ₦96,000
                   </div>
@@ -282,7 +282,7 @@ export default function HomePage() {
               Simple by design
             </div>
             <h2
-              className={`section-title font-bold text-forest md:mb-4 ${sora.className}`}
+              className={`section-title font-bold text-forest md:mb-4 ${soraClass}`}
             >
               Up and running in seconds
             </h2>
@@ -293,7 +293,7 @@ export default function HomePage() {
             <div className="steps-grid grid grid-cols-2 w-4/5 gap-3 p-2 justify-self-center">
               <div className="step-card border border-card-border p-7 shadow-2xs transition-all hover:border-aqua hover:shadow-lg rounded-xl">
                 <div
-                  className={`step-num md:w-11 md:h-11 flex items-center justify-center ${sora.className} text-[18px]`}
+                  className={`step-num md:w-11 md:h-11 flex items-center justify-center ${soraClass} text-[18px]`}
                 >
                   1
                 </div>
@@ -305,7 +305,7 @@ export default function HomePage() {
               </div>
               <div className="step-card  border border-card-border p-7 shadow-2xs transition-all hover:border-aqua hover:shadow-lg rounded-xl">
                 <div
-                  className={`step-num md:w-11 md:h-11 flex items-center justify-center ${sora.className} text-[18px]`}
+                  className={`step-num md:w-11 md:h-11 flex items-center justify-center ${soraClass} text-[18px]`}
                 >
                   2
                 </div>
@@ -317,7 +317,7 @@ export default function HomePage() {
               </div>
               <div className="step-card  border border-card-border p-7 shadow-2xs transition-all hover:border-aqua hover:shadow-lg rounded-xl">
                 <div
-                  className={`step-num md:w-11 md:h-11 flex items-center justify-center ${sora.className} text-[18px]`}
+                  className={`step-num md:w-11 md:h-11 flex items-center justify-center ${soraClass} text-[18px]`}
                 >
                   3
                 </div>
@@ -329,7 +329,7 @@ export default function HomePage() {
               </div>
               <div className="step-card  border border-card-border p-7 shadow-2xs transition-all hover:border-aqua hover:shadow-lg rounded-xl">
                 <div
-                  className={`step-num md:w-11 md:h-11 flex items-center justify-center ${sora.className} text-[18px]`}
+                  className={`step-num md:w-11 md:h-11 flex items-center justify-center ${soraClass} text-[18px]`}
                 >
                   4
                 </div>
@@ -352,7 +352,7 @@ export default function HomePage() {
             <div className="section-label text-sm uppercase my-2 text-teal">
               Everything you need
             </div>
-            <h2 className={`section-title ${sora.className} my-1 text-lg`}>
+            <h2 className={`section-title ${soraClass} my-1 text-lg`}>
               Built for real life
             </h2>
             <p className="section-subtitle my-2 text-[16px]/1.7">
@@ -362,7 +362,7 @@ export default function HomePage() {
             <div className="features-grid grid grid-cols-3 justify-self-center w-4/5 gap-4 md:py-6">
               <div className="feature-card bg-white/5 border border-solid border-white/20 p-7 transition-all hover:bg-white/10 rounded-xl">
                 <div className="feature-icon">💸</div>
-                <h3 className={`${sora.className} text-bold`}>
+                <h3 className={`${soraClass} text-bold`}>
                   Flexible Bill Splitting
                 </h3>
                 <p>
@@ -372,7 +372,7 @@ export default function HomePage() {
               </div>
               <div className="feature-card bg-white/5 border border-solid border-white/20 p-7 transition-all hover:bg-white/10 rounded-xl">
                 <div className="feature-icon">🎯</div>
-                <h3 className={`${sora.className} text-bold`}>Group Goals</h3>
+                <h3 className={`${soraClass} text-bold`}>Group Goals</h3>
                 <p>
                   Pool contributions toward any shared objective — a group gift,
                   a holiday fund, or a team dinner. Watch the progress bar fill
@@ -381,7 +381,7 @@ export default function HomePage() {
               </div>
               <div className="feature-card bg-white/5 border border-solid border-white/20 p-7 transition-all hover:bg-white/10 rounded-xl">
                 <div className="feature-icon">📊</div>
-                <h3 className={`${sora.className} text-bold`}>
+                <h3 className={`${soraClass} text-bold`}>
                   Live Balance Dashboard
                 </h3>
                 <p>
@@ -391,9 +391,7 @@ export default function HomePage() {
               </div>
               <div className="feature-card bg-white/5 border border-solid border-white/20 p-7 transition-all hover:bg-white/10 rounded-xl">
                 <div className="feature-icon">🔔</div>
-                <h3 className={`${sora.className} text-bold`}>
-                  Smart Reminders
-                </h3>
+                <h3 className={`${soraClass} text-bold`}>Smart Reminders</h3>
                 <p>
                   Automated, friendly nudges so you never have to be the awkward
                   one asking for money back.
@@ -401,7 +399,7 @@ export default function HomePage() {
               </div>
               <div className="feature-card bg-white/5 border border-solid border-white/20 p-7 transition-all hover:bg-white/10 rounded-xl">
                 <div className="feature-icon">🧮</div>
-                <h3 className={`${sora.className} text-bold`}>
+                <h3 className={`${soraClass} text-bold`}>
                   Debt Simplification
                 </h3>
                 <p>
@@ -411,9 +409,7 @@ export default function HomePage() {
               </div>
               <div className="feature-card bg-white/5 border border-solid border-white/20 p-7 transition-all hover:bg-white/10 rounded-xl">
                 <div className="feature-icon">🌍</div>
-                <h3 className={`${sora.className} text-bold`}>
-                  Multi-Currency
-                </h3>
+                <h3 className={`${soraClass} text-bold`}>Multi-Currency</h3>
                 <p>
                   Travel the world together. GrouPay handles currency conversion
                   so cross-border trips don't get messy.
@@ -480,9 +476,7 @@ export default function HomePage() {
         </section> */}
 
         <section className="cta-banner py-20 px-6 bg-linear-150 from-[rgba(73, 198, 53, 0.08)] to-[rgba(0, 189, 157, 0.08)] border border-y-card-border text-center ">
-          <h2
-            className={`text-[40px] text-forest ${sora.className} font-bold mb-4`}
-          >
+          <h2 className={`text-[40px] text-forest ${soraClass} font-bold mb-4`}>
             Ready to end the awkwardness?
           </h2>
           <p className="text-ink-mid md:mb-9">
@@ -517,7 +511,7 @@ export default function HomePage() {
             </div>
             <div className="footer-col">
               <p
-                className={`${sora.className} text-sm font-bold text-white tracking-wider uppercase mb-4`}
+                className={`${soraClass} text-sm font-bold text-white tracking-wider uppercase mb-4`}
               >
                 Product
               </p>
@@ -539,7 +533,7 @@ export default function HomePage() {
             </div>
             <div className="footer-col">
               <p
-                className={`${sora.className} text-sm font-bold text-white tracking-wider uppercase mb-4`}
+                className={`${soraClass} text-sm font-bold text-white tracking-wider uppercase mb-4`}
               >
                 Company
               </p>
@@ -561,7 +555,7 @@ export default function HomePage() {
             </div>
             <div className="footer-col">
               <p
-                className={`${sora.className} text-sm font-bold text-white tracking-wider uppercase mb-4`}
+                className={`${soraClass} text-sm font-bold text-white tracking-wider uppercase mb-4`}
               >
                 Legal
               </p>

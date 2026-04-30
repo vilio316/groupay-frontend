@@ -1,9 +1,11 @@
 import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
-import { sora } from "../fonts";
+import { soraClass } from "../fonts";
+import Link from "next/link";
 
 export default function ClusterCard({ className }: { className?: string }) {
   return (
-    <div
+    <Link
+      href="/cluster/234"
       className={`border ${className} flex shrink-0 border-card-border relative rounded-2xl`}
     >
       <div>
@@ -15,7 +17,7 @@ export default function ClusterCard({ className }: { className?: string }) {
       <div className="absolute bottom-0 h-3/4 z-20 bg-white rounded-2xl border-2 border-card-border w-full shadow-xl shadow-card-border p-2 grid text-justify">
         <p className="flex items-center gap-x-1">
           <span
-            className={`${sora.className} flex items-center font-bold text-[20px] text-green w-3/5`}
+            className={`${soraClass} flex items-center font-bold text-[20px] text-green w-3/5`}
           >
             ClusterName
           </span>
@@ -45,12 +47,12 @@ export default function ClusterCard({ className }: { className?: string }) {
 
           <div className="w-1/5 flex justify-end">
             <ArrowRightIcon
-              className="text-2xl hover:scale-125 transition-all p-1 text-green cursor-pointer"
+              className="text-2xl hover:scale-125 transition-all p-1 text-teal  cursor-pointer"
               weight="bold"
             />
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

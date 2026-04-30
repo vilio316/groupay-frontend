@@ -1,4 +1,4 @@
-import { sora } from "@/app/fonts";
+import { soraClass } from "@/app/fonts";
 import {
   GearIcon,
   HouseLineIcon,
@@ -20,7 +20,7 @@ export default function Sidebar() {
                 <path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4zm-1 3v4l3.5 2-.7 1.2L8 12.2V7h1z" />
               </svg>
             </div>
-            <p className={`${sora.className} font-bold`}>GrouPay</p>
+            <p className={`${soraClass} font-bold`}>GrouPay</p>
           </div>
           <div className="flex sidebar-link gap-x-2 items-center my-4">
             <HouseLineIcon className="h-12 w-12 p-2" />

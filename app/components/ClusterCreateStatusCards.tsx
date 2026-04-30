@@ -4,7 +4,7 @@ import {
   ShareNetworkIcon,
   XCircleIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { sora } from "../fonts";
+import { soraClass } from "../fonts";
 import Link from "next/link";
 
 export default function ClusterCreateSuccessCard() {
@@ -17,7 +17,7 @@ export default function ClusterCreateSuccessCard() {
             weight="duotone"
           />
         </div>
-        <p className={`${sora.className} font-bold my-2 text-2xl text-green `}>
+        <p className={`${soraClass} font-bold my-2 text-2xl text-green `}>
           Cluster Created Successfully!{" "}
         </p>
       </div>
@@ -49,7 +49,7 @@ export function ClusterCreateFailureCard() {
             weight="duotone"
           />
         </div>
-        <p className={`${sora.className} font-bold my-2 text-2xl text-red`}>
+        <p className={`${soraClass} font-bold my-2 text-2xl text-red`}>
           Failed to Create Cluster{" "}
         </p>
       </div>

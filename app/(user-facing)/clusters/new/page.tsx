@@ -2,7 +2,7 @@ import ClusterCreateSuccessCard, {
   ClusterCreateFailureCard,
 } from "@/app/components/ClusterCreateStatusCards";
 import SpinnerLoader from "@/app/components/SpinnerLoader";
-import { sora } from "@/app/fonts";
+import { soraClass } from "@/app/fonts";
 import { UsersThreeIcon } from "@phosphor-icons/react/dist/ssr";
 
 export default function NewClusterPage() {
@@ -10,7 +10,7 @@ export default function NewClusterPage() {
     <>
       <div className="py-4 px-6 border-2 border-card-border place-self-center w-3/4 shadow-2xl shadow-green/40 rounded-xl max-h-3/4">
         <p
-          className={`${sora.className} font-bold text-2xl my-4 text-green flex gap-2`}
+          className={`${soraClass} font-bold text-2xl my-4 text-green flex gap-2`}
         >
           <UsersThreeIcon weight="duotone" />
           Create A New Cluster

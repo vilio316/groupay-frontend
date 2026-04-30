@@ -2,7 +2,7 @@
 
 import { CheckCircleIcon } from "@phosphor-icons/react";
 import Link from "next/link";
-import { sora } from "../fonts";
+import { soraClass } from "../fonts";
 
 export function AppOfferings() {
   const benefitList = [
@@ -36,7 +36,7 @@ export function AppOfferings() {
       <div className="h-full content-center">
         <Link
           href="/"
-          className={`panel-logo ${sora.className} flex gap-x-3 items-center font-bold text-2xl`}
+          className={`panel-logo ${soraClass} flex gap-x-3 items-center font-bold text-2xl`}
         >
           <div className="logo-mark w-9 h-9 bg-green flex justify-center items-center rounded-[10px]">
             <svg viewBox="0 0 20 20">
@@ -48,7 +48,7 @@ export function AppOfferings() {
 
         <div className="panel-hero relative z-1">
           <p
-            className={`md:text-4xl ${sora.className} font-bold md:my-4 text-white tracking-tight`}
+            className={`md:text-4xl ${soraClass} font-bold md:my-4 text-white tracking-tight`}
           >
             All things money, done{" "}
             <span className="text-green">together.</span>{" "}

@@ -16,8 +16,25 @@ export default async function ClusterPage() {
         >
           ClusterName
         </p>
-        <p>22 Members</p>
+        <div>
+          <p>22 Members</p>
+          <div className="avatars flex m-1">
+            <div className="avatar h-7 w-7 rounded-full flex border-2 border-solid border-white items-center justify-center font-bold -mr-2 bg-yellow-300 text-white">
+              <span>C</span>
+            </div>
+            <div className="avatar h-7 w-7 rounded-full flex border-2 border-solid border-white items-center justify-center font-bold -mr-2 bg-mist text-white">
+              <span>A</span>
+            </div>
+            <div className="avatar h-7 w-7 rounded-full flex border-2 border-solid border-white items-center justify-center font-bold -mr-2 bg-green/80 text-white">
+              <span>E</span>
+            </div>
+            <div className="avatar h-7 w-7 rounded-full border-2 border-solid border-white items-center justify-center font-bold -mr-2 bg-red-400 text-white">
+              <span>9+</span>
+            </div>
+          </div>
+        </div>
       </div>
+
       <div className="flex gap-x-2">
         <BalanceCard />
         <div className="items-center flex ">

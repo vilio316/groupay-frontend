@@ -8,12 +8,14 @@ import {
 } from "@/app/components/TransactionStatusBlocks";
 import ClusterCard from "@/app/components/ClusterCard";
 import { BalanceCard } from "@/app/components/BalanceCard";
-// import { PlusIcon } from "@phosphor-icons/react";
+// import PaymentModal from "@/app/components/PaymentModal";
+// import OnboardingStatusCard from "@/app/components/OnboardingStatusCard";
+// // import { PlusIcon } from "@phosphor-icons/react";
 
 export default function DashboardPage() {
   return (
     <div className="grid">
-      <div className="sticky top-0 z-40 bg-white nameAndBalance px-4 py-2">
+      <div className="bg-white nameAndBalance px-4 py-2">
         <p className={`${soraClass} text-3xl`}>
           Good day, <span className="text-bold text-green">David</span>
         </p>
@@ -22,13 +24,12 @@ export default function DashboardPage() {
 
           <Link
             href="#transactions"
-            className="text-white text-sm shrink-0 flex self-end justify-self-end bg-green rounded-full p-2 hover:bg-[#3db029] transition-all hover:scale-x-105"
+            className="text-white text-md shrink-0 flex self-end justify-self-end bg-green rounded-full p-2 hover:bg-[#3db029] transition-all hover:scale-x-105"
           >
             Your Transactions &gt;
           </Link>
         </div>
       </div>
-
       <div className="h-300 content px-4">
         <div className="my-4">
           <p className="font-semibold text-xl uppercase text-ink-mid">
@@ -77,7 +78,6 @@ export default function DashboardPage() {
           <FailedTransaction />
         </div>
       </div>
-
       <div className="sticky bottom-12 right-8 w-full flex justify-end">
         <Link
           href="/clusters/new"

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { inter, sora } from "./fonts";
+import { inter, soraClass } from "./fonts";
 import "./globals.css";
 import { AirplaneIcon, ForkKnifeIcon, HouseIcon } from "@phosphor-icons/react";
 export default function HomePage() {
@@ -75,7 +75,7 @@ export default function HomePage() {
             "
             >
               <span className="hero-badge-dot w-2 h-2 bg-aqua rounded-full"></span>{" "}
-              New features available!
+              <p className="text-center w-[90%]">New features available!</p>
             </div>
             <p
               className={`${soraClass} text-[48px] font-bold max-w-195 text-forest my-0 md:mx-6 tracking-tight`}

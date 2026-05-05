@@ -22,7 +22,9 @@ export function SuccessfulTransaction() {
         </p>
       </div>
       <div className="text-green font-bold col-span-4 p-3">
-        <p className="text-right text-green ">+&#8358; TRANSACTION_AMOUNT</p>
+        <p className="text-right text-green text-xl ">
+          +&#8358; TRANSACTION_AMOUNT
+        </p>
       </div>
     </Link>
   );
@@ -45,7 +47,7 @@ export function FailedTransaction() {
         </p>
       </div>
       <div className="text-red font-bold col-span-4 p-3">
-        <p className="text-right">-&#8358; TRANSACTION_AMOUNT</p>
+        <p className="text-right text-xl">-&#8358; TRANSACTION_AMOUNT</p>
       </div>
     </Link>
   );
@@ -71,7 +73,7 @@ export function PendingTransaction() {
         </p>
       </div>
       <div className="text-amber font-bold col-span-4 p-3">
-        <p className="text-right text-amber-500">+&#8358; 10045.25</p>
+        <p className="text-right text-amber-500 text-xl">+&#8358; 10045.25</p>
       </div>
     </Link>
   );

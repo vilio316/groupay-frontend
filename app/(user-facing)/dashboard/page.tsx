@@ -1,4 +1,5 @@
-import { PlusIcon, ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
+"use client";
+import { PlusIcon, ArrowRightIcon } from "@phosphor-icons/react";
 import { soraClass } from "../../fonts";
 import Link from "next/link";
 import {
@@ -8,19 +9,28 @@ import {
 } from "@/app/components/TransactionStatusBlocks";
 import ClusterCard from "@/app/components/ClusterCard";
 import { BalanceCard } from "@/app/components/BalanceCard";
-// import PaymentModal from "@/app/components/PaymentModal";
-// import OnboardingStatusCard from "@/app/components/OnboardingStatusCard";
+import PaymentModal from "@/app/components/PaymentModal";
+import OnboardingStatusCard from "@/app/components/OnboardingStatusCard";
+import { useState } from "react";
 // // import { PlusIcon } from "@phosphor-icons/react";
 
 export default function DashboardPage() {
+  const [showModal, updateModalState] = useState(false);
+
   return (
     <div className="grid">
+      <PaymentModal
+        isShown={showModal}
+        onClick={() => {
+          updateModalState(!showModal);
+        }}
+      />
       <div className="bg-white nameAndBalance px-4 py-2">
         <p className={`${soraClass} text-3xl`}>
           Good day, <span className="text-bold text-green">David</span>
         </p>
         <div className="flex gap-x-4 my-4 px-2">
-          <BalanceCard />
+          <BalanceCard payFunct={() => updateModalState(true)} />
 
           <Link
             href="#transactions"
@@ -30,6 +40,7 @@ export default function DashboardPage() {
           </Link>
         </div>
       </div>
+      <OnboardingStatusCard />
       <div className="h-300 content px-4">
         <div className="my-4">
           <p className="font-semibold text-xl uppercase text-ink-mid">
@@ -53,10 +64,12 @@ export default function DashboardPage() {
               <ClusterCard className="w-[30%]" />
               <ClusterCard className="w-[30%]" />
               <ClusterCard className="w-[30%]" />
+              <ClusterCard className="w-[30%]" />
+              <ClusterCard className="w-[30%]" />
             </div>
 
             <Link href="/clusters">
-              <ArrowRightIcon className="w-8 h-8" />
+              <ArrowRightIcon className="w-8 h-8 hover:text-greener" />
             </Link>
           </div>
         </div>

@@ -266,7 +266,7 @@ Each major section has a friendly illustrated empty state:
 - **Form validation:** Inline errors below each field on blur; summary at top of form on submit attempt
 - **Empty search:** "No results for '...'" with suggestion to check spelling or invite via link
 
----
+----
 
 ## 15. Onboarding Flow
 

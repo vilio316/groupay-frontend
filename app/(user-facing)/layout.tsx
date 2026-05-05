@@ -21,11 +21,13 @@ export default function DashboardLayout({
       <div className="md:col-span-1 hidden md:grid md:p-2 h-[95vh] border-r-2 border-ink-mid/25 text-ink">
         <Sidebar />
       </div>
-      <div className="grid md:col-span-5 relative p-4 md:p-0 overflow-y-scroll min-h-screen custom-scrollbar items-center">
+      <div className="grid md:col-span-5 relative p-2 md:p-0 overflow-y-scroll min-h-screen items-center">
         <div className="h-full">
           <div className="flex w-full items-center p-2 gap-x-4 justify-end top-icons">
-            <p className="w-3/4"></p>
-            <Link href="/notifications" className="relative">
+            <Link
+              href="/notifications"
+              className="relative flex justify-self-end"
+            >
               <BellIcon className="flex w-8 h-8 fill-green" />
               <div
                 className="absolute w-4 h-4 px-0.5

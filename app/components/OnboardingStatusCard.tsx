@@ -3,7 +3,7 @@ import { soraClass } from "../fonts";
 
 export default function OnboardingStatusCard() {
   return (
-    <div className="md:py-3 md:px-6 border border-card-border rounded-xl shadow-sm shadow-card-border my-4 ">
+    <div className="md:py-3 md:px-6 border border-card-border rounded-xl shadow-sm shadow-card-border my-4 mx-6 hover:scale-102 transition-all">
       <div className="flex gap-x-3 items-center">
         <div className="w-4/5">
           <p className={`${soraClass} text-2xl font-bold my-2`}>

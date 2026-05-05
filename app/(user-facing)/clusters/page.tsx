@@ -9,7 +9,7 @@ export default function ClustersPage() {
       <p className={`${soraClass} font-bold text-green text-3xl my-3`}>
         Your Clusters
       </p>{" "}
-      <div className="clusterBody mx-auto p-4 border border-card-border grid justify-center text-center rounded-lg">
+      <div className="clusterBody mx-6 p-4 border border-card-border grid justify-center text-center rounded-lg">
         <div className="grid justify-center p-2">
           <UsersThreeIcon
             className="h-18 w-18 fill-green bg-green/20 p-2 rounded-xl"

@@ -1,14 +1,66 @@
 "use client";
 import { soraClass } from "@/app/fonts";
 import { MemberCard } from "../members/page";
-import { CaretDownIcon } from "@phosphor-icons/react";
-
+import { ManagerViewCategory, ManagerViewItem } from "./ManagerViewItem";
+import {
+  ArticleIcon,
+  CreditCardIcon,
+  GearIcon,
+  HandCoinsIcon,
+  MoneyWavyIcon,
+  UsersThreeIcon,
+} from "@phosphor-icons/react";
+import { useState } from "react";
+import PlanCard from "@/app/components/PlanCard";
+import Link from "next/link";
 export default function ManageClusterPage() {
+  const [activeTabs, updateActiveTabs] = useState<string[]>([]);
+
+  const handleCategoryClick = (category: string) => {
+    if (activeTabs.includes(category)) {
+      const popped = activeTabs.filter((cat) => cat !== category);
+      updateActiveTabs(popped);
+    } else {
+      updateActiveTabs([...activeTabs, category]);
+    }
+  };
+
+  const managerViewItems: ManagerViewItem[] = [
+    {
+      categoryName: "Members",
+      icon: <UsersThreeIcon className="text-xl" weight="duotone" />,
+      childElement: <MembersChild />,
+    },
+    {
+      categoryName: "Plans",
+      icon: <ArticleIcon className="text-xl" weight="duotone" />,
+      childElement: <PlansChild />,
+    },
+    {
+      categoryName: "Settings",
+      icon: <GearIcon className="text-xl" weight="duotone" />,
+    },
+    {
+      categoryName: "Transactions",
+      icon: <MoneyWavyIcon className="text-xl" weight="duotone" />,
+    },
+    {
+      categoryName: "Requests",
+      icon: <HandCoinsIcon className="text-xl" weight="duotone" />,
+    },
+    {
+      categoryName: "Cards",
+      icon: <CreditCardIcon className="text-xl" weight="duotone" />,
+    },
+  ];
+
   return (
     <div className="p-4 mx-4 border-2 border-card-border rounded-xl">
       <div className="flex gap-x-4">
-        <p className={`${soraClass} p-1 my-2 text-3xl text-green w-1/2`}>
-          Cluster/Manager View
+        <p
+          className={`${soraClass} p-1 my-2 text-3xl text-green w-1/2 font-bold`}
+        >
+          <Link href="./">ClusterName</Link> &gt; Manager View
         </p>
         <div className="grid justify-end text-end w-1/2">
           <p className="uppercase text-ink-mid text-sm font-bold">
@@ -27,60 +79,46 @@ export default function ManageClusterPage() {
             className="rounded-full p-2 h-24 w-24 object-cover shadow-xl shadow-card-border"
           />
           <div>
-            <p className={`${soraClass} text-lg font-bold`}>Cluster Details</p>
+            <p className={`${soraClass} text-xl font-bold`}>Cluster Details</p>
             <p>Name: ClusterName</p>
             <p>Members: 22</p>
           </div>
         </div>
 
-        <div className="content">
-          <div
-            className={`rounded-xl p-3 text-2xl font-bold text-forest ${soraClass} hover:bg-aqua/25 flex items-center gap-x-3 my-2 `}
-          >
-            <p>Members</p>
-            <CaretDownIcon />
-          </div>
-          <div
-            className={`rounded-xl p-3 text-2xl font-bold text-forest ${soraClass} hover:bg-aqua/25 `}
-          >
-            <p>Plans</p>
-            <CaretDownIcon />
-          </div>
-          <div
-            className={`rounded-xl p-2 text-2xl font-bold text-forest ${soraClass}`}
-          >
-            <p>Settings</p>
-            <CaretDownIcon />
-          </div>
-          <div
-            className={`rounded-xl p-2 text-2xl font-bold text-forest ${soraClass}`}
-          >
-            <p>Transactions</p>
-            <CaretDownIcon />
-          </div>
-          <div
-            className={`rounded-xl p-2 text-2xl font-bold text-forest ${soraClass}`}
-          >
-            <p>Requests</p>
-            <CaretDownIcon />
-          </div>
-          <div
-            className={`rounded-xl p-2 text-2xl font-bold text-forest ${soraClass} flex gap-x-4 items-center`}
-          >
-            <p>Cards</p>
-            <CaretDownIcon />
-          </div>
+        <div className="content my-4">
+          {managerViewItems.map((item) => (
+            <ManagerViewCategory
+              key={item.categoryName}
+              obj={item}
+              array={activeTabs}
+              click={() => handleCategoryClick(item.categoryName)}
+            />
+          ))}
         </div>
-
-        {/* <div className="p-2">
-          <MemberCard />
-          <MemberCard />
-          <MemberCard />
-          <MemberCard />
-          <MemberCard />
-          <MemberCard />
-        </div> */}
       </div>
+    </div>
+  );
+}
+
+function MembersChild() {
+  return (
+    <div className="">
+      <MemberCard />
+      <MemberCard />
+      <MemberCard />
+      <MemberCard />
+    </div>
+  );
+}
+
+function PlansChild() {
+  return (
+    <div className="flex overflow-x-scroll gap-6">
+      <PlanCard />
+      <PlanCard />
+      <PlanCard />
+      <PlanCard />
+      <PlanCard />
     </div>
   );
 }

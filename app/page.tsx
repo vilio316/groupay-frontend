@@ -4,6 +4,7 @@ import Link from "next/link";
 import { inter, soraClass } from "./fonts";
 import "./globals.css";
 import { AirplaneIcon, ForkKnifeIcon, HouseIcon } from "@phosphor-icons/react";
+import Avatars from "./components/AvatarsCircles";
 export default function HomePage() {
   return (
     <div>
@@ -251,20 +252,7 @@ export default function HomePage() {
                 <div className="progress-fill rounded-full bg-linear-90 from-teal to-green w-1/2 h-2.5"></div>
               </div>
               <div className="flex items-center my-2">
-                <div className="avatars flex mt-3 w-4/5">
-                  <div className="avatar h-7 w-7 rounded-full flex border-2 border-solid border-white items-center justify-center font-bold -mr-2 bg-yellow-300 text-white">
-                    <span>C</span>
-                  </div>
-                  <div className="avatar h-7 w-7 rounded-full flex border-2 border-solid border-white items-center justify-center font-bold -mr-2 bg-mist text-white">
-                    <span>A</span>
-                  </div>
-                  <div className="avatar h-7 w-7 rounded-full flex border-2 border-solid border-white items-center justify-center font-bold -mr-2 bg-green/80 text-white">
-                    <span>E</span>
-                  </div>
-                  <div className="avatar h-7 w-7 rounded-full border-2 border-solid border-white items-center justify-center font-bold -mr-2 bg-red-400 text-white">
-                    <span>+3</span>
-                  </div>
-                </div>
+                <Avatars />
                 <a
                   href="groupay-signup.html"
                   className="w-1/5 text-center rounded-full p-1 justify-self-end bg-teal text-white hover:bg-green hover:shadow-lg -translate-y-1"

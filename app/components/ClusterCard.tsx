@@ -1,6 +1,7 @@
 import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
 import { soraClass } from "../fonts";
 import Link from "next/link";
+import Avatars from "./AvatarsCircles";
 
 export default function ClusterCard({ className }: { className?: string }) {
   return (
@@ -29,23 +30,9 @@ export default function ClusterCard({ className }: { className?: string }) {
           dolorum dolores sit, ratione rerum. At, iure blanditiis neque in
           architecto animi recusandae.
         </p>
-        <div className="flex items-end self-end">
-          <div className="avatars flex mt-1 w-4/5 items-center">
-            <div className="avatar h-7 w-7 rounded-full flex border-2 border-solid border-white items-center justify-center font-bold -mr-2 bg-yellow-300 text-white">
-              <span className="text-[12px]">C</span>
-            </div>
-            <div className="avatar h-7 w-7 rounded-full flex border-2 border-solid border-white items-center justify-center font-bold -mr-2 bg-mist text-white">
-              <span className="text-[12px]">A</span>
-            </div>
-            <div className="avatar h-7 w-7 rounded-full flex border-2 border-solid border-white items-center justify-center font-bold -mr-2 bg-green/80 text-white">
-              <span className="text-[12px]">E</span>
-            </div>
-            <div className="avatar h-7 w-7 rounded-full border-2 border-solid border-white items-center justify-center font-bold -mr-2 bg-red-400 text-white">
-              <span className="text-[12px]">+3</span>
-            </div>
-          </div>
-
-          <div className="w-1/5 flex justify-end">
+        <div className="flex items-end self-end w-full">
+          <Avatars className="w-3/4 justify-start" />
+          <div className="w-1/4 flex justify-end">
             <ArrowRightIcon
               className="text-2xl hover:scale-125 transition-all p-1 text-teal  cursor-pointer"
               weight="bold"

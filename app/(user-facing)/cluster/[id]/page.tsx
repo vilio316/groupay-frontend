@@ -1,5 +1,6 @@
 "use client";
 
+import Avatars from "@/app/components/AvatarsCircles";
 import { BalanceCard } from "@/app/components/BalanceCard";
 import PlanCard from "@/app/components/PlanCard";
 import {
@@ -23,26 +24,11 @@ export default function ClusterPage() {
           ClusterName
         </p>
         <Link
-          className="hover:bg-aqua/15 hover:rounded-2xl p-2 flex flex-col w-1/5 justify-end-safe items-center"
+          className="hover:bg-aqua/15 hover:rounded-2xl p-2 flex flex-col w-1/5 justify-end items-center text-right"
           href={"/cluster/234/members"}
         >
-          <p>
-            <span className="font-bold">22</span> Members
-          </p>
-          <div className="avatars flex m-1">
-            <div className="avatar h-7 w-7 rounded-full flex border-2 border-solid border-white items-center justify-center font-bold -mr-2 bg-yellow-300 text-white">
-              <span>C</span>
-            </div>
-            <div className="avatar h-7 w-7 rounded-full flex border-2 border-solid border-white items-center justify-center font-bold -mr-2 bg-mist text-white">
-              <span>A</span>
-            </div>
-            <div className="avatar h-7 w-7 rounded-full flex border-2 border-solid border-white items-center justify-center font-bold -mr-2 bg-green/80 text-white">
-              <span>E</span>
-            </div>
-            <div className="avatar h-7 w-7 rounded-full border-2 border-solid border-white items-center justify-center font-bold -mr-2 bg-red-400 text-white">
-              <span>9+</span>
-            </div>
-          </div>
+          <span className="w-full">22 Members</span>
+          <Avatars className="justify-end w-full" />
         </Link>
       </div>
       <div className="flex gap-x-2">

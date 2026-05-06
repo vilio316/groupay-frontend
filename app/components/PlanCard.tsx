@@ -5,7 +5,7 @@ import Link from "next/link";
 export default function PlanCard({ className }: { className?: string }) {
   return (
     <Link
-      href="/cluster/234/plans/101"
+      href="/plans/101"
       className={`border ${className} flex shrink-0 border-card-border relative rounded-2xl`}
     >
       <div>

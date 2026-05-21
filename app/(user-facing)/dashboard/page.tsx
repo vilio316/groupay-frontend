@@ -34,7 +34,7 @@ export default function DashboardPage() {
 
           <Link
             href="#transactions"
-            className="text-white text-md shrink-0 flex self-end justify-self-end bg-green rounded-full p-2 hover:bg-[#3db029] transition-all hover:scale-x-105"
+            className="text-white text-md shrink-0 flex self-end justify-self-end bg-green rounded-2xl p-2 hover:bg-[#3db029] transition-all hover:scale-x-105"
           >
             Your Transactions &gt;
           </Link>

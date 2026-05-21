@@ -28,21 +28,23 @@ export default function ManageClusterPage() {
   const managerViewItems: ManagerViewItem[] = [
     {
       categoryName: "Members",
-      icon: <UsersThreeIcon className="text-xl" weight="duotone" />,
+      icon: <UsersThreeIcon className="text-2xl" weight="duotone" />,
       childElement: <MembersChild />,
+      count: 22,
     },
     {
       categoryName: "Plans",
-      icon: <ArticleIcon className="text-xl" weight="duotone" />,
+      icon: <ArticleIcon className="text-2xl" weight="duotone" />,
       childElement: <PlansChild />,
+      count: 3,
     },
     {
       categoryName: "Settings",
-      icon: <GearIcon className="text-xl" weight="duotone" />,
+      icon: <GearIcon className="text-2xl" weight="duotone" />,
     },
     {
       categoryName: "Transactions",
-      icon: <MoneyWavyIcon className="text-xl" weight="duotone" />,
+      icon: <MoneyWavyIcon className="text-2xl" weight="duotone" />,
     },
     {
       categoryName: "Requests",
@@ -60,7 +62,7 @@ export default function ManageClusterPage() {
         <p
           className={`${soraClass} p-1 my-2 text-3xl text-green w-1/2 font-bold`}
         >
-          <Link href="./">ClusterName</Link> &gt; Manager View
+          <Link href="./">ClusterName</Link> / Manager View
         </p>
         <div className="grid justify-end text-end w-1/2">
           <p className="uppercase text-ink-mid text-sm font-bold">
@@ -81,7 +83,7 @@ export default function ManageClusterPage() {
           <div>
             <p className={`${soraClass} text-xl font-bold`}>Cluster Details</p>
             <p>Name: ClusterName</p>
-            <p>Members: 22</p>
+            <p>Date of Creation: 22 Feb 3004</p>
           </div>
         </div>
 

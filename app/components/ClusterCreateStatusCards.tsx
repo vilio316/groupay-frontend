@@ -24,9 +24,12 @@ export default function ClusterCreateSuccessCard() {
 
       <p className="indent-4 first-letter:text-xl text-justify">
         Your cluster, <span className="font-bold text-green">ClusterName</span>,
-        was created successfully. Click <Link href={"/"}>here</Link> to view and
-        edit your cluster's key details. Click the "Share" button to share your
-        cluster's link and add others to your merry band!
+        was created successfully. Click{" "}
+        <Link href={"/cluster/234/manage"} className="underline">
+          here
+        </Link>{" "}
+        to view and edit your cluster's key details. Click the "Share" button to
+        share your cluster's link and add others to your merry band!
       </p>
 
       <div className="flex justify-end items-center text-white">

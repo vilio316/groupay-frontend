@@ -2,6 +2,7 @@
 
 import Avatars from "@/app/components/AvatarsCircles";
 import { BalanceCard } from "@/app/components/BalanceCard";
+import PaymentModal from "@/app/components/PaymentModal";
 import PlanCard from "@/app/components/PlanCard";
 import {
   FailedTransaction,
@@ -15,24 +16,26 @@ import {
   ShareNetworkIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function ClusterPage() {
+  const [isModalShown, showModal] = useState(false);
   return (
     <div className="p-4 mx-auto">
       <div className="flex gap-x-4 items-center">
-        <p className={`${soraClass} w-4/5 text-3xl font-bold text-forest my-3`}>
+        <p className={`${soraClass} w-5/6 text-3xl font-bold text-forest my-3`}>
           ClusterName
         </p>
         <Link
-          className="hover:bg-aqua/15 hover:rounded-2xl p-2 flex flex-col w-1/5 justify-end items-center text-right"
+          className="hover:bg-aqua/15 hover:rounded-2xl p-2 flex flex-col max-w-1/5 justify-end items-center text-right"
           href={"/cluster/234/members"}
         >
-          <span className="w-full">22 Members</span>
+          <span className="w-full justify-self-end">22 Members</span>
           <Avatars className="justify-end w-full" />
         </Link>
       </div>
       <div className="flex gap-x-2">
-        <BalanceCard payFunct={() => console.log("Awooga")} />
+        <BalanceCard payFunct={() => showModal(true)} />
         <div className="items-center flex p-2 gap-x-4 ">
           <ShareNetworkIcon className="w-12 h-12 fill-green" weight="duotone" />
           <Link href={"/cluster/234/manage"}>
@@ -77,6 +80,8 @@ export default function ClusterPage() {
           <PendingTransaction />
         </div>
       </div>
+
+      <PaymentModal onClick={() => showModal(false)} isShown={isModalShown} />
     </div>
   );
 }

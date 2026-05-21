@@ -1,5 +1,7 @@
 import { soraClass } from "@/app/fonts";
+
 import {
+  ArticleIcon,
   GearIcon,
   HouseLineIcon,
   SignOutIcon,
@@ -20,7 +22,9 @@ export default function Sidebar() {
                 <path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4zm-1 3v4l3.5 2-.7 1.2L8 12.2V7h1z" />
               </svg>
             </div>
-            <p className={`${soraClass} font-bold`}>GrouPay</p>
+            <Link className={`${soraClass} font-bold`} href="/dashboard">
+              GrouPay
+            </Link>
           </div>
           <div className="flex sidebar-link gap-x-2 items-center my-4">
             <HouseLineIcon className="h-12 w-12 p-2" />
@@ -40,6 +44,13 @@ export default function Sidebar() {
             <UsersThreeIcon className="h-12 w-12 p-2" />
             <Link href="/clusters" className="text-[18px] hover:font-semibold">
               Your Clusters
+            </Link>
+          </div>
+
+          <div className="flex sidebar-link gap-x-2 items-center my-4">
+            <ArticleIcon className="h-12 w-12 p-2" />
+            <Link href="/plans" className="text-[18px] hover:font-semibold">
+              Your Plans
             </Link>
           </div>
 

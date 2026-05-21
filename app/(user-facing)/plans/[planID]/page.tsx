@@ -13,6 +13,7 @@ import { useState } from "react";
 export default function PlanPage() {
   const [isPaying, updatePaymentStatus] = useState(false);
   const [hasContributed] = useState(false);
+  const [joinedState] = useState(true);
   return (
     <div className="px-4 my-2 mx-auto">
       <div className="flex items-center">
@@ -30,12 +31,16 @@ export default function PlanPage() {
         </div>
 
         <div className="w-1/5 flex justify-end p-1 gap-x-4">
-          <button className="rounded-xl p-2 border uppercase text-red border-red hover:bg-red hover:text-white hover:scale-105 transition-all shrink-0">
-            Exit Plan
-          </button>
-          <button className="rounded-xl p-2 uppercase text-white bg-teal hover:text-white hover:scale-105 transition-all shrink-0 ">
-            Ask to Join
-          </button>
+          {joinedState && (
+            <button className="rounded-xl p-2 border uppercase text-red border-red hover:bg-red hover:text-white hover:scale-105 transition-all shrink-0">
+              Exit Plan
+            </button>
+          )}
+          {!joinedState && (
+            <button className="rounded-xl p-2 uppercase text-white bg-teal hover:text-white hover:scale-105 transition-all shrink-0 ">
+              Ask to Join
+            </button>
+          )}
         </div>
       </div>
       <div className="border border-card-border shadow-sm shadow-card-border rounded-xl md:p-4 p-2 my-2">
@@ -45,10 +50,12 @@ export default function PlanPage() {
           </p>
 
           <Link
-            href="../plans/101/manage"
+            href="../plans/101/members"
             className="flex justify-end p-1 text-end flex-col w-1/5"
           >
-            <p className="text-sm">3/6 members paid</p>
+            <p className="text-sm capitalize text-ink-mid font-bold">
+              3/6 members paid
+            </p>
             <Avatars className="justify-end" />
           </Link>
         </div>
@@ -61,7 +68,7 @@ export default function PlanPage() {
 
             <div className="w-1/5 flex justify-end p-2">
               <button
-                className={`text-white bg-green hover:bg-greener rounded-xl uppercase hover:scale-105 transition-all p-2 flex items-center gap-x-2 disabled:opacity-70 disabled:hover:scale-100 `}
+                className={`text-white bg-green hover:bg-greener rounded-xl uppercase hover:scale-105 transition-all p-2 flex items-center gap-x-2 disabled:opacity-70 disabled:hover:scale-100 disabled:hover:bg-green `}
                 onClick={() => updatePaymentStatus(true)}
                 disabled={hasContributed}
               >

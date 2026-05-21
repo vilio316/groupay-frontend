@@ -17,11 +17,11 @@ export default function DashboardLayout({
   children: React.ReactElement;
 }) {
   return (
-    <div className="grid md:grid-cols-6 gap-x-2 md:p-4 h-screen">
+    <div className="grid md:grid-cols-4 lg:grid-cols-6 gap-x-2 md:p-4 h-screen">
       <div className="md:col-span-1 hidden md:grid md:p-2 h-[95vh] border-r-2 border-ink-mid/25 text-ink">
         <Sidebar />
       </div>
-      <div className="grid md:col-span-5 relative p-2 md:p-0 overflow-y-scroll min-h-screen items-center">
+      <div className="grid md:col-span-3 lg:col-span-5 relative p-2 md:p-0 overflow-y-scroll min-h-screen items-center">
         <div className="h-full">
           <div className="flex w-full items-center p-2 gap-x-4 justify-end top-icons">
             <Link

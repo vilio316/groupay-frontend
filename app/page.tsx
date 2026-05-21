@@ -40,13 +40,13 @@ export default function HomePage() {
           </div>
           <div className="flex items-center gap-4">
             <a
-              href="groupay-signup.html"
+              href="/auth/sign-in"
               className="text-[14px] font-semibold text-forest hover:text-teal py-3"
             >
               Log In
             </a>
             <a
-              href="groupay-signup.html"
+              href="/auth/sign-up"
               className={`bg-green hover:bg-greener text-white inline-flex center gap-2 py-3 px-6 rounded-full font-semibold cursor-pointer transition-all`}
             >
               Get Started
@@ -102,7 +102,7 @@ export default function HomePage() {
             </p>
             <div className="hero-actions flex justify-center  flex-wrap gap-4">
               <a
-                href="groupay-signup.html"
+                href="/auth/sign-up"
                 className="btn bg-green hover:bg-[#3db029] md:px-9 md:py-4 rounded-full"
               >
                 Start for free →
@@ -253,13 +253,10 @@ export default function HomePage() {
               </div>
               <div className="flex items-center my-2">
                 <Avatars />
-                <a
-                  href="groupay-signup.html"
-                  className="w-1/5 text-center rounded-full p-1 justify-self-end bg-teal text-white hover:bg-green hover:shadow-lg -translate-y-1"
-                >
-                  Settle up ✓
-                </a>
               </div>
+              <button className="w-1/5 text-center rounded-full p-1 justify-self-end bg-teal text-white hover:bg-green hover:shadow-lg -translate-y-1 block hover:scale-105">
+                Settle up ✓
+              </button>
             </div>
           </div>
         </div>

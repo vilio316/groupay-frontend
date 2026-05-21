@@ -5,17 +5,20 @@ export type ManagerViewItem = {
   categoryName: string;
   icon: React.ReactElement;
   childElement?: React.ReactElement;
+  count?: number;
 };
 export function ManagerViewCategory({
   obj,
   array,
   click,
+  isActive,
 }: {
   obj: ManagerViewItem;
   array: string[];
   click: () => void;
+  isActive?: boolean;
 }) {
-  const { categoryName, icon, childElement } = obj;
+  const { categoryName, icon, childElement, count } = obj;
   const isIncluded = array.includes(categoryName);
   return (
     <div
@@ -27,6 +30,7 @@ export function ManagerViewCategory({
       >
         {icon}
         <p className="w-4/5">{categoryName}</p>
+        <span>{count}</span>
         {isIncluded ? <CaretUpIcon /> : <CaretDownIcon />}
       </div>
       {isIncluded && (

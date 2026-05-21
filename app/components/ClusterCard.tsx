@@ -12,17 +12,19 @@ export default function ClusterCard({ className }: { className?: string }) {
       <div>
         <img
           src="/family.jpg"
-          className="md:h-60 w-full object-cover rounded-2xl"
+          className="md:h-48 lg:h-60 w-full object-cover rounded-2xl"
         />
       </div>
       <div className="absolute bottom-0 h-3/4 z-20 bg-white rounded-2xl border-2 border-card-border w-full shadow-xl shadow-card-border p-2 grid text-justify">
         <p className="flex items-center gap-x-1">
           <span
-            className={`${soraClass} flex items-center font-bold text-[20px] text-green w-3/5`}
+            className={`${soraClass} flex items-center font-bold md:text-[16px] lg:text-[20px] text-green w-4/5`}
           >
             ClusterName
           </span>
-          <span className="text-sm font-normal text-right">6 Members</span>
+          <span className="md:text-[8px] lg:text-[11px] font-normal text-right">
+            6 Members
+          </span>
         </p>
         <p className="indent-4 px-4 clusterDesc overflow-y-hidden text-ellipsis max-h-20 text-ink-mid text-[12px] ">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem,

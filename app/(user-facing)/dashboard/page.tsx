@@ -12,10 +12,12 @@ import { BalanceCard } from "@/app/components/BalanceCard";
 import PaymentModal from "@/app/components/PaymentModal";
 import OnboardingStatusCard from "@/app/components/OnboardingStatusCard";
 import { useState } from "react";
-// // import { PlusIcon } from "@phosphor-icons/react";
 
 export default function DashboardPage() {
   const [showModal, updateModalState] = useState(false);
+  const [prompter, updatePrompter] = useState<"add" | "withdraw" | "transfer">(
+    "add",
+  );
 
   return (
     <div className="grid">
@@ -24,13 +26,19 @@ export default function DashboardPage() {
         onClick={() => {
           updateModalState(!showModal);
         }}
+        prompter={prompter}
       />
       <div className="bg-white nameAndBalance px-4 py-2">
         <p className={`${soraClass} text-3xl`}>
           Good day, <span className="text-bold text-green">David</span>
         </p>
         <div className="flex gap-x-4 my-4 px-2">
-          <BalanceCard payFunct={() => updateModalState(true)} />
+          <BalanceCard
+            payFunct={(string: any) => {
+              updateModalState(true);
+              updatePrompter(string);
+            }}
+          />
 
           <Link
             href="#transactions"
@@ -46,15 +54,6 @@ export default function DashboardPage() {
           <p className="font-semibold text-xl uppercase text-ink-mid">
             Your Clusters
           </p>
-          {/* <div className="p-4 text-center border-2 border-card-border rounded-xl my-4 mx-4">
-            <p className="text-center font-semibold p-1 my-2 text-2xl ">
-              No Clusters Yet{" "}
-            </p>
-            <p className="text-xl">
-              Click the "+" button to create your own Cluster or join a friend's
-              via their invite link
-            </p>
-          </div> */}
           <div className="flex items-center gap-x-6">
             <div className="flex shrink-0 gap-x-3 p-3 my-2 w-[90%] overflow-x-scroll">
               <ClusterCard className="w-[30%]" />

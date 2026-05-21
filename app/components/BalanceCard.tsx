@@ -1,10 +1,17 @@
+"use client";
+
 import { PaperPlaneTiltIcon } from "@phosphor-icons/react";
 import {
   HandDepositIcon,
   HandWithdrawIcon,
 } from "@phosphor-icons/react/dist/ssr";
+import { usePathname } from "next/navigation";
 
-export function BalanceCard({ payFunct }: { payFunct: () => void }) {
+export function BalanceCard({
+  payFunct,
+}: {
+  payFunct: (string?: string) => void;
+}) {
   return (
     <div className="grid w-[90%] grid-cols-8 items-center border border-card-border shadow-md p-4 rounded-xl shadow-card-border/40">
       <div className="col-span-1">
@@ -27,7 +34,7 @@ export function BalanceCard({ payFunct }: { payFunct: () => void }) {
             <HandDepositIcon
               weight="duotone"
               className="rounded-full bg-green/40 text-black shadow-xl shadow-card-border md:h-12 w-12 p-2 hover:bg-greener hover:font-bold hover:scale-105 transition-all duration-100"
-              onClick={() => payFunct()}
+              onClick={() => payFunct("add")}
             />
           </div>
           <span className="text-sm text-ink-mid">Add money</span>
@@ -38,7 +45,7 @@ export function BalanceCard({ payFunct }: { payFunct: () => void }) {
             <HandWithdrawIcon
               weight="duotone"
               className="rounded-full bg-green/40 text-black shadow-xl shadow-card-border md:h-12 w-12 p-2 hover:bg-greener hover:font-bold hover:scale-105 transition-all duration-100"
-              onClick={() => payFunct()}
+              onClick={() => payFunct("withdraw")}
             />
           </div>
           <span className="text-ink-mid text-sm">Withdraw</span>
@@ -49,7 +56,7 @@ export function BalanceCard({ payFunct }: { payFunct: () => void }) {
             <PaperPlaneTiltIcon
               weight="duotone"
               className="rounded-full bg-green/40 text-black shadow-xl shadow-card-border md:h-12 w-12 p-2 hover:bg-greener hover:font-bold hover:scale-105 transition-all duration-100"
-              onClick={() => payFunct()}
+              onClick={() => payFunct("transfer")}
             />
           </div>
           <span className="text-ink-mid text-sm">Transfer</span>

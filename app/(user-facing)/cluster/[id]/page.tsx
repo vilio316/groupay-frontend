@@ -20,6 +20,9 @@ import { useState } from "react";
 
 export default function ClusterPage() {
   const [isModalShown, showModal] = useState(false);
+  const [promptButton, updatePrompter] = useState<
+    "add" | "withdraw" | "transfer"
+  >("add");
   return (
     <div className="p-4 mx-auto">
       <div className="flex gap-x-4 items-center">
@@ -35,7 +38,12 @@ export default function ClusterPage() {
         </Link>
       </div>
       <div className="flex gap-x-2">
-        <BalanceCard payFunct={() => showModal(true)} />
+        <BalanceCard
+          payFunct={(string: any) => {
+            showModal(true);
+            updatePrompter(string);
+          }}
+        />
         <div className="items-center flex p-2 gap-x-4 ">
           <ShareNetworkIcon className="w-12 h-12 fill-green" weight="duotone" />
           <Link href={"/cluster/234/manage"}>
@@ -81,7 +89,13 @@ export default function ClusterPage() {
         </div>
       </div>
 
-      <PaymentModal onClick={() => showModal(false)} isShown={isModalShown} />
+      <PaymentModal
+        onClick={() => {
+          showModal(false);
+        }}
+        isShown={isModalShown}
+        prompter={promptButton}
+      />
     </div>
   );
 }

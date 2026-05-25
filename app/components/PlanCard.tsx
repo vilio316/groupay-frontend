@@ -12,13 +12,13 @@ export default function PlanCard({ className }: { className?: string }) {
       <div>
         <img
           src="/family.jpg"
-          className="md:h-48 lg:h-60 w-full object-cover rounded-2xl"
+          className="md:h-48 lg:h-60 h-44 w-full object-cover rounded-2xl"
         />
       </div>
       <div className="absolute bottom-0 h-[90%] z-20 bg-white rounded-2xl border-2 border-card-border w-full shadow-xl shadow-card-border p-2 grid text-justify">
-        <p className="flex items-center gap-x-2">
+        <p className="flex items-center gap-x-2 md:flex-row flex-col">
           <span
-            className={`${soraClass} flex items-center font-bold text-10px md:text-[12px] lg:text-[20px] text-green w-4/5 overflow-y-hidden h-5 `}
+            className={`${soraClass} flex items-center font-bold text-11px md:text-[12px] lg:text-[20px] text-green md:w-4/5 overflow-y-hidden h-5 `}
           >
             PlanName
           </span>
@@ -32,8 +32,8 @@ export default function PlanCard({ className }: { className?: string }) {
           molestias dolorum dolores sit, ratione rerum. At, iure blanditiis
           neque in architecto animi recusandae.
         </p>
-        <div className="flex items-center">
-          <div className="w-1/2">
+        <div className="flex items-center  md:flex-row flex-col">
+          <div className="md:w-1/2 w-full">
             <p className="text-[10px] text-ink-mid">6 Members</p>
             <div className="flex items-end self-end">
               <div className="avatars flex mt-1 w-4/5 items-center">
@@ -41,14 +41,16 @@ export default function PlanCard({ className }: { className?: string }) {
               </div>
             </div>
           </div>
-          <div className="text-right w-1/3">
-            <p className="text-sm">&#8358; {(5000).toLocaleString()}</p>
+          <div className="text-right md:w-1/3 w-full flex flex-col justify-end">
+            <p className="md:text-sm text-[10px]">
+              &#8358; {(5000).toLocaleString()}
+            </p>
             <p className="lg:text-[10px] text-[7px] text-ink-mid">
               Avg. Contribution
             </p>
           </div>
 
-          <div className="flex justify-end w-1/6">
+          <div className="flex justify-end md:w-1/6 w-full">
             <ArrowRightIcon
               className="text-2xl hover:scale-125 transition-all p-1 text-teal  cursor-pointer"
               weight="bold"

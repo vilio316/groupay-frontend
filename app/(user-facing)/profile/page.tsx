@@ -3,9 +3,15 @@ import { SignOutIcon } from "@phosphor-icons/react/dist/ssr";
 export default function ProfilePage() {
   return (
     <div className="p-3 h-full">
-      <p className={`text-3xl ${soraClass} font-bold text-green my-3`}>
-        Your Profile
-      </p>
+      <div className="flex gap-x-2 items-center">
+        <p className={`text-3xl ${soraClass} w-3/5 font-bold text-green my-3`}>
+          Your Profile
+        </p>
+        <button className="flex gap-x-4 md:hidden items-center text-red border-red border p-2 hover:text-white hover:bg-red transition-all rounded-xl my-4">
+          <SignOutIcon className="h-6 w-6 " />
+          Log Out
+        </button>
+      </div>
       <div className="flex gap-4 items-center p-4 border border-card-border rounded-xl shadow-sm shadow-green/40">
         <div>
           <img
@@ -28,7 +34,7 @@ export default function ProfilePage() {
       >
         <p>Settings</p>
       </div>
-      <div className="flex w-full items-center justify-center">
+      <div className="md:flex w-full items-center justify-center hidden ">
         <button className="flex gap-x-4 items-center text-red border-red border p-2 hover:text-white hover:bg-red transition-all rounded-xl my-4">
           <SignOutIcon className="h-6 w-6 " />
           Log Out

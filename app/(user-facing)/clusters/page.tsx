@@ -12,12 +12,14 @@ export default function ClustersPage() {
   return (
     <div className="min-h-full">
       <div className="flex gap-x-4 my-3 items-center">
-        <p className={`${soraClass} font-bold text-green text-3xl w-4/5`}>
+        <p
+          className={`${soraClass} font-bold text-green text-3xl md:w-4/5 w-3/5`}
+        >
           Your Clusters
         </p>{" "}
         <Link
           href={"/clusters/new"}
-          className="text-white text-lg hover:bg-greener bg-green hover:scale-105 rounded-full p-1 items-center justify-center w-1/5 text-center flex gap-x-4"
+          className="text-white text-lg hover:bg-greener bg-green hover:scale-105 rounded-full p-1 items-center justify-center md:w-1/5 w-auto text-center flex gap-x-4"
         >
           <PlusIcon />
           <span>New Cluster</span>
@@ -46,7 +48,7 @@ export default function ClustersPage() {
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-2 gap-x-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-2 gap-3">
           <ClusterCard />
           <ClusterCard />
           <ClusterCard />

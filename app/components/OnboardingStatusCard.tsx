@@ -6,7 +6,7 @@ export default function OnboardingStatusCard() {
   return (
     <Link
       href={"/onboarding"}
-      className="md:py-3 md:px-6 border border-card-border rounded-xl shadow-sm shadow-card-border my-4 mx-6 hover:scale-102 transition-all"
+      className="md:py-3 md:px-6 p-3 border border-card-border rounded-xl shadow-sm shadow-card-border my-4 mx-6 hover:scale-102 transition-all"
     >
       <div className="flex gap-x-3 items-center">
         <div className="w-4/5">

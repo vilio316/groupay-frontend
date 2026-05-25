@@ -25,9 +25,7 @@ export default function PaymentModal({
   const [contributionSource, changeSource] = useState("");
 
   useEffect(() => {
-    if (prompter === "transfer") {
-      updatePaymentStage(1);
-    } else if (prompter == "plan") {
+    if (prompter === "transfer" || prompter === "plan") {
       updatePaymentStage(paymentStage);
     } else {
       updatePaymentStage(0);
@@ -41,8 +39,8 @@ export default function PaymentModal({
 
   return (
     isShown && (
-      <div className="fixed -top-12 left-0 min-h-screen w-full bg-gray-100/60  z-70 max-h-3/4  mx-auto grid p-3">
-        <div className="place-self-center md:w-2/5 w-4/5 max-h-3/4 rounded-xl bg-white px-6 py-4 border border-card-border shadow-2xl shadow-card-border relative">
+      <div className="fixed -top-12 left-0 min-h-screen w-full bg-gray-100/60  z-70  mx-auto grid p-3">
+        <div className="place-self-center md:w-2/5 w-4/5 max-h-4/5 rounded-xl bg-white px-6 py-4 border border-card-border shadow-2xl shadow-card-border relative">
           <span className="w-full text-right flex justify-end">
             <XIcon
               className="w-12 h-12 p-2 hover:text-red hover:scale-105 text-ink"
@@ -141,11 +139,11 @@ export default function PaymentModal({
                 defaultValue={500}
               />
 
-              <p className={`${soraClass} my-1 text-ink text-xl`}>
+              <p className={`${soraClass} my-1 text-ink text-sm md:text-xl`}>
                 Where's the contribution coming from?
               </p>
-              <div className="flex justify-center py-2 w-full gap-x-4">
-                <div className="rounded-xl p-2 gap-x-2 has-checked:border-green has-checked:scale-110 w-2/5 flex border hover:border-green">
+              <div className="flex md:flex-row flex-col justify-center py-2 w-full gap-x-4">
+                <div className="rounded-xl p-2 gap-x-2 has-checked:border-green has-checked:scale-110 md:w-2/5 flex border hover:border-green transition-all">
                   <input
                     type="radio"
                     name="recipient_category"
@@ -160,7 +158,7 @@ export default function PaymentModal({
                   </label>
                 </div>
 
-                <div className="rounded-xl p-2 gap-x-2 has-checked:border-green has-checked:scale-110 w-2/5 flex border hover:border-green">
+                <div className="rounded-xl p-2 gap-x-2 has-checked:border-green has-checked:scale-110 md:w-2/5 my-1 flex border hover:border-green transition-all">
                   <input
                     type="radio"
                     name="recipient_category"

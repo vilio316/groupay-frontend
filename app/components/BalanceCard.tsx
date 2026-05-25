@@ -13,11 +13,11 @@ export function BalanceCard({
   payFunct: (string?: string) => void;
 }) {
   return (
-    <div className="grid w-[90%] grid-cols-8 items-center border border-card-border shadow-md p-4 rounded-xl shadow-card-border/40">
+    <div className="md:grid md:w-[90%] grid-cols-8 items-center border border-card-border shadow-md p-4 rounded-xl shadow-card-border/40 my-2">
       <div className="col-span-1">
         <img
           src="/family.jpg"
-          className="rounded-full p-1 drop-shadow-xl drop-shadow-card-border h-24 w-24 object-cover"
+          className="rounded-full p-1 drop-shadow-xl drop-shadow-card-border md:h-24 md:w-24 h-12 w-12 object-cover"
         />
       </div>
       <div className="col-span-4">
@@ -33,7 +33,7 @@ export function BalanceCard({
           <div className="flex justify-center">
             <HandDepositIcon
               weight="duotone"
-              className="rounded-full bg-green/40 text-black shadow-xl shadow-card-border md:h-12 w-12 p-2 hover:bg-greener hover:font-bold hover:scale-105 transition-all duration-100"
+              className="rounded-full bg-green/40 text-black shadow-xl shadow-card-border h-8 w-8 md:h-12 md:w-12 p-2 hover:bg-greener hover:font-bold hover:scale-105 transition-all duration-100"
               onClick={() => payFunct("add")}
             />
           </div>
@@ -44,7 +44,7 @@ export function BalanceCard({
           <div className="flex justify-center">
             <HandWithdrawIcon
               weight="duotone"
-              className="rounded-full bg-green/40 text-black shadow-xl shadow-card-border md:h-12 w-12 p-2 hover:bg-greener hover:font-bold hover:scale-105 transition-all duration-100"
+              className="rounded-full bg-green/40 text-black shadow-xl shadow-card-border h-8 w-8 md:h-12 md:w-12 p-2 hover:bg-greener hover:font-bold hover:scale-105 transition-all duration-100"
               onClick={() => payFunct("withdraw")}
             />
           </div>
@@ -55,7 +55,7 @@ export function BalanceCard({
           <div className="flex justify-center">
             <PaperPlaneTiltIcon
               weight="duotone"
-              className="rounded-full bg-green/40 text-black shadow-xl shadow-card-border md:h-12 w-12 p-2 hover:bg-greener hover:font-bold hover:scale-105 transition-all duration-100"
+              className="rounded-full bg-green/40 text-black shadow-xl shadow-card-border h-8 w-8 md:h-12 md:w-12 p-2 hover:bg-greener hover:font-bold hover:scale-105 transition-all duration-100"
               onClick={() => payFunct("transfer")}
             />
           </div>

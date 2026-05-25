@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   FailedTransaction,
   PendingTransaction,
-  SuccessfulTransaction,
+  TransactionBlock,
 } from "@/app/components/TransactionStatusBlocks";
 import ClusterCard from "@/app/components/ClusterCard";
 import { BalanceCard } from "@/app/components/BalanceCard";
@@ -32,7 +32,7 @@ export default function DashboardPage() {
         <p className={`${soraClass} text-3xl`}>
           Good day, <span className="text-bold text-green">David</span>
         </p>
-        <div className="flex gap-x-4 my-4 px-2">
+        <div className="md:flex gap-x-4 my-4 px-2">
           <BalanceCard
             payFunct={(string: any) => {
               updateModalState(true);
@@ -56,15 +56,15 @@ export default function DashboardPage() {
           </p>
           <div className="flex items-center gap-x-6">
             <div className="flex shrink-0 gap-x-3 p-3 my-2 w-[90%] overflow-x-scroll">
-              <ClusterCard className="w-[30%]" />
-              <ClusterCard className="w-[30%]" />
-              <ClusterCard className="w-[30%]" />
-              <ClusterCard className="w-[30%]" />
-              <ClusterCard className="w-[30%]" />
-              <ClusterCard className="w-[30%]" />
-              <ClusterCard className="w-[30%]" />
-              <ClusterCard className="w-[30%]" />
-              <ClusterCard className="w-[30%]" />
+              <ClusterCard className="md:w-[30%] w-[45%]" />
+              <ClusterCard className="md:w-[30%] w-[45%]" />
+              <ClusterCard className="md:w-[30%] w-[45%]" />
+              <ClusterCard className="md:w-[30%] w-[45%]" />
+              <ClusterCard className="md:w-[30%] w-[45%]" />
+              <ClusterCard className="md:w-[30%] w-[45%]" />
+              <ClusterCard className="md:w-[30%] w-[45%]" />
+              <ClusterCard className="md:w-[30%] w-[45%]" />
+              <ClusterCard className="md:w-[30%] w-[45%]" />
             </div>
 
             <Link href="/clusters">
@@ -85,12 +85,27 @@ export default function DashboardPage() {
               Your most recent transactions will show up here
             </p>
           </div>
-          <SuccessfulTransaction />
-          <PendingTransaction />
-          <FailedTransaction />
+          <TransactionBlock
+            transactionObject={{
+              status: "success",
+              amount: 4000,
+            }}
+          />
+          <TransactionBlock
+            transactionObject={{
+              status: "pending",
+              amount: 3450.56,
+            }}
+          />{" "}
+          <TransactionBlock
+            transactionObject={{
+              status: "fail",
+              amount: 4500.56,
+            }}
+          />
         </div>
       </div>
-      <div className="sticky bottom-12 right-8 w-full flex justify-end">
+      <div className="sticky bottom-12 right-8 w-full flex justify-end z-40">
         <Link
           href="/clusters/new"
           className="flex items-center justify-cente bg-green text-white text-center rounded-full p-2 w-20 h-20 sticky hover:bg-greener transition-all hover:shadow-2xl hover:shadow-card-border hover:translate-y-px"

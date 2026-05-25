@@ -4,11 +4,7 @@ import Avatars from "@/app/components/AvatarsCircles";
 import { BalanceCard } from "@/app/components/BalanceCard";
 import PaymentModal from "@/app/components/PaymentModal";
 import PlanCard from "@/app/components/PlanCard";
-import {
-  FailedTransaction,
-  PendingTransaction,
-  SuccessfulTransaction,
-} from "@/app/components/TransactionStatusBlocks";
+import { TransactionBlock } from "@/app/components/TransactionStatusBlocks";
 import { soraClass } from "@/app/fonts";
 import { GearSixIcon } from "@phosphor-icons/react";
 import {
@@ -37,14 +33,14 @@ export default function ClusterPage() {
           <Avatars className="justify-end w-full" />
         </Link>
       </div>
-      <div className="flex gap-x-2">
+      <div className="flex gap-x-2 flex-col md:flex-row ">
         <BalanceCard
           payFunct={(string: any) => {
             showModal(true);
             updatePrompter(string);
           }}
         />
-        <div className="items-center flex p-2 gap-x-4 ">
+        <div className="items-center justify-end flex p-2 gap-x-4 ">
           <ShareNetworkIcon className="w-12 h-12 fill-green" weight="duotone" />
           <Link href={"/cluster/234/manage"}>
             <GearSixIcon className="w-12 h-12 fill-green" weight="duotone" />
@@ -83,9 +79,18 @@ export default function ClusterPage() {
       <div className="my-3 p-3 rounded-2xl grid items-center border border-card-border shadow-md shadow-card-border">
         <p className="uppercase text-ink-mid font-semibold my-2">activities</p>
         <div className="grid">
-          <SuccessfulTransaction />
-          <FailedTransaction />
-          <PendingTransaction />
+          <TransactionBlock
+            transactionObject={{
+              status: "success",
+              amount: 4000,
+            }}
+          />
+          <TransactionBlock
+            transactionObject={{
+              status: "pending",
+              amount: 3450.56,
+            }}
+          />{" "}
         </div>
       </div>
 

@@ -3,7 +3,7 @@ import Avatars from "@/app/components/AvatarsCircles";
 import PaymentModal from "@/app/components/PaymentModal";
 import {
   FailedTransaction,
-  SuccessfulTransaction,
+  TransactionBlock,
 } from "@/app/components/TransactionStatusBlocks";
 import { soraClass } from "@/app/fonts";
 import { CheckCircleIcon, HandDepositIcon } from "@phosphor-icons/react";
@@ -60,13 +60,13 @@ export default function PlanPage() {
           </Link>
         </div>
         <div className="details">
-          <div className="flex gap-x-4 items-center">
-            <div className="details-text w-4/5">
+          <div className="flex flex-col md:flex-row gap-x-4 items-center">
+            <div className="details-text md:w-4/5 w-auto">
               <p>Your Contribution Amount: &#8358; {(1234).toLocaleString()}</p>
               <p>Contribution Status: 60%</p>
             </div>
 
-            <div className="w-1/5 flex justify-end p-2">
+            <div className="md:w-1/5 flex justify-end p-2">
               <button
                 className={`text-white bg-green hover:bg-greener rounded-xl uppercase hover:scale-105 transition-all p-2 flex items-center gap-x-2 disabled:opacity-70 disabled:hover:scale-100 disabled:hover:bg-green `}
                 onClick={() => updatePaymentStatus(true)}
@@ -92,7 +92,7 @@ export default function PlanPage() {
             <p className="uppercase text-ink-mid font-bold text-lg">
               Description
             </p>
-            <p>
+            <p className="indent-4">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
               esse, eius ad iure modi, dignissimos rem animi commodi vero unde
               quos molestias voluptas ex odio? Error consectetur voluptates unde
@@ -105,10 +105,18 @@ export default function PlanPage() {
               Recent Transactions
             </p>
             <div className="transactions">
-              <SuccessfulTransaction />
-              <SuccessfulTransaction />
-              <SuccessfulTransaction />
-              <FailedTransaction />
+              <TransactionBlock
+                transactionObject={{
+                  status: "success",
+                  amount: 4000,
+                }}
+              />
+              <TransactionBlock
+                transactionObject={{
+                  status: "pending",
+                  amount: 3450.56,
+                }}
+              />{" "}
             </div>
           </div>
         </div>

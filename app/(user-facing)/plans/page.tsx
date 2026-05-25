@@ -9,15 +9,17 @@ export default function PlansPage() {
   return (
     <div className="p-4 mx-auto border border-card-border rounded-xl">
       <div className="flex md:gap-x-4 gap-x-2 my-2">
-        <p className={`${soraClass} text-xl lg:text-3xl my-2 text-green w-4/5`}>
+        <p
+          className={`${soraClass} text-xl lg:text-3xl my-2 text-green md:w-4/5 w-2/5`}
+        >
           Your Plans
         </p>
         <Link
           href={"/plans/new"}
-          className="text-white text-lg hover:bg-greener bg-green hover:scale-105 rounded-full p-1 items-center justify-center w-1/5 text-center flex gap-x-4"
+          className="text-white text-lg hover:bg-greener bg-green hover:scale-105 rounded-full p-1 items-center justify-center justify-self-end md:w-1/5 w-auto text-center flex gap-x-4"
         >
           <PlusIcon />
-          <span>Create New Plan</span>
+          <span>New Plan</span>
         </Link>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

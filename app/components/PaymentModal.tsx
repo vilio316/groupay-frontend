@@ -1,6 +1,12 @@
 "use client";
 
-import { ArrowRightIcon, AtIcon, BankIcon, XIcon } from "@phosphor-icons/react";
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  AtIcon,
+  BankIcon,
+  XIcon,
+} from "@phosphor-icons/react";
 import { soraClass } from "../fonts";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -12,16 +18,19 @@ export default function PaymentModal({
 }: {
   isShown?: boolean;
   onClick: () => void;
-  prompter?: "add" | "withdraw" | "transfer";
+  prompter?: "add" | "withdraw" | "transfer" | "plan";
 }) {
   const [paymentStage, updatePaymentStage] = useState(0);
   const pathname = usePathname();
+  const [contributionSource, changeSource] = useState("");
 
   useEffect(() => {
-    if (prompter !== "transfer") {
-      updatePaymentStage(0);
-    } else {
+    if (prompter === "transfer") {
       updatePaymentStage(1);
+    } else if (prompter == "plan") {
+      updatePaymentStage(paymentStage);
+    } else {
+      updatePaymentStage(0);
     }
   }, [prompter, paymentStage]);
 
@@ -40,10 +49,19 @@ export default function PaymentModal({
               onClick={handleClick}
             />
           </span>
+          {paymentStage >= 1 && (
+            <button
+              className="flex gap-x-1 text-lg items-center cursor-pointer"
+              onClick={() => updatePaymentStage((state) => state - 1)}
+            >
+              <ArrowLeftIcon className="text-ink font-bold text-xl" />
+              <span>Back</span>
+            </button>
+          )}
           <p
             className={`${soraClass} text-2xl text-forest font-bold my-3 capitalize`}
           >
-            {prompter} Money
+            {prompter !== "plan" ? `${prompter} Money` : "Contribute to Plan"}
           </p>
 
           {prompter === "add" && (
@@ -107,7 +125,87 @@ export default function PaymentModal({
             </div>
           )}
 
-          {paymentStage === 1 && (
+          {prompter === "plan" && paymentStage === 0 && (
+            <div className="grid p-4 justify-center gap-y-2">
+              <p className={`text-ink ${soraClass} text-xl`}>
+                Your Contribution Amount
+              </p>
+              <p className="text-ink">NGN</p>
+              <input
+                type="number"
+                autoFocus
+                className="text-forest text-3xl outline-none border-0 "
+                min={100}
+                max={1000000}
+                step={100}
+                defaultValue={500}
+              />
+
+              <p className={`${soraClass} my-1 text-ink text-xl`}>
+                Where's the contribution coming from?
+              </p>
+              <div className="flex justify-center py-2 w-full gap-x-4">
+                <div className="rounded-xl p-2 gap-x-2 has-checked:border-green has-checked:scale-110 w-2/5 flex border hover:border-green">
+                  <input
+                    type="radio"
+                    name="recipient_category"
+                    id="groupayUser"
+                    onChange={(e) => {
+                      if (e.target.checked) changeSource("groupay");
+                    }}
+                  />
+                  <label htmlFor="groupayUser">
+                    <AtIcon weight="bold" />
+                    Your Groupay Wallet
+                  </label>
+                </div>
+
+                <div className="rounded-xl p-2 gap-x-2 has-checked:border-green has-checked:scale-110 w-2/5 flex border hover:border-green">
+                  <input
+                    type="radio"
+                    name="recipient_category"
+                    id="bankAccount"
+                    onChange={(e) => {
+                      if (e.target.checked) changeSource("external");
+                    }}
+                  />
+                  <label htmlFor="bankAccount">
+                    <BankIcon weight="bold" />
+                    Bank Account
+                  </label>
+                </div>
+              </div>
+
+              <button
+                className="text-white justify-self-center p-2 justify-center flex text-center w-3/4 my-3 bg-green font-bold uppercase rounded-2xl"
+                onClick={() => {
+                  if (contributionSource == "external") {
+                    updatePaymentStage(1);
+                  } else {
+                    setTimeout(() => {
+                      alert("Sent");
+                    }, 2000);
+                  }
+                }}
+              >
+                Continue
+              </button>
+            </div>
+          )}
+
+          {paymentStage === 1 && prompter === "plan" && (
+            <div className="grid justify-center">
+              <p>Send the money to the account below: </p>
+              <div className="text-center text-3xl uppercase font-bold my-3">
+                <p className="text-forest">0834567111</p>
+                <p className="uppercase text-xl">AMOS EBUBE CIROMA</p>
+              </div>
+              <button>I have sent the money</button>
+            </div>
+          )}
+
+          {/* Transaction Stages for "Transfer" attempts on payment modal */}
+          {paymentStage === 1 && prompter === "transfer" && (
             <div>
               <p className={`text-2xl font-bold ${soraClass}`}>
                 Where's the money headed?
@@ -146,7 +244,7 @@ export default function PaymentModal({
             </div>
           )}
 
-          {paymentStage === 2 && (
+          {paymentStage === 2 && prompter === "transfer" && (
             <div className="detailsAndLookup">
               <p className="capitalize my-3 text-lg ">add payment details</p>
 
@@ -206,7 +304,7 @@ export default function PaymentModal({
             </div>
           )}
 
-          {paymentStage === 3 && (
+          {paymentStage === 3 && prompter === "transfer" && (
             <div>
               <p className={`${soraClass} text-2xl font-bold my-3`}>
                 Transaction Details
@@ -237,6 +335,7 @@ export default function PaymentModal({
               </div>
             </div>
           )}
+          {/* end */}
         </div>
       </div>
     )

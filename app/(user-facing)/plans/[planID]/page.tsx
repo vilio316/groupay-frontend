@@ -116,6 +116,7 @@ export default function PlanPage() {
       <PaymentModal
         isShown={isPaying}
         onClick={() => updatePaymentStatus(false)}
+        prompter="plan"
       />
     </div>
   );

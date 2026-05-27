@@ -1,7 +1,14 @@
+"use client";
 import { soraClass } from "@/app/fonts";
 import Link from "next/link";
+import { signIn } from "@/lib/authClient";
+import { redirect } from "next/navigation";
+import { useState } from "react";
 
 export default function SignInPage() {
+  const [email, updateEmail] = useState("");
+  const [password, updatePassword] = useState("");
+
   return (
     <div className="p-6 grid items-center h-full justify-center md:justify-start">
       <div className="w-125">
@@ -13,7 +20,18 @@ export default function SignInPage() {
             Log back in to your acccount
           </p>
         </div>
-        <form className="grid my-4">
+        <form
+          className="grid my-4"
+          onSubmit={async (e: any) => {
+            e.preventDefault();
+            await signIn.email(
+              { email, password },
+              {
+                onSuccess: () => redirect("/dashboard"),
+              },
+            );
+          }}
+        >
           <div className="mb-4">
             <label
               htmlFor="email"
@@ -25,6 +43,7 @@ export default function SignInPage() {
               type="email"
               id="email"
               name="emailAddress"
+              onChange={(e) => updateEmail(e.target.value)}
               autoFocus
               placeholder="johndoe@emailcompany.com"
               className="h-12 px-3 outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border border-card-border rounded-xl w-full"
@@ -42,6 +61,7 @@ export default function SignInPage() {
               type="password"
               id="password"
               name="password"
+              onChange={(e) => updatePassword(e.target.value)}
               placeholder="Your password here..."
               className="h-12 px-3 outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border border-card-border rounded-xl w-full"
             />

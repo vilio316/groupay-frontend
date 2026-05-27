@@ -12,12 +12,14 @@ import { BalanceCard } from "@/app/components/BalanceCard";
 import PaymentModal from "@/app/components/PaymentModal";
 import OnboardingStatusCard from "@/app/components/OnboardingStatusCard";
 import { useState } from "react";
+import { getSession, useSession } from "@/lib/authClient";
 
 export default function DashboardPage() {
   const [showModal, updateModalState] = useState(false);
   const [prompter, updatePrompter] = useState<"add" | "withdraw" | "transfer">(
     "add",
   );
+  const { data } = useSession();
 
   return (
     <div className="grid">
@@ -30,7 +32,10 @@ export default function DashboardPage() {
       />
       <div className="bg-white nameAndBalance px-4 py-2">
         <p className={`${soraClass} text-3xl`}>
-          Good day, <span className="text-bold text-green">David</span>
+          Good day,{" "}
+          <span className="text-bold text-green">
+            {data?.user.name ? data.user.name.split(" ")[0] : "David"}
+          </span>
         </p>
         <div className="md:flex gap-x-4 my-4 px-2">
           <BalanceCard

@@ -65,7 +65,7 @@ export function FailedTransaction() {
         <XCircleIcon weight="light" className="h-12 w-12 p-2 text-red" />
       </div>
       <div className="col-span-7">
-        <p>TRANSACTION HEADING</p>
+        <p className="text-sm font-bold">TRANSACTION HEADING</p>
         <p className="text-ink-mid/70">
           <span>22/07/2026, 11:30:44 AM </span>|{" "}
           <span>Transaction Category</span>

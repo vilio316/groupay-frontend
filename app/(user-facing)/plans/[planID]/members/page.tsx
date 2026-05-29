@@ -4,13 +4,13 @@ import Link from "next/link";
 export default function MembersPage() {
   return (
     <div className="mx-auto my-4">
-      <div className="grid grid-cols-5 items-center p-1">
+      <div className="grid md:grid-cols-5 grid-cols-4 items-center p-1">
         <p
-          className={`my-4 text-2xl ${soraClass} font-bold text-green col-span-4`}
+          className={`my-4 text-2xl ${soraClass} font-bold text-green md:col-span-4 col-span-3`}
         >
           <Link href="/plan/101">PlanName</Link> / Members
         </p>
-        <span className="col-span-1 rounded-xl text-center justify-self-end text-red hover:bg-red hover:text-white p-2 hover:scale-105 transition-all capitalize">
+        <span className="col-span-1 rounded-xl text-center justify-self-end text-red hover:bg-red hover:text-white p-2 hover:scale-105 transition-all uppercase">
           exit plan
         </span>
       </div>

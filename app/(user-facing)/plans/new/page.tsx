@@ -35,6 +35,21 @@ export default function CreatePlan() {
               className="w-3/4 block mb-4 mt-2 p-2 indent-4 border-card-border border-2 rounded-[10px] outline-none focus:border-green"
             />
 
+            <label
+              htmlFor="clusterFunct"
+              className="font-semibold text-sm text-ink-mid block my-2 uppercase"
+            >
+              parent cluster
+            </label>
+            <input
+              type="text"
+              required
+              id="planFunct"
+              autoFocus
+              placeholder="The name of your plan"
+              className="w-3/4 block mb-4 mt-2 p-2 indent-4 border-card-border border-2 rounded-[10px] outline-none focus:border-green"
+            />
+
             <div className="my-3">
               <label className="font-semibold text-sm text-ink-mid block my-3 uppercase">
                 {" "}

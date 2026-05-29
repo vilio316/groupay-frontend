@@ -19,7 +19,7 @@ export default function ClustersPage() {
         </p>{" "}
         <Link
           href={"/clusters/new"}
-          className="text-white text-lg hover:bg-greener bg-green hover:scale-105 rounded-full p-1 items-center justify-center md:w-1/5 w-auto text-center flex gap-x-4"
+          className="text-white text-lg hover:bg-greener bg-green hover:scale-105 rounded-full p-1 items-center justify-center md:w-1/5 w-auto text-center flex gap-x-4 shrink-0"
         >
           <PlusIcon />
           <span>New Cluster</span>

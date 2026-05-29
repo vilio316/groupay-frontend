@@ -1,5 +1,9 @@
+"use client";
+
 import { soraClass } from "@/app/fonts";
+import { signOut } from "@/lib/authClient";
 import { SignOutIcon } from "@phosphor-icons/react/dist/ssr";
+import { redirect } from "next/navigation";
 export default function ProfilePage() {
   return (
     <div className="p-3 h-full">
@@ -7,7 +11,16 @@ export default function ProfilePage() {
         <p className={`text-3xl ${soraClass} w-3/5 font-bold text-green my-3`}>
           Your Profile
         </p>
-        <button className="flex gap-x-4 md:hidden items-center text-red border-red border p-2 hover:text-white hover:bg-red transition-all rounded-xl my-4">
+        <button
+          className="flex gap-x-4 md:hidden items-center text-red border-red border p-2 hover:text-white hover:bg-red transition-all rounded-xl my-4"
+          onClick={async () => {
+            await signOut({
+              fetchOptions: {
+                onSuccess: () => redirect("/api/auth/sign-in"),
+              },
+            });
+          }}
+        >
           <SignOutIcon className="h-6 w-6 " />
           Log Out
         </button>
@@ -15,7 +28,7 @@ export default function ProfilePage() {
       <div className="flex gap-4 items-center p-4 border border-card-border rounded-xl shadow-sm shadow-green/40">
         <div>
           <img
-            className="rounded-full h-28 w-28 object-cover"
+            className="rounded-full md:h-28 md:w-28 w-24 h-24 object-cover"
             src="/family.jpg"
           />
         </div>
@@ -35,7 +48,16 @@ export default function ProfilePage() {
         <p>Settings</p>
       </div>
       <div className="md:flex w-full items-center justify-center hidden ">
-        <button className="flex gap-x-4 items-center text-red border-red border p-2 hover:text-white hover:bg-red transition-all rounded-xl my-4">
+        <button
+          className="flex gap-x-4 items-center text-red border-red border p-2 hover:text-white hover:bg-red transition-all rounded-xl my-4"
+          onClick={async () => {
+            await signOut({
+              fetchOptions: {
+                onSuccess: () => redirect("/api/auth/sign-in"),
+              },
+            });
+          }}
+        >
           <SignOutIcon className="h-6 w-6 " />
           Log Out
         </button>

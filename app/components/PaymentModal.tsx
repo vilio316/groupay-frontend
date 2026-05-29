@@ -24,23 +24,15 @@ export default function PaymentModal({
   const pathname = usePathname();
   const [contributionSource, changeSource] = useState("");
 
-  useEffect(() => {
-    if (prompter === "transfer" || prompter === "plan") {
-      updatePaymentStage(paymentStage);
-    } else {
-      updatePaymentStage(0);
-    }
-  }, [prompter, paymentStage]);
-
   const handleClick = () => {
     onClick();
-    updatePaymentStage(1);
+    updatePaymentStage(0);
   };
 
   return (
     isShown && (
       <div className="fixed -top-12 left-0 min-h-screen w-full bg-gray-100/60  z-70  mx-auto grid p-3">
-        <div className="place-self-center md:w-2/5 w-4/5 max-h-4/5 rounded-xl bg-white px-6 py-4 border border-card-border shadow-2xl shadow-card-border relative">
+        <div className="place-self-center md:w-2/5 w-4/5 md:max-h-4/5 h-auto rounded-xl bg-white px-6 py-4 border border-card-border shadow-2xl shadow-card-border relative">
           <span className="w-full text-right flex justify-end">
             <XIcon
               className="w-12 h-12 p-2 hover:text-red hover:scale-105 text-ink"
@@ -203,17 +195,22 @@ export default function PaymentModal({
           )}
 
           {/* Transaction Stages for "Transfer" attempts on payment modal */}
-          {paymentStage === 1 && prompter === "transfer" && (
+          {paymentStage === 0 && prompter === "transfer" && (
             <div>
               <p className={`text-2xl font-bold ${soraClass}`}>
                 Where's the money headed?
               </p>
-              <div className="flex justify-center my-2 py-8 w-4/5 gap-x-4">
-                <div className="rounded-xl p-2 gap-x-2 has-checked:border-green w-2/5 flex border hover:border-green">
+              <div className="flex justify-center my-2 py-3 w-4/5 gap-x-4 flex-col md:flex-row">
+                <div className="rounded-xl p-2 gap-x-2 has-checked:border-green md:w-2/5 my-1 flex  border hover:border-green">
                   <input
                     type="radio"
                     name="recipient_category"
                     id="groupayUser"
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        changeSource("groupay");
+                      }
+                    }}
                   />
                   <label htmlFor="groupayUser">
                     <AtIcon weight="bold" />
@@ -221,11 +218,16 @@ export default function PaymentModal({
                   </label>
                 </div>
 
-                <div className="rounded-xl p-2 gap-x-2 has-checked:border-green w-2/5 flex border hover:border-green">
+                <div className="rounded-xl p-2 gap-x-2 has-checked:border-green md:w-2/5 my-1 flex border hover:border-green">
                   <input
                     type="radio"
                     name="recipient_category"
                     id="bankAccount"
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        changeSource("external");
+                      }
+                    }}
                   />
                   <label htmlFor="bankAccount">
                     <BankIcon weight="bold" />
@@ -235,74 +237,91 @@ export default function PaymentModal({
               </div>
               <button
                 className="w-3/4 flex justify-self-center justify-center uppercase bg-green text-white rounded-xl p-2 my-2"
-                onClick={() => updatePaymentStage(2)}
+                onClick={() => updatePaymentStage(1)}
               >
                 <span>Confirm</span>
               </button>
             </div>
           )}
 
-          {paymentStage === 2 && prompter === "transfer" && (
-            <div className="detailsAndLookup">
-              <p className="capitalize my-3 text-lg ">add payment details</p>
+          {paymentStage === 1 &&
+            prompter === "transfer" &&
+            contributionSource == "external" && (
+              <div className="detailsAndLookup">
+                <p className="capitalize my-3 text-lg ">add payment details</p>
 
-              <p>Recipient Details</p>
-              <div>
+                <p>Recipient Details</p>
+                <div>
+                  <label
+                    htmlFor="accountNumber"
+                    className="text-ink-mid font-bold my-1 uppercase block"
+                  >
+                    Account Number
+                  </label>
+                  <input
+                    className="border outline-0 my-1 p-2 border-shadow-border focus:border-green rounded-xl transition-all "
+                    id="accountNumber"
+                    name="accountNumber"
+                    type="text"
+                    maxLength={10}
+                  />
+                </div>
                 <label
-                  htmlFor="accountNumber"
+                  htmlFor="bankName"
                   className="text-ink-mid font-bold my-1 uppercase block"
                 >
-                  Account Number
+                  Bank Name
+                </label>
+                <select className="border outline-none my-2 border-ink-mid focus:border-green transition-all focus:scale-105 w-3/4 p-2 rounded-xl">
+                  <option value={"UBA"}>UBA</option>
+                  <option value={"UBA"}>UBA</option>
+
+                  <option value={"UBA"}>UBA</option>
+                  <option value={"UBA"}>UBA</option>
+                  <option value={"UBA"}>UBA</option>
+                  <option value={"UBA"}>UBA</option>
+                  <option value={"UBA"}>UBA</option>
+                  <option value={"UBA"}>UBA</option>
+                  <option value={"UBA"}>UBA</option>
+
+                  <option value={"UBA"}>UBA</option>
+                </select>
+
+                <p>Account Name</p>
+                <p>Account Result</p>
+
+                <div className="flex justify-center  gap-x-4 ">
+                  <button className="flex justify-center items-center w-2/5 ">
+                    <span>Cancel </span>
+                  </button>
+                  <button
+                    className="flex justify-center items-center w-2/5"
+                    onClick={() => updatePaymentStage(3)}
+                  >
+                    <span>
+                      Continue <ArrowRightIcon className="inline" />{" "}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+          {paymentStage === 1 &&
+            prompter === "transfer" &&
+            contributionSource === "groupay" && (
+              <div>
+                <p>Sending to GrouPay User</p>
+                <label className="uppercase text-ink-mid font-bold">
+                  enter username here
                 </label>
                 <input
-                  className="border outline-0 my-1 p-2 border-shadow-border focus:border-green rounded-xl transition-all "
-                  id="accountNumber"
-                  name="accountNumber"
                   type="text"
-                  maxLength={10}
+                  className="outline-none block p-1 border focus:border-green rounded-xl"
                 />
               </div>
-              <label
-                htmlFor="bankName"
-                className="text-ink-mid font-bold my-1 uppercase block"
-              >
-                Bank Name
-              </label>
-              <select className="border outline-none my-2 border-ink-mid focus:border-green transition-all focus:scale-105 w-3/4 p-2 rounded-xl">
-                <option value={"UBA"}>UBA</option>
-                <option value={"UBA"}>UBA</option>
+            )}
 
-                <option value={"UBA"}>UBA</option>
-                <option value={"UBA"}>UBA</option>
-                <option value={"UBA"}>UBA</option>
-                <option value={"UBA"}>UBA</option>
-                <option value={"UBA"}>UBA</option>
-                <option value={"UBA"}>UBA</option>
-                <option value={"UBA"}>UBA</option>
-
-                <option value={"UBA"}>UBA</option>
-              </select>
-
-              <p>Account Name</p>
-              <p>Account Result</p>
-
-              <div className="flex justify-center  gap-x-4 ">
-                <button className="flex justify-center items-center w-2/5 ">
-                  <span>Cancel </span>
-                </button>
-                <button
-                  className="flex justify-center items-center w-2/5"
-                  onClick={() => updatePaymentStage(3)}
-                >
-                  <span>
-                    Continue <ArrowRightIcon className="inline" />{" "}
-                  </span>
-                </button>
-              </div>
-            </div>
-          )}
-
-          {paymentStage === 3 && prompter === "transfer" && (
+          {paymentStage === 2 && prompter === "transfer" && (
             <div>
               <p className={`${soraClass} text-2xl font-bold my-3`}>
                 Transaction Details

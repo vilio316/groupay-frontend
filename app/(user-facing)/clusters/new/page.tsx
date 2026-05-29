@@ -17,7 +17,7 @@ export default function NewClusterPage() {
 
   return (
     <>
-      {isSuccessful ? (
+      {!isSuccessful ? (
         <div className="py-4 px-6 border-4 border-card-border place-self-center w-3/4 shadow-card-border shadow-2xl rounded-xl md:min-h-1/2">
           <p
             className={`${soraClass} font-bold text-2xl my-4 text-green flex gap-2`}

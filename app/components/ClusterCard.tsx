@@ -15,7 +15,7 @@ export default function ClusterCard({ className }: { className?: string }) {
           className="md:h-48 lg:h-60 h-44 w-full object-cover rounded-2xl"
         />
       </div>
-      <div className="absolute bottom-0 h-3/4 z-20 bg-white rounded-2xl border-2 border-card-border w-full shadow-xl shadow-card-border p-2 grid text-justify">
+      <div className="absolute bottom-0 h-3/4 z-20 bg-white rounded-2xl border-2 border-card-border w-full shadow-xl shadow-card-border p-2 grid text-justify md:text-left">
         <p className="flex items-center gap-x-1">
           <span
             className={`${soraClass} flex items-center font-bold text-sm md:text-[16px] lg:text-[20px] text-green w-4/5`}

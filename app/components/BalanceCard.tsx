@@ -5,7 +5,6 @@ import {
   HandDepositIcon,
   HandWithdrawIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { usePathname } from "next/navigation";
 
 export function BalanceCard({
   payFunct,

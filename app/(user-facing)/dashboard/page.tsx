@@ -2,17 +2,13 @@
 import { PlusIcon, ArrowRightIcon } from "@phosphor-icons/react";
 import { soraClass } from "../../fonts";
 import Link from "next/link";
-import {
-  FailedTransaction,
-  PendingTransaction,
-  TransactionBlock,
-} from "@/app/components/TransactionStatusBlocks";
+import { TransactionBlock } from "@/app/components/TransactionStatusBlocks";
 import ClusterCard from "@/app/components/ClusterCard";
 import { BalanceCard } from "@/app/components/BalanceCard";
 import PaymentModal from "@/app/components/PaymentModal";
 import OnboardingStatusCard from "@/app/components/OnboardingStatusCard";
 import { useState } from "react";
-import { getSession, useSession } from "@/lib/authClient";
+import { useSession } from "@/lib/authClient";
 
 export default function DashboardPage() {
   const [showModal, updateModalState] = useState(false);
@@ -82,14 +78,6 @@ export default function DashboardPage() {
           <p className="uppercase font-semibold text-ink-mid text-xl my-2">
             Your Transactions
           </p>
-          <div className="m-4 p-4 text-center border-2 border-card-border rounded-xl ">
-            <p className="font-semibold text-2xl p-1 my-2">
-              No Recent Transactions
-            </p>
-            <p className="text-xl">
-              Your most recent transactions will show up here
-            </p>
-          </div>
           <TransactionBlock
             transactionObject={{
               status: "success",
@@ -113,7 +101,7 @@ export default function DashboardPage() {
       <div className="sticky bottom-12 right-8 w-full flex justify-end z-40">
         <Link
           href="/clusters/new"
-          className="flex items-center justify-cente bg-green text-white text-center rounded-full p-2 w-20 h-20 sticky hover:bg-greener transition-all hover:shadow-2xl hover:shadow-card-border hover:translate-y-px"
+          className="md:flex items-center justify-center hidden bg-green text-white text-center rounded-full p-2 w-20 h-20 sticky hover:bg-greener transition-all hover:shadow-2xl hover:shadow-card-border hover:translate-y-px"
           title="Create New Cluster"
         >
           <PlusIcon className="h-18 w-18" />

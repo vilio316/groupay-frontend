@@ -1,10 +1,7 @@
 "use client";
 import Avatars from "@/app/components/AvatarsCircles";
 import PaymentModal from "@/app/components/PaymentModal";
-import {
-  FailedTransaction,
-  TransactionBlock,
-} from "@/app/components/TransactionStatusBlocks";
+import { TransactionBlock } from "@/app/components/TransactionStatusBlocks";
 import { soraClass } from "@/app/fonts";
 import { CheckCircleIcon, HandDepositIcon } from "@phosphor-icons/react";
 import Link from "next/link";
@@ -53,7 +50,7 @@ export default function PlanPage() {
             href="../plans/101/members"
             className="flex justify-end p-1 text-end flex-col w-1/5"
           >
-            <p className="text-sm capitalize text-ink-mid font-bold">
+            <p className="text-[10px] md:text-sm capitalize text-ink-mid">
               3/6 members paid
             </p>
             <Avatars className="justify-end" />
@@ -61,12 +58,12 @@ export default function PlanPage() {
         </div>
         <div className="details">
           <div className="flex flex-col md:flex-row gap-x-4 items-center">
-            <div className="details-text md:w-4/5 w-auto">
+            <div className="details-text md:w-4/5 w-full">
               <p>Your Contribution Amount: &#8358; {(1234).toLocaleString()}</p>
               <p>Contribution Status: 60%</p>
             </div>
 
-            <div className="md:w-1/5 flex justify-end p-2">
+            <div className="md:w-1/5 flex justify-end p-2 w-full">
               <button
                 className={`text-white bg-green hover:bg-greener rounded-xl uppercase hover:scale-105 transition-all p-2 flex items-center gap-x-2 disabled:opacity-70 disabled:hover:scale-100 disabled:hover:bg-green `}
                 onClick={() => updatePaymentStatus(true)}
@@ -92,7 +89,7 @@ export default function PlanPage() {
             <p className="uppercase text-ink-mid font-bold text-lg">
               Description
             </p>
-            <p className="indent-4">
+            <p className="indent-4 text-justify">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
               esse, eius ad iure modi, dignissimos rem animi commodi vero unde
               quos molestias voluptas ex odio? Error consectetur voluptates unde

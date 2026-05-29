@@ -1,5 +1,8 @@
-import { soraClass } from "@/app/fonts";
+"use client";
 
+import { soraClass } from "@/app/fonts";
+import { signOut } from "@/lib/authClient";
+import { redirect } from "next/navigation";
 import {
   ArticleIcon,
   GearIcon,
@@ -74,12 +77,22 @@ export default function Sidebar() {
           </Link>
         </div>
 
-        <div className="flex sidebar-link gap-x-2 items-center my-4">
+        <button
+          className="outline-0 border-0 flex sidebar-link gap-x-2 items-center my-4"
+          onClick={async (e) => {
+            e.preventDefault();
+            await signOut({
+              fetchOptions: {
+                onSuccess: () => redirect("/auth/sign-in"),
+              },
+            });
+          }}
+        >
           <SignOutIcon className="h-12 w-12 p-2" />
           <Link href="/" className="text-[18px] hover:font-semibold">
             Sign Out
           </Link>
-        </div>
+        </button>
       </div>
     </>
   );

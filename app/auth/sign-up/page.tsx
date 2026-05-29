@@ -1,8 +1,20 @@
+"use client";
+
 import { EyeIcon, ShieldIcon, UsersIcon } from "@phosphor-icons/react/dist/ssr";
 import { CreditCardIcon } from "@phosphor-icons/react/dist/ssr";
 import { soraClass } from "@/app/fonts";
 import Link from "next/link";
+import { signUp } from "@/lib/authClient";
+import { useState } from "react";
+import { redirect } from "next/navigation";
+
 export default function SignUpPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [isPasswordShown, togglePasswordShow] = useState(false);
+
   return (
     <div className="flex flex-col items-center justify-center py-12 px-10">
       <div className="w-full max-w-125 ">
@@ -70,6 +82,7 @@ export default function SignUpPage() {
                 className="h-12 px-3 outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border border-card-border rounded-xl"
                 type="text"
                 id="firstName"
+                onChange={(e) => setFirstName(e.target.value)}
                 placeholder="Amara"
                 autoComplete="given-name"
               />
@@ -86,6 +99,7 @@ export default function SignUpPage() {
                 className="h-12 px-3 outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border border-card-border rounded-xl"
                 type="text"
                 id="lastName"
+                onChange={(e) => setLastName(e.target.value)}
                 placeholder="Okafor"
                 autoComplete="family-name"
               />
@@ -100,9 +114,10 @@ export default function SignUpPage() {
               Email address
             </label>
             <input
-              className="h-12 px-3 outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border border-card-border rounded-xl"
+              className="h-12 px-3 w-full outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border border-card-border rounded-xl"
               type="email"
               id="email"
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="amara@example.com"
               autoComplete="email"
             />
@@ -135,8 +150,9 @@ export default function SignUpPage() {
             <div className="password-wrap relative">
               <input
                 className="h-12 px-11 w-full outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border border-card-border rounded-xl"
-                type="password"
+                type={isPasswordShown ? `text` : "password"}
                 id="password"
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="At least 8 characters"
                 autoComplete="new-password"
               />
@@ -148,6 +164,7 @@ export default function SignUpPage() {
                 <EyeIcon
                   weight="light"
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 flex border-0 h-4.5 w-4.5"
+                  onClick={() => togglePasswordShow(!isPasswordShown)}
                 />
               </button>
             </div>
@@ -172,6 +189,15 @@ export default function SignUpPage() {
           </div>
 
           <button
+            onClick={async (e) => {
+              e.preventDefault();
+              await signUp.email(
+                { email, password, name: `${firstName} ${lastName}` },
+                {
+                  onSuccess: () => redirect("/auth/sign-in"),
+                },
+              );
+            }}
             type="button"
             className="submit-btn h-13 w-full rounded-full bg-green text-white font-bold hover:bg-[#3db029] hover:-translate-y-px flex  hover:shadow-sm hover:shadow-card-border/40 items-center justify-center gap-2 "
           >

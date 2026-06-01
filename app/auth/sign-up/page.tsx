@@ -4,7 +4,7 @@ import { EyeIcon, ShieldIcon, UsersIcon } from "@phosphor-icons/react/dist/ssr";
 import { CreditCardIcon } from "@phosphor-icons/react/dist/ssr";
 import { soraClass } from "@/app/fonts";
 import Link from "next/link";
-import { signUp } from "@/lib/authClient";
+import { signUp, signIn } from "@/lib/authClient";
 import { useState } from "react";
 import { redirect } from "next/navigation";
 
@@ -31,7 +31,19 @@ export default function SignUpPage() {
         </div>
 
         <div className="oauth-buttons flex gap-3 my-4 md:mb-6">
-          <button className="oauth-btn flex-1 flex items-center justify-center gap-2 rounded-[10px] border border-solid border-card-border font-semibold text-ink cursor-pointer hover:border-mist transition-all hover: shadow-sm hover:shadow-teal/25 p-3">
+          <button
+            className="oauth-btn flex-1 flex items-center justify-center gap-2 rounded-[10px] border border-solid border-card-border font-semibold text-ink cursor-pointer hover:border-mist transition-all hover: shadow-sm hover:shadow-teal/25 p-3"
+            onClick={async () => {
+              const data = await signIn.social(
+                {
+                  provider: "google",
+                },
+                {
+                  onSuccess: () => redirect("/dashboard"),
+                },
+              );
+            }}
+          >
             <svg viewBox="0 0 24 24" className="h-4.5 w-4.5">
               <path
                 fill="#4285F4"

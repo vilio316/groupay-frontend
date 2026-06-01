@@ -11,13 +11,13 @@ export default function SignInPage() {
 
   return (
     <div className="p-6 grid items-center h-full justify-center md:justify-start">
-      <div className="w-125">
+      <div className="md:w-125">
         <div>
           <p className={`${soraClass} text-3xl font-bold text-forest my-3 `}>
             Sign In
           </p>
           <p className="font-semibold text-ink-mid my-2">
-            Log back in to your acccount
+            Log back in to your account
           </p>
         </div>
         <form
@@ -66,16 +66,22 @@ export default function SignInPage() {
               className="h-12 px-3 outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border border-card-border rounded-xl w-full"
             />
           </div>
-          <button className="submit-btn p-3 rounded-2xl bg-green text-white font-bold hover:bg-[#3db029] hover:-translate-y-px flex  hover:shadow-sm hover:shadow-card-border/40 items-center justify-center gap-2 w-1/2 my-4">
+          <button className="submit-btn p-3 rounded-2xl bg-green text-white font-bold hover:bg-[#3db029] hover:-translate-y-px flex  hover:shadow-sm hover:shadow-card-border/40 items-center justify-center gap-2 md:w-1/2 w-3/4 my-4">
             Log In
           </button>
-          <p>
+          <p className="text-center">
             Don't have an account?{" "}
             <Link
               href="/auth/sign-up"
               className="text-green hover:text-greener hover:underline"
             >
               Sign Up →
+            </Link>
+          </p>
+          <p className="text-center">
+            Forgot password?{" "}
+            <Link href={"/auth/forgot-password"} className="text-green">
+              Reset password here →
             </Link>
           </p>
         </form>
@@ -85,7 +91,19 @@ export default function SignInPage() {
         </div>
 
         <div className="oauth-buttons flex gap-3 my-4 md:mb-6">
-          <button className="oauth-btn flex-1 flex items-center justify-center gap-2 rounded-[10px] border border-solid border-card-border font-semibold text-ink cursor-pointer hover:border-mist transition-all hover: shadow-sm hover:shadow-teal/25 p-3">
+          <button
+            className="oauth-btn flex-1 flex items-center justify-center gap-2 rounded-[10px] border border-solid border-card-border font-semibold text-ink cursor-pointer hover:border-mist transition-all hover: shadow-sm hover:shadow-teal/25 p-3"
+            onClick={async () => {
+              const data = await signIn.social(
+                {
+                  provider: "google",
+                },
+                {
+                  onSuccess: () => redirect("/dashboard"),
+                },
+              );
+            }}
+          >
             <svg viewBox="0 0 24 24" className="h-4.5 w-4.5">
               <path
                 fill="#4285F4"

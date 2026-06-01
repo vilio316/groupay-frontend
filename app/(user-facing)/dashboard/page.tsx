@@ -45,7 +45,7 @@ export default function DashboardPage() {
             href="#transactions"
             className="text-white text-md shrink-0 flex self-end justify-self-end bg-green rounded-2xl p-2 hover:bg-[#3db029] transition-all hover:scale-x-105"
           >
-            Your Transactions &gt;
+            Your Transactions →
           </Link>
         </div>
       </div>

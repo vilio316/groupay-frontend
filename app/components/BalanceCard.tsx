@@ -1,5 +1,6 @@
 "use client";
 
+import { useSession } from "@/lib/authClient";
 import { PaperPlaneTiltIcon } from "@phosphor-icons/react";
 import {
   HandDepositIcon,
@@ -11,11 +12,13 @@ export function BalanceCard({
 }: {
   payFunct: (string?: string) => void;
 }) {
+  const session = useSession();
+
   return (
     <div className="md:grid md:w-[90%] grid-cols-8 items-center border border-card-border shadow-md p-4 rounded-xl shadow-card-border/40 my-2">
       <div className="col-span-1">
         <img
-          src="/family.jpg"
+          src={`${session.data?.user.image ? session.data.user.image : "/family.jpg"}`}
           className="rounded-full p-1 drop-shadow-xl drop-shadow-card-border md:h-24 md:w-24 h-12 w-12 object-cover"
         />
       </div>

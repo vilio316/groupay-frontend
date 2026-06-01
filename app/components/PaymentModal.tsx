@@ -310,7 +310,7 @@ export default function PaymentModal({
             prompter === "transfer" &&
             contributionSource === "groupay" && (
               <div>
-                <p>Sending to GrouPay User</p>
+                <p className="italic">Sending to GrouPay User</p>
                 <label className="uppercase text-ink-mid font-bold">
                   enter username here
                 </label>
@@ -318,6 +318,9 @@ export default function PaymentModal({
                   type="text"
                   className="outline-none block p-1 border focus:border-green rounded-xl"
                 />
+                <button className="uppercase text-white font-bold hover:bg-greener bg-green hover:scale-105 block p-2 rounded-2xl justify-self-center my-2 w-1/2">
+                  Confirm
+                </button>
               </div>
             )}
 

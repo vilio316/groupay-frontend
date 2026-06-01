@@ -4,8 +4,19 @@ import {
   CircleHalfIcon,
   XCircleIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { success } from "better-auth";
 import Link from "next/link";
+
+function getStatusClass(status: string) {
+  if (status === "success") return "text-green";
+  if (status === "fail") return "text-red";
+  if (status === "pending") return "text-amber-300";
+}
+
+function setBg(status: string) {
+  if (status === "success") return "from-green/20";
+  if (status === "fail") return "from-red/20";
+  if (status === "pending") return "from-amber-500/25";
+}
 
 export function TransactionBlock({
   transactionObject,
@@ -21,19 +32,25 @@ export function TransactionBlock({
   return (
     <Link
       href="/"
-      className={`grid grid-cols-12 gap-x-4 p-1 my-2 items-center border-card-border border bg-linear-to-r ${status === "success" ? "from-green/20" : "from-red/20"} to-zinc-200/20 rounded-xl hover:scale-x-102 hover:shadow-2xl hover:shadow-card-border transition-all`}
+      className={`grid grid-cols-12 gap-x-4 p-1 my-2 items-center border-card-border border bg-linear-to-r ${setBg(status)} to-zinc-200/20 rounded-xl hover:scale-x-102 hover:shadow-2xl hover:shadow-card-border transition-all`}
     >
       <div className="col-span-1">
         {status === "success" && (
-          <CheckCircleIcon weight="light" className="text-3xl text-green p-1" />
+          <CheckCircleIcon
+            weight="light"
+            className="text-3xl text-green p-1 h-10 w-10 "
+          />
         )}
         {status === "fail" && (
-          <XCircleIcon weight="light" className="text-3xl text-red p-1" />
+          <XCircleIcon
+            weight="light"
+            className="text-3xl text-red p-1 h-10 w-10"
+          />
         )}
         {status === "pending" && (
           <HourglassHighIcon
             weight="light"
-            className="text-3xl text-amber-300 p-1"
+            className="text-3xl text-amber-300 p-1 h-10 w-10"
           />
         )}
       </div>
@@ -44,9 +61,7 @@ export function TransactionBlock({
           <span>Transaction Category</span>
         </p>
       </div>
-      <div
-        className={` ${status === "success" ? "text-green" : "text-red"} font-bold col-span-4 p-3`}
-      >
+      <div className={`${getStatusClass(status)} font-bold col-span-4 p-3`}>
         <p className="text-right text-sm md:text-xl ">
           +&#8358; {amount.toFixed(2).toLocaleString()}
         </p>

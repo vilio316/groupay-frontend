@@ -4,15 +4,22 @@ import { soraClass } from "@/app/fonts";
 import { signOut } from "@/lib/authClient";
 import { SignOutIcon } from "@phosphor-icons/react/dist/ssr";
 import { redirect } from "next/navigation";
+import { useSession } from "@/lib/authClient";
+import { useEffect } from "react";
+
 export default function ProfilePage() {
+  const session = useSession();
+
   return (
     <div className="p-3 h-full">
       <div className="flex gap-x-2 items-center">
-        <p className={`text-3xl ${soraClass} w-3/5 font-bold text-green my-3`}>
+        <p
+          className={`text-3xl ${soraClass} md:w-3/5 w-4/5 font-bold text-green my-3`}
+        >
           Your Profile
         </p>
         <button
-          className="flex gap-x-4 md:hidden items-center text-red border-red border p-2 hover:text-white hover:bg-red transition-all rounded-xl my-4"
+          className="flex gap-x-4 md:hidden shrink-0 items-center text-red border-red border p-2 hover:text-white hover:bg-red transition-all rounded-xl my-4"
           onClick={async () => {
             await signOut({
               fetchOptions: {
@@ -28,12 +35,14 @@ export default function ProfilePage() {
       <div className="flex gap-4 items-center p-4 border border-card-border rounded-xl shadow-sm shadow-green/40">
         <div>
           <img
-            className="rounded-full md:h-28 md:w-28 w-24 h-24 object-cover"
-            src="/family.jpg"
+            className="rounded-full md:h-28 md:w-28 w-24 h-24 object-cover border border-green"
+            src={`${session.data?.user.image ? session.data.user.image : "/family.jpg"} `}
           />
         </div>
         <div>
-          <p className="text-xl font-bold">UserNames</p>
+          <p className="text-xl font-bold">
+            {session.data?.user ? session.data.user.name : "User Names"}
+          </p>
           <p className="text-ink-mid font-semibold">@username</p>
           <p>
             Member in 5+ Clusters, including{" "}
@@ -53,7 +62,7 @@ export default function ProfilePage() {
           onClick={async () => {
             await signOut({
               fetchOptions: {
-                onSuccess: () => redirect("/api/auth/sign-in"),
+                onSuccess: () => redirect("/auth/sign-in"),
               },
             });
           }}

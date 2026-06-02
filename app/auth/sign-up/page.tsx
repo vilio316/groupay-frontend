@@ -12,6 +12,7 @@ export default function SignUpPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
+  const [phone, updatePhone] = useState("");
   const [lastName, setLastName] = useState("");
   const [isPasswordShown, togglePasswordShow] = useState(false);
 
@@ -147,6 +148,7 @@ export default function SignUpPage() {
               className="h-12 px-3 w-full outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border border-card-border rounded-xl"
               type="tel"
               id="phone"
+              onChange={(e) => updatePhone(e.target.value)}
               placeholder="+234 800 000 0000"
               autoComplete="tel"
             />
@@ -204,7 +206,12 @@ export default function SignUpPage() {
             onClick={async (e) => {
               e.preventDefault();
               await signUp.email(
-                { email, password, name: `${firstName} ${lastName}` },
+                {
+                  email,
+                  password,
+                  phone,
+                  name: `${firstName} ${lastName}`,
+                },
                 {
                   onSuccess: () => redirect("/auth/sign-in"),
                 },

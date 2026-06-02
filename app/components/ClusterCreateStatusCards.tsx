@@ -7,7 +7,11 @@ import {
 import { soraClass } from "../fonts";
 import Link from "next/link";
 
-export default function ClusterCreateSuccessCard() {
+export default function ClusterCreateSuccessCard({
+  clusterName,
+}: {
+  clusterName: string;
+}) {
   return (
     <div className="rounded-2xl grid shadow-2xl shadow-card-border py-4 px-6 w-3/5 max-h-3/4 my-4 mx-auto border border-green transition-all hover:scale-105">
       <div className="text-center">
@@ -23,8 +27,9 @@ export default function ClusterCreateSuccessCard() {
       </div>
 
       <p className="indent-4 first-letter:text-xl text-justify">
-        Your cluster, <span className="font-bold text-green">ClusterName</span>,
-        was created successfully. Click{" "}
+        Your cluster,{" "}
+        <span className="font-bold text-green">{clusterName}</span>, was created
+        successfully. Click{" "}
         <Link href={"/cluster/234/manage"} className="underline">
           here
         </Link>{" "}
@@ -58,10 +63,10 @@ export function ClusterCreateFailureCard() {
       </div>
 
       <p className="indent-4 first-letter:text-xl text-justify px-4">
-        Your cluster, <span className="font-bold text-red">ClusterName</span>,
-        could not be created. Please ensure that all input fields are correctly
-        filled and check the quality of your internet connection before trying
-        again.
+        Your cluster,{" "}
+        <span className="font-bold text-red">{"clusterName"}</span>, could not
+        be created. Please ensure that all input fields are correctly filled and
+        check the quality of your internet connection before trying again.
       </p>
 
       <div className="flex justify-end items-center text-white">

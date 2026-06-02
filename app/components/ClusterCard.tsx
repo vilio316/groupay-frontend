@@ -3,10 +3,21 @@ import { soraClass } from "../fonts";
 import Link from "next/link";
 import Avatars from "./AvatarsCircles";
 
-export default function ClusterCard({ className }: { className?: string }) {
+export default function ClusterCard({
+  className,
+  valuesObj,
+}: {
+  className?: string;
+  valuesObj?: any;
+}) {
+  function mkDt(string: string) {
+    const date = new Date(string).toLocaleDateString();
+    return date;
+  }
+
   return (
     <Link
-      href="/cluster/234"
+      href={`/cluster/${valuesObj ? valuesObj.id : "/234"}`}
       className={`border ${className} flex shrink-0 border-card-border relative rounded-2xl`}
     >
       <div>
@@ -20,21 +31,20 @@ export default function ClusterCard({ className }: { className?: string }) {
           <span
             className={`${soraClass} flex items-center font-bold text-sm md:text-[16px] lg:text-[20px] text-green w-4/5`}
           >
-            ClusterName
+            {valuesObj ? valuesObj.name : "ClusterName"}
           </span>
           <span className="hidden md:block md:text-[8px] lg:text-[11px] font-normal text-right">
             6 Members
           </span>
         </p>
+        <p className="text-[10px]">
+          Created on: {valuesObj ? mkDt(valuesObj.createdAt) : "22/04/23"}
+        </p>
         <p className="indent-4 px-4 clusterDesc overflow-y-hidden text-ellipsis max-h-20 text-ink-mid text-[10px] md:text-sm ">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem,
-          tenetur iusto nostrum neque mollitia temporibus sequi molestias
-          dolorum dolores sit, ratione rerum. At, iure blanditiis neque in
-          architecto animi recusandae.
+          {valuesObj ? valuesObj.desc : "Lorem ipsum dolor amet ...."}
         </p>
         <div className="flex items-end self-end w-full">
-          <Avatars className="w-3/4 justify-start" />
-          <div className="w-1/4 flex justify-end">
+          <div className="w-full flex justify-end">
             <ArrowRightIcon
               className="text-2xl hover:scale-125 transition-all p-1 text-teal  cursor-pointer"
               weight="bold"

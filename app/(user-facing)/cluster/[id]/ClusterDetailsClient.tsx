@@ -23,7 +23,7 @@ export interface clusterDetailsType {
   desc: string;
   members: ClusterMember[];
   plans: any[];
-  transacrions: any[];
+  transactions: any[];
 }
 
 export interface ClusterMember {
@@ -89,12 +89,9 @@ export default function ClusterDetailsClient({
         </p>
         <div className="flex items-center gap-6">
           <div className="flex items-center overflow-x-scroll gap-x-4 w-[90%]">
-            <PlanCard />
-            <PlanCard />
-            <PlanCard />
-            <PlanCard />
-            <PlanCard />
-            <PlanCard />
+            {plans.map((plan) => (
+              <PlanCard planObject={plan} key={plan.planId} />
+            ))}
           </div>
           <ArrowRightIcon className="w-6 h-6 hover:text-greener hover:scale-110 transition-all" />
         </div>

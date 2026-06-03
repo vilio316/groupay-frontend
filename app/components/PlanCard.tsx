@@ -3,10 +3,18 @@ import { soraClass } from "../fonts";
 import Link from "next/link";
 import Avatars from "./AvatarsCircles";
 
-export default function PlanCard({ className }: { className?: string }) {
+export default function PlanCard({
+  className,
+  planObject,
+}: {
+  className?: string;
+  planObject: any;
+}) {
+  const { id, desc, name, members } = planObject;
+
   return (
     <Link
-      href="/plans/101"
+      href={`/plans/${id}`}
       className={`border ${className} flex shrink-0 border-card-border relative rounded-2xl`}
     >
       <div>
@@ -20,7 +28,7 @@ export default function PlanCard({ className }: { className?: string }) {
           <span
             className={`${soraClass} flex items-center font-bold text-11px md:text-[12px] lg:text-[20px] text-green md:w-4/5 overflow-y-hidden h-5 `}
           >
-            PlanName
+            {name ? name : "PlanName"}
           </span>
           <span className="md:text-[8px] lg:text-[11px] text-ink-mid font-bold text-end uppercase bg-aqua/40 rounded-full p-2 text-[7px]">
             subscription
@@ -34,7 +42,9 @@ export default function PlanCard({ className }: { className?: string }) {
         </p>
         <div className="flex items-center  md:flex-row flex-col">
           <div className="md:w-1/2 w-full">
-            <p className="text-[10px] text-ink-mid">6 Members</p>
+            <p className="text-[10px] text-ink-mid">
+              Members: {members ? members.length : 6}
+            </p>
             <div className="flex items-end self-end">
               <div className="avatars flex mt-1 w-4/5 items-center">
                 <Avatars />

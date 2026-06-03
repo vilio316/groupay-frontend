@@ -17,7 +17,6 @@ export default function PlanCreationClient({ clusters }: { clusters: any[] }) {
 
   async function createPlan(e: any) {
     e.preventDefault();
-    console.log(clusterId);
     await fetch(`http://localhost:3000/clusters/${clusterId}/plans`, {
       credentials: "include",
       headers: {

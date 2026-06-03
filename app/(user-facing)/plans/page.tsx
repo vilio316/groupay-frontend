@@ -22,13 +22,7 @@ export default function PlansPage() {
           <span>New Plan</span>
         </Link>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <PlanCard />
-        <PlanCard />
-        <PlanCard />
-        <PlanCard />
-        <PlanCard />
-      </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
     </div>
   );
 }

@@ -6,8 +6,8 @@ import { PlusIcon, UsersThreeIcon } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { useState } from "react";
 
-export default function ClusterClient({ clusterObj }: { clusterObj: [] }) {
-  const [hasClusters] = useState(clusterObj.length > 0);
+export default function ClusterClient({ clusterObj }: { clusterObj: any[] }) {
+  const hasClusters = true;
   return (
     <div className="min-h-full">
       <div className="flex gap-x-4 my-3 items-center">
@@ -49,7 +49,7 @@ export default function ClusterClient({ clusterObj }: { clusterObj: [] }) {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-2 gap-3">
           {clusterObj.map((cluster: any) => (
-            <ClusterCard key={cluster.id} valuesObj={cluster} />
+            <ClusterCard key={cluster.clusterId} valuesObj={cluster} />
           ))}
         </div>
       )}

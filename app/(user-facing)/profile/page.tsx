@@ -6,6 +6,8 @@ import { SignOutIcon } from "@phosphor-icons/react/dist/ssr";
 import { redirect } from "next/navigation";
 import { useSession } from "@/lib/authClient";
 import { useEffect } from "react";
+import Link from "next/link";
+import { PencilSimpleLineIcon } from "@phosphor-icons/react";
 
 export default function ProfilePage() {
   const session = useSession();
@@ -23,7 +25,7 @@ export default function ProfilePage() {
           onClick={async () => {
             await signOut({
               fetchOptions: {
-                onSuccess: () => redirect("/api/auth/sign-in"),
+                onSuccess: () => redirect("/auth/sign-in"),
               },
             });
           }}
@@ -31,6 +33,15 @@ export default function ProfilePage() {
           <SignOutIcon className="h-6 w-6 " />
           Log Out
         </button>
+      </div>
+      <div className="w-full flex justify-end">
+        <Link
+          className="border p-2 border-green text-green rounded-xl hover:bg-green hover:text-white flex gap-x-2 hover:scale-105 transition-all"
+          href="/profile/edit"
+        >
+          <PencilSimpleLineIcon className="text-2xl" />
+          <span className="uppercase">Edit Profile Details</span>
+        </Link>
       </div>
       <div className="flex gap-4 items-center p-4 border border-card-border rounded-xl shadow-sm shadow-green/40">
         <div>
@@ -43,7 +54,9 @@ export default function ProfilePage() {
           <p className="text-xl font-bold">
             {session.data?.user ? session.data.user.name : "User Names"}
           </p>
-          <p className="text-ink-mid font-semibold">@username</p>
+          <p className="text-ink-mid font-semibold">
+            @{session.data?.user ? session.data?.user.email.split("@")[0] : ""}
+          </p>
           <p>
             Member in 5+ Clusters, including{" "}
             <span className="font-semibold text-green">mostActive </span>

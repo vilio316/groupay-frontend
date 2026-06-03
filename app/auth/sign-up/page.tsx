@@ -151,6 +151,7 @@ export default function SignUpPage() {
               onChange={(e) => updatePhone(e.target.value)}
               placeholder="+234 800 000 0000"
               autoComplete="tel"
+              maxLength={11}
             />
           </div>
 

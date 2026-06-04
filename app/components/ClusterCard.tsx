@@ -2,13 +2,14 @@ import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
 import { soraClass } from "../fonts";
 import Link from "next/link";
 import Avatars from "./AvatarsCircles";
+import { clusterDetailsType } from "../(user-facing)/cluster/[id]/ClusterDetailsClient";
 
 export default function ClusterCard({
   className,
   valuesObj,
 }: {
   className?: string;
-  valuesObj?: any;
+  valuesObj: clusterDetailsType;
 }) {
   function mkDt(string: string) {
     const date = new Date(string).toLocaleDateString();

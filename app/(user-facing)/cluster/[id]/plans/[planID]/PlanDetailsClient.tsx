@@ -6,8 +6,9 @@ import { soraClass } from "@/app/fonts";
 import { CheckCircleIcon, HandDepositIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useState } from "react";
+import { PlanDetails } from "../../cluster/[id]/ClusterDetailsClient";
 
-export default function PlanPage({ planObj }: { planObj: any }) {
+export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
   const [isPaying, updatePaymentStatus] = useState(false);
   const [hasContributed] = useState(false);
   const [joinedState] = useState(true);

@@ -2,19 +2,20 @@ import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
 import { soraClass } from "../fonts";
 import Link from "next/link";
 import Avatars from "./AvatarsCircles";
+import { PlanDetails } from "../(user-facing)/cluster/[id]/ClusterDetailsClient";
 
 export default function PlanCard({
   className,
   planObject,
 }: {
   className?: string;
-  planObject: any;
+  planObject: PlanDetails;
 }) {
-  const { id, desc, name, members } = planObject;
+  const { id, desc, name, members, clusterId } = planObject;
 
   return (
     <Link
-      href={`/plans/${id}`}
+      href={`${clusterId}/plans/${id}`}
       className={`border ${className} flex shrink-0 border-card-border relative rounded-2xl`}
     >
       <div>
@@ -26,7 +27,7 @@ export default function PlanCard({
       <div className="absolute bottom-0 h-[90%] z-20 bg-white rounded-2xl border-2 border-card-border w-full shadow-xl shadow-card-border p-2 grid text-justify">
         <p className="flex items-center gap-x-2 md:flex-row flex-col">
           <span
-            className={`${soraClass} flex items-center font-bold text-11px md:text-[12px] lg:text-[20px] text-green md:w-4/5 overflow-y-hidden h-5 `}
+            className={`${soraClass} flex items-center font-bold text-11px md:text-[12px] lg:text-[20px] text-green md:w-4/5 overflow-y-hidden `}
           >
             {name ? name : "PlanName"}
           </span>
@@ -35,10 +36,9 @@ export default function PlanCard({
           </span>
         </p>
         <p className="hidden md:block indent-4 lg:px-4 px-2 clusterDesc overflow-y-hidden text-ellipsis max-h-20 text-ink-mid lg:text-[12px] md:text-[10px] ">
-          Plan Desc: Lorem ipsum dolor sit amet consectetur adipisicing elit.
-          Voluptatem, tenetur iusto nostrum neque mollitia temporibus sequi
-          molestias dolorum dolores sit, ratione rerum. At, iure blanditiis
-          neque in architecto animi recusandae.
+          {desc
+            ? desc
+            : "Plan Desc: Lorem ipsum dolor sit amet consectetur adipisicing elit.Voluptatem, tenetur iusto nostrum neque mollitia temporibus sequi molestias dolorum dolores sit, ratione rerum. At, iure blanditiisneque in architecto animi recusandae"}
         </p>
         <div className="flex items-center  md:flex-row flex-col">
           <div className="md:w-1/2 w-full">

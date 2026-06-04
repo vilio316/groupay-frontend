@@ -22,8 +22,20 @@ export interface clusterDetailsType {
   accountNumber: string;
   desc: string;
   members: ClusterMember[];
-  plans: any[];
+  plans: PlanDetails[];
   transactions: any[];
+}
+
+export interface PlanDetails {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  name: string;
+  minimumContribution: string;
+  desc: string;
+  members: ClusterMember[];
+  transactions: any[];
+  clusterId: string;
 }
 
 export interface ClusterMember {
@@ -31,7 +43,15 @@ export interface ClusterMember {
   joinedAt: string;
   userId: string;
   clusterId: string;
-  user: any;
+  user: User;
+}
+
+export interface User {
+  id: string;
+  image: string;
+  phone: string;
+  name: string;
+  email: string;
 }
 
 export default function ClusterDetailsClient({
@@ -90,7 +110,7 @@ export default function ClusterDetailsClient({
         <div className="flex items-center gap-6">
           <div className="flex items-center overflow-x-scroll gap-x-4 w-[90%]">
             {plans.map((plan) => (
-              <PlanCard planObject={plan} key={plan.planId} />
+              <PlanCard planObject={plan} key={plan.id} />
             ))}
           </div>
           <ArrowRightIcon className="w-6 h-6 hover:text-greener hover:scale-110 transition-all" />

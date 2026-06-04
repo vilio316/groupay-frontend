@@ -4,9 +4,13 @@ import ClusterCard from "@/app/components/ClusterCard";
 import { soraClass } from "@/app/fonts";
 import { PlusIcon, UsersThreeIcon } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-import { useState } from "react";
+import { clusterDetailsType } from "../cluster/[id]/ClusterDetailsClient";
 
-export default function ClusterClient({ clusterObj }: { clusterObj: any[] }) {
+export default function ClusterClient({
+  clusterObj,
+}: {
+  clusterObj: clusterDetailsType[];
+}) {
   const hasClusters = true;
   return (
     <div className="min-h-full">
@@ -48,8 +52,8 @@ export default function ClusterClient({ clusterObj }: { clusterObj: any[] }) {
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-2 gap-3">
-          {clusterObj.map((cluster: any) => (
-            <ClusterCard key={cluster.clusterId} valuesObj={cluster} />
+          {clusterObj.map((cluster) => (
+            <ClusterCard key={cluster.id} valuesObj={cluster} />
           ))}
         </div>
       )}

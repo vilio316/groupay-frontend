@@ -1,8 +1,8 @@
 "use client";
 import ClusterClient from "./ClusterClient";
 import { useSession } from "@/lib/authClient";
-import { request } from "http";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { clusterDetailsType } from "../cluster/[id]/ClusterDetailsClient";
 
 export default function ClustersPage() {
   const { data } = useSession();
@@ -40,7 +40,9 @@ export default function ClustersPage() {
 
   return (
     <>
-      <ClusterClient clusterObj={clusterResponse} />
+      <Suspense fallback="Loading...">
+        <ClusterClient clusterObj={clusterResponse} />
+      </Suspense>
     </>
   );
 }

@@ -11,11 +11,11 @@ export default function PlanCard({
   className?: string;
   planObject: PlanDetails;
 }) {
-  const { id, desc, name, members, clusterId } = planObject;
+  const { id, desc, name, members, clusterId, planType } = planObject;
 
   return (
     <Link
-      href={`${clusterId}/plans/${id}`}
+      href={`/cluster/${clusterId}/plans/${id}`}
       className={`border ${className} flex shrink-0 border-card-border relative rounded-2xl`}
     >
       <div>
@@ -32,7 +32,7 @@ export default function PlanCard({
             {name ? name : "PlanName"}
           </span>
           <span className="md:text-[8px] lg:text-[11px] text-ink-mid font-bold text-end uppercase bg-aqua/40 rounded-full p-2 text-[7px]">
-            subscription
+            {planType ? planType : "general"}
           </span>
         </p>
         <p className="hidden md:block indent-4 lg:px-4 px-2 clusterDesc overflow-y-hidden text-ellipsis max-h-20 text-ink-mid lg:text-[12px] md:text-[10px] ">

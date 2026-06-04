@@ -35,6 +35,7 @@ export interface PlanDetails {
   desc: string;
   members: ClusterMember[];
   transactions: any[];
+  planType: string;
   clusterId: string;
 }
 
@@ -72,7 +73,7 @@ export default function ClusterDetailsClient({
         </p>
         <Link
           className="hover:bg-aqua/15 hover:rounded-2xl p-2 flex flex-col max-w-1/5 justify-end items-center text-right"
-          href={"/cluster/234/members"}
+          href={`/cluster/${id}/members`}
         >
           <span className="w-full justify-self-end">
             {detailsObject ? members.length : ""} Members

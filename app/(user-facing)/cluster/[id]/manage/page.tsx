@@ -105,10 +105,7 @@ export default function ManageClusterPage() {
 function MembersChild() {
   return (
     <div className="">
-      <MemberCard />
-      <MemberCard />
-      <MemberCard />
-      <MemberCard />
+      <p>fahh!</p>
     </div>
   );
 }
@@ -116,11 +113,7 @@ function MembersChild() {
 function PlansChild() {
   return (
     <div className="flex overflow-x-scroll gap-6">
-      <PlanCard />
-      <PlanCard />
-      <PlanCard />
-      <PlanCard />
-      <PlanCard />
+      <p>heh</p>
     </div>
   );
 }

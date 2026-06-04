@@ -75,9 +75,11 @@ export default function PlansPage() {
         </Link>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {userPlans.map((plan) => (
-          <PlanCard planObject={plan} key={plan.id} />
-        ))}
+        {data && userPlans.length > 0
+          ? userPlans.map((plan) => (
+              <PlanCard planObject={plan} key={plan.id} />
+            ))
+          : "Loading your plans..."}
       </div>
     </div>
   );

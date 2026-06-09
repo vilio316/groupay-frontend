@@ -1,7 +1,6 @@
 import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
 import { soraClass } from "../fonts";
 import Link from "next/link";
-import Avatars from "./AvatarsCircles";
 import { clusterDetailsType } from "../(user-facing)/cluster/[id]/ClusterDetailsClient";
 
 export default function ClusterCard({
@@ -33,9 +32,6 @@ export default function ClusterCard({
             className={`${soraClass} flex items-center font-bold text-sm md:text-[16px] lg:text-[20px] text-green w-4/5`}
           >
             {valuesObj ? valuesObj.name : "ClusterName"}
-          </span>
-          <span className="hidden md:block md:text-[8px] lg:text-[11px] font-normal text-right">
-            6 Members
           </span>
         </p>
         <p className="text-[10px]">

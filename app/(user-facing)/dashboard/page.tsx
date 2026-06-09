@@ -57,15 +57,7 @@ export default function DashboardPage() {
           </p>
           <div className="flex items-center gap-x-6">
             <div className="flex shrink-0 gap-x-3 p-3 my-2 w-[90%] overflow-x-scroll">
-              <ClusterCard className="md:w-[30%] w-[45%]" />
-              <ClusterCard className="md:w-[30%] w-[45%]" />
-              <ClusterCard className="md:w-[30%] w-[45%]" />
-              <ClusterCard className="md:w-[30%] w-[45%]" />
-              <ClusterCard className="md:w-[30%] w-[45%]" />
-              <ClusterCard className="md:w-[30%] w-[45%]" />
-              <ClusterCard className="md:w-[30%] w-[45%]" />
-              <ClusterCard className="md:w-[30%] w-[45%]" />
-              <ClusterCard className="md:w-[30%] w-[45%]" />
+              <Link href={"./clusters"}>View Your Clusters here</Link>
             </div>
 
             <Link href="/clusters">

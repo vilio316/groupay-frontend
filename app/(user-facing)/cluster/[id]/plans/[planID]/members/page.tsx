@@ -11,7 +11,7 @@ export default function MembersPage() {
           <Link href="/plan/101">PlanName</Link> / Members
         </p>
         <span className="col-span-1 rounded-xl text-center justify-self-end text-red hover:bg-red hover:text-white p-2 hover:scale-105 transition-all uppercase">
-          exit plan
+          Leave Plan
         </span>
       </div>
       <input
@@ -36,28 +36,7 @@ export default function MembersPage() {
           </div>
           <div></div>
         </div>
-        <MemberCard />
-        <MemberCard />
-        <MemberCard />
       </div>
-    </div>
-  );
-}
-
-export function MemberCard() {
-  return (
-    <div className="flex gap-x-4 items-center hover:bg-aqua/20 rounded-xl p-2 my-3 group ">
-      <div className="p-1">
-        <img
-          className="w-12 h-12 rounded-full object-cover user-display-img border border-aqua"
-          src="/family.jpg"
-        />
-      </div>
-      <div className="w-[80%]">
-        <p>DisplayName</p>
-        <p>@username | userStatus</p>
-      </div>
-      <div></div>
     </div>
   );
 }

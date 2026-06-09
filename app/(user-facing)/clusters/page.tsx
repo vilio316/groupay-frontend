@@ -2,11 +2,10 @@
 import ClusterClient from "./ClusterClient";
 import { useSession } from "@/lib/authClient";
 import { Suspense, useEffect, useState } from "react";
-import { clusterDetailsType } from "../cluster/[id]/ClusterDetailsClient";
 
 export default function ClustersPage() {
   const { data } = useSession();
-  const [clusterResponse, updateClustResp] = useState<any[]>([]);
+  const [clusterResponse, updateClustResp] = useState<any[] | null>(null);
 
   async function fetchClust(id: string) {
     const request = await fetch(`http://localhost:3000/clusters/${id}`, {
@@ -40,9 +39,11 @@ export default function ClustersPage() {
 
   return (
     <>
-      <Suspense fallback="Loading...">
+      {clusterResponse ? (
         <ClusterClient clusterObj={clusterResponse} />
-      </Suspense>
+      ) : (
+        <p>Getting Your Clusters...</p>
+      )}
     </>
   );
 }

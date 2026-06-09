@@ -5,7 +5,10 @@ import { inter, soraClass } from "./fonts";
 import "./globals.css";
 import { AirplaneIcon, ForkKnifeIcon, HouseIcon } from "@phosphor-icons/react";
 import Avatars from "./components/AvatarsCircles";
+import { useSession } from "@/lib/authClient";
+
 export default function HomePage() {
+  const { data } = useSession();
   return (
     <div>
       <nav className="fixed top-0 left-0 z-100 bg-white backdrop-blur-md border-b border-b-solid border-b-card-border">
@@ -40,13 +43,13 @@ export default function HomePage() {
           </div>
           <div className="flex items-center gap-4">
             <a
-              href="/auth/sign-in"
+              href={data?.user ? "/dashboard" : "/auth/sign-in"}
               className="text-[14px] font-semibold text-forest hover:text-teal py-3"
             >
-              Log In
+              {data && data.user ? data.user.name : "Log In"}
             </a>
             <a
-              href="/auth/sign-up"
+              href={"/auth/sign-up"}
               className={`bg-green hover:bg-greener text-white inline-flex center gap-2 py-3 px-6 rounded-full font-semibold cursor-pointer transition-all`}
             >
               Get Started

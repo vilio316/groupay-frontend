@@ -1,6 +1,5 @@
 "use client";
 import { soraClass } from "@/app/fonts";
-import { MemberCard } from "../members/page";
 import { ManagerViewCategory, ManagerViewItem } from "./ManagerViewItem";
 import {
   ArticleIcon,
@@ -11,7 +10,6 @@ import {
   UsersThreeIcon,
 } from "@phosphor-icons/react";
 import { useState } from "react";
-import PlanCard from "@/app/components/PlanCard";
 import Link from "next/link";
 export default function ManageClusterPage() {
   const [activeTabs, updateActiveTabs] = useState<string[]>([]);

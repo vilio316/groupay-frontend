@@ -3,11 +3,15 @@ import { soraClass } from "@/app/fonts";
 import Link from "next/link";
 import { signIn } from "@/lib/authClient";
 import { redirect } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { EyeIcon, EyeClosedIcon } from "@phosphor-icons/react";
 
 export default function SignInPage() {
   const [email, updateEmail] = useState("");
   const [password, updatePassword] = useState("");
+  const [error, updateError] = useState("");
+  const [loading, updateLoadState] = useState(false);
+  const [isPasswordShown, showPassword] = useState(false);
 
   return (
     <div className="p-6 grid items-center h-full justify-center md:justify-start">
@@ -24,10 +28,15 @@ export default function SignInPage() {
           className="grid my-4"
           onSubmit={async (e: any) => {
             e.preventDefault();
+            updateLoadState(true);
             await signIn.email(
               { email, password },
               {
-                onSuccess: () => redirect("/dashboard"),
+                onSuccess: () => {
+                  updateLoadState(false);
+                  redirect("/dashboard");
+                },
+                onError: (e) => updateError(e.error.message),
               },
             );
           }}
@@ -50,24 +59,35 @@ export default function SignInPage() {
             />
           </div>
 
-          <div className="mb-4">
+          <div className="mb-4 ">
             <label
               htmlFor="password"
               className="uppercase block text-sm font-semibold text-forest mb-1.5"
             >
               Password
             </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              onChange={(e) => updatePassword(e.target.value)}
-              placeholder="Your password here..."
-              className="h-12 px-3 outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border border-card-border rounded-xl w-full"
-            />
+            <div className="flex gap-x-4 items-center">
+              <input
+                type={isPasswordShown ? "text" : "password"}
+                id="password"
+                name="password"
+                minLength={8}
+                onChange={(e) => updatePassword(e.target.value)}
+                placeholder="Your password here..."
+                className={`h-12 invalid:border-red px-3 outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border border-card-border rounded-xl w-full`}
+              />
+              <button onClick={() => showPassword(!isPasswordShown)}>
+                {isPasswordShown ? <EyeClosedIcon /> : <EyeIcon />}
+              </button>
+            </div>
           </div>
+          <p
+            className={`${error.length > 1 ? "text-red text-xl font-medium" : "hidden"}`}
+          >
+            {error}
+          </p>
           <button className="submit-btn p-3 rounded-2xl bg-green text-white font-bold hover:bg-[#3db029] hover:-translate-y-px flex  hover:shadow-sm hover:shadow-card-border/40 items-center justify-center gap-2 md:w-1/2 w-3/4 my-4">
-            Log In
+            {loading ? "Loading..." : "Log In"}
           </button>
           <p className="text-center">
             Don't have an account?{" "}
@@ -94,14 +114,10 @@ export default function SignInPage() {
           <button
             className="oauth-btn flex-1 flex items-center justify-center gap-2 rounded-[10px] border border-solid border-card-border font-semibold text-ink cursor-pointer hover:border-mist transition-all hover: shadow-sm hover:shadow-teal/25 p-3"
             onClick={async () => {
-              const data = await signIn.social(
-                {
-                  provider: "google",
-                },
-                {
-                  onSuccess: () => redirect("/dashboard"),
-                },
-              );
+              await signIn.social({
+                provider: "google",
+                callbackURL: "http://localhost:9909/dashboard",
+              });
             }}
           >
             <svg viewBox="0 0 24 24" className="h-4.5 w-4.5">

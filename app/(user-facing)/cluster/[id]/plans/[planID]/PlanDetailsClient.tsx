@@ -6,12 +6,47 @@ import { soraClass } from "@/app/fonts";
 import { CheckCircleIcon, HandDepositIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useState } from "react";
-import { PlanDetails } from "../../cluster/[id]/ClusterDetailsClient";
+import { useSession } from "@/lib/authClient";
+import { PlanDetails } from "../../ClusterDetailsClient";
+import { useParams, usePathname } from "next/navigation";
+import { redirect } from "next/navigation";
 
 export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
   const [isPaying, updatePaymentStatus] = useState(false);
+  const { data } = useSession();
+  const userId = data?.user.id;
+  const params = useParams();
+  async function handlePlanMembership(isMember: boolean) {
+    if (!isMember) {
+      await fetch(
+        `http://localhost:3000/clusters/${params.id}/plans/${params.planID}/members`,
+        {
+          credentials: "include",
+          method: "POST",
+          body: JSON.stringify({
+            userId: userId,
+          }),
+        },
+      );
+      redirect("/plans");
+    } else {
+      await fetch(
+        `http://localhost:3000/clusters/${params.id}/plans/${params.planId}/members/${userId}`,
+        {
+          credentials: "include",
+          method: "DELETE",
+        },
+      );
+      redirect("/plans");
+    }
+  }
+
   const [hasContributed] = useState(false);
-  const [joinedState] = useState(true);
+
+  const userDetails = planObj.members.filter(
+    (member) => member.user.id === userId,
+  );
+  const userDetailsInCluster = userDetails.length > 0;
 
   const { name, desc, minimumContribution, id } = planObj;
   return (
@@ -31,16 +66,12 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
         </div>
 
         <div className="w-1/5 flex justify-end p-1 gap-x-4">
-          {joinedState && (
-            <button className="rounded-xl p-2 border uppercase text-red border-red hover:bg-red hover:text-white hover:scale-105 transition-all shrink-0">
-              Exit Plan
-            </button>
-          )}
-          {!joinedState && (
-            <button className="rounded-xl p-2 uppercase text-white bg-teal hover:text-white hover:scale-105 transition-all shrink-0 ">
-              Ask to Join
-            </button>
-          )}
+          <button
+            onClick={() => handlePlanMembership(userDetailsInCluster)}
+            className={`rounded-xl p-2 uppercase text-red ${userDetailsInCluster ? `border border-red hover:bg-red` : `bg-teal text-white`} hover:text-white hover:scale-105 transition-all shrink-0`}
+          >
+            {userDetailsInCluster ? "Exit Plan" : "Ask to Join"}
+          </button>
         </div>
       </div>
       <div className="border border-card-border shadow-sm shadow-card-border rounded-xl md:p-4 p-2 my-2">
@@ -50,7 +81,7 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
           </p>
 
           <Link
-            href="../plans/101/members"
+            href={`../plans/${id}/members`}
             className="flex justify-end p-1 text-end flex-col w-1/5"
           >
             <p className="text-[10px] md:text-sm capitalize text-ink-mid">
@@ -73,9 +104,9 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
 
             <div className="md:w-1/5 flex justify-end p-2 w-full">
               <button
-                className={`text-white bg-green hover:bg-greener rounded-xl uppercase hover:scale-105 transition-all p-2 flex items-center gap-x-2 disabled:opacity-70 disabled:hover:scale-100 disabled:hover:bg-green `}
+                className={`text-white bg-green hover:bg-greener rounded-xl uppercase hover:scale-105 transition-all p-2 flex items-center gap-x-2 disabled:opacity-40 disabled:hover:scale-100 disabled:hover:bg-green disabled:cursor-not-allowed `}
                 onClick={() => updatePaymentStatus(true)}
-                disabled={hasContributed}
+                disabled={hasContributed || !userDetailsInCluster}
               >
                 {hasContributed ? (
                   <CheckCircleIcon

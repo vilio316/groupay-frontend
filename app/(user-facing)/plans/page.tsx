@@ -62,7 +62,7 @@ export default function PlansPage() {
     <div className="p-4 mx-auto border border-card-border rounded-xl">
       <div className="flex md:gap-x-4 gap-x-2 my-2 items-center">
         <p
-          className={`${soraClass} text-xl lg:text-3xl text-green w-3/5 md:w-4/5`}
+          className={`${soraClass} text-2xl lg:text-3xl text-green w-3/5 md:w-4/5 font-bold`}
         >
           Your Plans
         </p>

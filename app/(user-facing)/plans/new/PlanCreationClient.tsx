@@ -6,13 +6,14 @@ import {
   CreditCardIcon,
   BasketIcon,
 } from "@phosphor-icons/react";
-import { redirect } from "next/navigation";
 import { useState } from "react";
 
 export default function PlanCreationClient({ clusters }: { clusters: any[] }) {
-  const [clusterId, updateClusterId] = useState("");
+  const [clusterId, updateClusterId] = useState(clusters[0].id);
   const [planDesc, updatePlanDesc] = useState("");
   const [planName, updatePlanName] = useState("");
+  const [type, alterType] = useState("subscription");
+  const [minimumContribution, updateMinimum] = useState("");
   const { data } = useSession();
 
   async function createPlan(e: any) {
@@ -26,6 +27,8 @@ export default function PlanCreationClient({ clusters }: { clusters: any[] }) {
         desc: planDesc,
         memberIds: [data?.user.id],
         name: planName,
+        planType: type,
+        minimumContribution: minimumContribution,
       }),
       method: "POST",
     });
@@ -65,7 +68,7 @@ export default function PlanCreationClient({ clusters }: { clusters: any[] }) {
               parent cluster
             </label>
             <select
-              className="p-2 outline-none border border-card-border rounded-[10px]"
+              className="p-2 outline-none border border-card-border rounded-[10px] w-4/5"
               onChange={(e) => updateClusterId(e.target.value)}
             >
               {clusters.map((cluster) => (
@@ -80,8 +83,15 @@ export default function PlanCreationClient({ clusters }: { clusters: any[] }) {
                 {" "}
                 What's this plan for?
               </label>
-              <div className="flex items-center gap-x-4  group border border-card-border w-3/5 my-4 p-2 rounded-xl hover:border-2 hover:border-green hover:translate-y-0.5 transition-all duration-75">
-                <input type="radio" name="purpose" id="subs" required />
+              <div className="flex items-center gap-x-4  group border border-card-border md:w-3/5 w-full my-4 p-2 rounded-xl hover:border-2 hover:border-green hover:translate-y-0.5 transition-all duration-75">
+                <input
+                  type="radio"
+                  name="purpose"
+                  id="subs"
+                  value={"subscription"}
+                  required
+                  onChange={(e) => alterType(e.target.value)}
+                />
                 <label htmlFor="subs">
                   <div className="flex gap-x-3 items-center">
                     <CreditCardIcon
@@ -97,8 +107,15 @@ export default function PlanCreationClient({ clusters }: { clusters: any[] }) {
                 </label>
               </div>
 
-              <div className="flex items-center gap-x-4 group border border-card-border p-2 rounded-xl hover:border-2 hover:border-green hover:translate-y-0.5 transition-all duration-75 w-3/5">
-                <input type="radio" name="purpose" id="general" required />
+              <div className="flex items-center gap-x-4 group border border-card-border p-2 rounded-xl hover:border-2 hover:border-green hover:translate-y-0.5 transition-all duration-75 md:w-3/5 w-full">
+                <input
+                  type="radio"
+                  name="purpose"
+                  id="general"
+                  required
+                  value={"general"}
+                  onChange={(e) => alterType(e.target.value)}
+                />
                 <label htmlFor="general">
                   <div className="flex gap-x-3 items-center">
                     <BasketIcon
@@ -141,6 +158,7 @@ export default function PlanCreationClient({ clusters }: { clusters: any[] }) {
               min={100}
               step={100}
               max={100000}
+              onChange={(e) => updateMinimum(e.target.value)}
               id="planDesc"
               placeholder="Minimum contribution amount"
               className="w-3/4 block mb-4 p-2 indent-4 border-card-border focus:border-green border-2 rounded-[10px] outline-none"

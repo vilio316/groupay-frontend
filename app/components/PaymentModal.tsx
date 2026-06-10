@@ -14,9 +14,11 @@ import { usePathname } from "next/navigation";
 export default function PaymentModal({
   isShown,
   onClick,
+  accountNumber,
   prompter,
 }: {
   isShown?: boolean;
+  accountNumber?: string;
   onClick: () => void;
   prompter?: "add" | "withdraw" | "transfer" | "plan";
 }) {
@@ -57,9 +59,20 @@ export default function PaymentModal({
           {prompter === "add" && (
             <div className="flex justify-center flex-col">
               <p>Send the money to the account below: </p>
-              <div className="text-center text-3xl uppercase font-bold my-3">
-                <p className="text-forest">0834567111</p>
+              <div className="text-center text-3xl font-bold my-3">
+                <p className="text-forest">
+                  {accountNumber && accountNumber.length > 0
+                    ? accountNumber
+                    : "0834556789"}
+                </p>
+
                 <p className="uppercase text-xl">AMOS EBUBE CIROMA</p>
+                <p
+                  className="
+                text-lg my-2"
+                >
+                  GTBank
+                </p>
               </div>
               <button>I have sent the money</button>
             </div>

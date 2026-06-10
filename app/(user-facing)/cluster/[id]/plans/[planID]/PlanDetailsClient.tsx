@@ -6,7 +6,7 @@ import { soraClass } from "@/app/fonts";
 import { CheckCircleIcon, HandDepositIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useState } from "react";
-import { useSession } from "@/lib/authClient";
+import { getSession, useSession } from "@/lib/authClient";
 import { PlanDetails } from "../../ClusterDetailsClient";
 import { useParams, usePathname } from "next/navigation";
 import { redirect } from "next/navigation";
@@ -18,23 +18,33 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
   const params = useParams();
   async function handlePlanMembership(isMember: boolean) {
     if (!isMember) {
-      await fetch(
+      const { data } = await getSession();
+      console.log(data);
+      const addReq = await fetch(
         `http://localhost:3000/clusters/${params.id}/plans/${params.planID}/members`,
         {
           credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
           method: "POST",
           body: JSON.stringify({
-            userId: userId,
+            userId: String(data?.user.id),
           }),
         },
       );
+      const addRes = await addReq.json();
+      console.log(addRes);
       redirect("/plans");
     } else {
       await fetch(
-        `http://localhost:3000/clusters/${params.id}/plans/${params.planId}/members/${userId}`,
+        `http://localhost:3000/clusters/${params.id}/plans/${params.planID}/members/${userId}`,
         {
           credentials: "include",
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
       );
       redirect("/plans");
@@ -65,12 +75,12 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
           </span>
         </div>
 
-        <div className="w-1/5 flex justify-end p-1 gap-x-4">
+        <div className="w-1/5 flex justify-end p-1 gap-x-4 shrink-0">
           <button
             onClick={() => handlePlanMembership(userDetailsInCluster)}
-            className={`rounded-xl p-2 uppercase text-red ${userDetailsInCluster ? `border border-red hover:bg-red` : `bg-teal text-white`} hover:text-white hover:scale-105 transition-all shrink-0`}
+            className={`rounded-xl p-2 uppercase w-full text-red ${userDetailsInCluster ? `border border-red hover:bg-red` : `bg-teal text-white`} hover:text-white hover:scale-105 transition-all shrink-0`}
           >
-            {userDetailsInCluster ? "Exit Plan" : "Ask to Join"}
+            {userDetailsInCluster ? "Exit Plan" : "Join"}
           </button>
         </div>
       </div>

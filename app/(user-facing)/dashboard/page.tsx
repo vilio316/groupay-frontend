@@ -7,7 +7,7 @@ import ClusterCard from "@/app/components/ClusterCard";
 import { BalanceCard } from "@/app/components/BalanceCard";
 import PaymentModal from "@/app/components/PaymentModal";
 import OnboardingStatusCard from "@/app/components/OnboardingStatusCard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "@/lib/authClient";
 
 export default function DashboardPage() {
@@ -16,6 +16,37 @@ export default function DashboardPage() {
     "add",
   );
   const { data } = useSession();
+  const [clusterResponse, updateClustResp] = useState<any[] | null>(null);
+
+  async function fetchClust(id: string) {
+    const request = await fetch(`http://localhost:3000/clusters/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const response = await request.json();
+    return response;
+  }
+
+  useEffect(() => {
+    async function eleba() {
+      const postReq = await fetch("http://localhost:3000/clusters/myClusters", {
+        method: "POST",
+        body: JSON.stringify({
+          userId: data?.user.id,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const postRes = await postReq.json();
+      const fetchedClustIds = postRes.map((clust: any) => clust.clusterId);
+      await Promise.all(
+        fetchedClustIds.map((clust: any) => fetchClust(clust)),
+      ).then((values) => updateClustResp(values));
+    }
+    eleba();
+  }, [data]);
 
   return (
     <div className="grid">
@@ -57,7 +88,11 @@ export default function DashboardPage() {
           </p>
           <div className="flex items-center gap-x-6">
             <div className="flex shrink-0 gap-x-3 p-3 my-2 w-[90%] overflow-x-scroll">
-              <Link href={"./clusters"}>View Your Clusters here</Link>
+              {clusterResponse && clusterResponse?.length > 0
+                ? clusterResponse.map((cluster) => (
+                    <ClusterCard valuesObj={cluster} className="w-1/4" />
+                  ))
+                : "loading..."}
             </div>
 
             <Link href="/clusters">

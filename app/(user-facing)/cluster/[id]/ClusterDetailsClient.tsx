@@ -140,6 +140,7 @@ export default function ClusterDetailsClient({
         onClick={() => {
           showModal(false);
         }}
+        accountNumber={accountNumber}
         isShown={isModalShown}
         prompter={promptButton}
       />

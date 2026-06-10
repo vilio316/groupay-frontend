@@ -30,7 +30,7 @@ export default function ClusterCreateSuccessCard({
         Your cluster,{" "}
         <span className="font-bold text-green">{clusterName}</span>, was created
         successfully. Click{" "}
-        <Link href={"/cluster/234/manage"} className="underline">
+        <Link href={"/clusters"} className="underline">
           here
         </Link>{" "}
         to view and edit your cluster's key details. Click the "Share" button to

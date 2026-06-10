@@ -6,6 +6,7 @@ import {
   HandDepositIcon,
   HandWithdrawIcon,
 } from "@phosphor-icons/react/dist/ssr";
+import { usePathname } from "next/navigation";
 
 export function BalanceCard({
   payFunct,
@@ -13,16 +14,20 @@ export function BalanceCard({
   payFunct: (string?: string) => void;
 }) {
   const session = useSession();
-
+  const pathname = usePathname();
   return (
     <div className="md:grid md:w-[90%] grid-cols-8 items-center border border-card-border shadow-md p-4 rounded-xl shadow-card-border/40 my-2">
-      <div className="col-span-1">
-        <img
-          src={`${session.data?.user.image ? session.data.user.image : "/family.jpg"}`}
-          className="rounded-full p-1 drop-shadow-xl drop-shadow-card-border md:h-24 md:w-24 h-12 w-12 object-cover"
-        />
-      </div>
-      <div className="col-span-4">
+      {!pathname.includes("cluster") && (
+        <div className="col-span-1">
+          <img
+            src={`${session.data?.user.image ? session.data.user.image : "/family.jpg"}`}
+            className="rounded-full p-1 drop-shadow-xl drop-shadow-card-border md:h-24 md:w-24 h-12 w-12 object-cover"
+          />
+        </div>
+      )}
+      <div
+        className={`${pathname.includes("cluster") ? "col-span-5" : "col-span-4"}`}
+      >
         <p className="text-ink-mid font-semibold uppercase my-2">
           Total Balance:
         </p>
@@ -53,16 +58,18 @@ export function BalanceCard({
           <span className="text-ink-mid text-sm">Withdraw</span>
         </button>
 
-        <button title="Make Transfer">
-          <div className="flex justify-center">
-            <PaperPlaneTiltIcon
-              weight="duotone"
-              className="rounded-full bg-green/40 text-black shadow-xl shadow-card-border h-8 w-8 md:h-12 md:w-12 p-2 hover:bg-greener hover:font-bold hover:scale-105 transition-all duration-100"
-              onClick={() => payFunct("transfer")}
-            />
-          </div>
-          <span className="text-ink-mid text-sm">Transfer</span>
-        </button>
+        {!pathname.includes("cluster") && (
+          <button title="Make Transfer">
+            <div className="flex justify-center">
+              <PaperPlaneTiltIcon
+                weight="duotone"
+                className="rounded-full bg-green/40 text-black shadow-xl shadow-card-border h-8 w-8 md:h-12 md:w-12 p-2 hover:bg-greener hover:font-bold hover:scale-105 transition-all duration-100"
+                onClick={() => payFunct("transfer")}
+              />
+            </div>
+            <span className="text-ink-mid text-sm">Transfer</span>
+          </button>
+        )}
       </div>
     </div>
   );

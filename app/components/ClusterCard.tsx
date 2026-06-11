@@ -26,7 +26,7 @@ export default function ClusterCard({
           className="md:h-48 lg:h-60 h-44 w-full object-cover rounded-2xl"
         />
       </div>
-      <div className="absolute bottom-0 h-3/4 z-20 bg-white rounded-2xl border-2 border-card-border w-full shadow-xl shadow-card-border p-2 grid text-justify md:text-left">
+      <div className="absolute bottom-0 h-3/4 z-20 bg-white rounded-2xl border-2 border-card-border w-full shadow-xl shadow-card-border p-2 grid">
         <p className="flex items-center gap-x-1">
           <span
             className={`${soraClass} flex items-center font-bold text-sm md:text-[16px] lg:text-[20px] text-green w-4/5`}
@@ -37,7 +37,7 @@ export default function ClusterCard({
         <p className="text-[10px]">
           Created on: {valuesObj ? mkDt(valuesObj.createdAt) : "22/04/23"}
         </p>
-        <p className="indent-4 px-4 clusterDesc overflow-y-hidden text-ellipsis max-h-20 text-ink-mid text-[10px] md:text-sm ">
+        <p className="indent-4 px-4 clusterDesc overflow-y-hidden text-ellipsis max-h-20 text-ink-mid text-[10px] md:text-sm text-justify">
           {valuesObj ? valuesObj.desc : "Lorem ipsum dolor amet ...."}
         </p>
         <div className="flex items-end self-end w-full">

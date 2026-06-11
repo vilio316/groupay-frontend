@@ -9,7 +9,7 @@ import PaymentModal from "@/app/components/PaymentModal";
 import OnboardingStatusCard from "@/app/components/OnboardingStatusCard";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useSession } from "@/lib/authClient";
+import { getSession, useSession } from "@/lib/authClient";
 import { clusterDetailsType } from "../cluster/[id]/ClusterDetailsClient";
 
 export default function DashboardPage() {
@@ -30,6 +30,7 @@ export default function DashboardPage() {
   }
 
   async function eleba() {
+    const { data } = await getSession();
     const postReq = await fetch("http://localhost:3000/clusters/myClusters", {
       method: "POST",
       body: JSON.stringify({
@@ -98,14 +99,9 @@ export default function DashboardPage() {
           <div className="flex items-center gap-x-6">
             <div className="flex shrink-0 gap-x-3 p-3 my-2 w-[90%] overflow-x-scroll">
               {isSuccess &&
-                clusterResponse
-                  .filter(
-                    (cluster, index) =>
-                      clusterResponse.indexOf(cluster) == index,
-                  )
-                  .map((cluster) => (
-                    <ClusterCard valuesObj={cluster} key={cluster.id} />
-                  ))}
+                clusterResponse.map((cluster) => (
+                  <ClusterCard valuesObj={cluster} key={cluster.id} />
+                ))}
               {isLoading && <p>Loading cluster details...</p>}
             </div>
 

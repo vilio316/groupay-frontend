@@ -1,3 +1,4 @@
+import { cacheLife } from "next/cache";
 import PlanPage from "./PlanDetailsClient";
 
 export default async function PlanDetailsPage({
@@ -9,9 +10,17 @@ export default async function PlanDetailsPage({
   }>;
 }) {
   const { id, planID } = await params;
-  const planDetailsRequest = await fetch(
-    `http://localhost:3000/clusters/${id}/plans/${planID}`,
-  );
-  const planDetailsResponse = await planDetailsRequest.json();
-  return <PlanPage planObj={planDetailsResponse} />;
+  async function fetchPlan() {
+    "use cache";
+    cacheLife("hours");
+    const planDetailsRequest = await fetch(
+      `http://localhost:3000/clusters/${id}/plans/${planID}`,
+    );
+    const planDetailsResponse = await planDetailsRequest.json();
+    return planDetailsResponse;
+  }
+
+  const planResponse = await fetchPlan();
+
+  return <PlanPage planObj={planResponse} />;
 }

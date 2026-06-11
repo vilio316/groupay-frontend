@@ -1,12 +1,10 @@
 "use client";
 import ClusterClient from "./ClusterClient";
-import { useSession } from "@/lib/authClient";
+import { getSession } from "@/lib/authClient";
 import { useQuery } from "@tanstack/react-query";
-import { Suspense, useEffect, useState } from "react";
+import { clusterDetailsType } from "../cluster/[id]/ClusterDetailsClient";
 
 export default function ClustersPage() {
-  const { data } = useSession();
-
   async function fetchClust(id: string) {
     const request = await fetch(`http://localhost:3000/clusters/${id}`, {
       headers: {
@@ -17,6 +15,7 @@ export default function ClustersPage() {
     return response;
   }
   async function eleba() {
+    const { data } = await getSession();
     const postReq = await fetch("http://localhost:3000/clusters/myClusters", {
       method: "POST",
       body: JSON.stringify({
@@ -28,7 +27,8 @@ export default function ClustersPage() {
     });
     const postRes = await postReq.json();
     const fetchedClustIds = postRes.map((clust: any) => clust.clusterId);
-    const promise = await Promise.all(
+    console.log(postRes, fetchedClustIds);
+    const promise: clusterDetailsType[] = await Promise.all(
       fetchedClustIds.map((clust: any) => fetchClust(clust)),
     );
     return promise;

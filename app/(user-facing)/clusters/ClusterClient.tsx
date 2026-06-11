@@ -52,9 +52,11 @@ export default function ClusterClient({
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-2 gap-3">
-          {clusterObj.map((cluster) => (
-            <ClusterCard key={cluster.id} valuesObj={cluster} />
-          ))}
+          {clusterObj
+            .filter((cluster, index) => clusterObj.indexOf(cluster) == index)
+            .map((cluster) => (
+              <ClusterCard key={cluster.id} valuesObj={cluster} />
+            ))}
         </div>
       )}
     </div>

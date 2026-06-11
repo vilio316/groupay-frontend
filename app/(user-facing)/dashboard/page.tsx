@@ -98,9 +98,14 @@ export default function DashboardPage() {
           <div className="flex items-center gap-x-6">
             <div className="flex shrink-0 gap-x-3 p-3 my-2 w-[90%] overflow-x-scroll">
               {isSuccess &&
-                clusterResponse.map((cluster) => (
-                  <ClusterCard valuesObj={cluster} key={cluster.id} />
-                ))}
+                clusterResponse
+                  .filter(
+                    (cluster, index) =>
+                      clusterResponse.indexOf(cluster) == index,
+                  )
+                  .map((cluster) => (
+                    <ClusterCard valuesObj={cluster} key={cluster.id} />
+                  ))}
               {isLoading && <p>Loading cluster details...</p>}
             </div>
 

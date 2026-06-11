@@ -24,7 +24,7 @@ export default function DashboardLayout({
       </div>
       <MobileNav />
       <div className="grid md:col-span-3 lg:col-span-5 relative p-2 md:p-0 overflow-y-scroll min-h-screen items-center">
-        <div className="h-full">
+        <div className="h-full my-2 md:p-2">
           <div className="flex w-full items-center p-2 gap-x-4 justify-end top-icons">
             <Link
               href="/notifications"

@@ -6,7 +6,9 @@ import {
   CreditCardIcon,
   BasketIcon,
 } from "@phosphor-icons/react";
+import { QueryClient, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
+import { redirect } from "next/navigation";
 
 export default function PlanCreationClient({ clusters }: { clusters: any[] }) {
   const [clusterId, updateClusterId] = useState(clusters[0].id);
@@ -16,8 +18,7 @@ export default function PlanCreationClient({ clusters }: { clusters: any[] }) {
   const [minimumContribution, updateMinimum] = useState("");
   const { data } = useSession();
 
-  async function createPlan(e: any) {
-    e.preventDefault();
+  async function createPlan() {
     await fetch(`http://localhost:3000/clusters/${clusterId}/plans`, {
       credentials: "include",
       headers: {
@@ -33,10 +34,20 @@ export default function PlanCreationClient({ clusters }: { clusters: any[] }) {
       method: "POST",
     });
   }
+  const qc = new QueryClient();
+  const { isPending, mutateAsync: create } = useMutation({
+    mutationFn: createPlan,
+    onSuccess: async () => {
+      await qc.invalidateQueries({
+        queryKey: ["userPlans"],
+      });
+      redirect("/plans");
+    },
+  });
 
   return (
     <>
-      <div className="py-4 px-6 border-4 border-card-border place-self-center w-3/4 shadow-card-border shadow-2xl rounded-xl md:min-h-3/4">
+      <div className="md:py-4 py-2 px-4 md:px-6 w-90vw border-4 border-card-border place-self-center md:w-3/4 shadow-card-border shadow-2xl rounded-xl md:min-h-3/4">
         <p
           className={`${soraClass} font-bold text-2xl my-4 text-green flex gap-2`}
         >
@@ -44,12 +55,17 @@ export default function PlanCreationClient({ clusters }: { clusters: any[] }) {
           Create A New Plan
         </p>
         <div>
-          <form onSubmit={createPlan}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              create();
+            }}
+          >
             <label
               htmlFor="clusterFunct"
               className="font-semibold text-sm text-ink-mid block my-2 uppercase"
             >
-              plan Name
+              plan name
             </label>
             <input
               type="text"
@@ -58,7 +74,7 @@ export default function PlanCreationClient({ clusters }: { clusters: any[] }) {
               onChange={(e) => updatePlanName(e.target.value)}
               autoFocus
               placeholder="The name of your plan"
-              className="w-3/4 block mb-4 mt-2 p-2 indent-4 border-card-border border-2 rounded-[10px] outline-none focus:border-green"
+              className="md:w-3/4 block mb-4 mt-2 p-2 w-full indent-4 border-card-border border-2 rounded-[10px] outline-none focus:border-green"
             />
 
             <label
@@ -68,7 +84,7 @@ export default function PlanCreationClient({ clusters }: { clusters: any[] }) {
               parent cluster
             </label>
             <select
-              className="p-2 outline-none border border-card-border rounded-[10px] w-4/5"
+              className="p-2 outline-none border border-card-border rounded-[10px] w-full md:w-3/4"
               onChange={(e) => updateClusterId(e.target.value)}
             >
               {clusters.map((cluster) => (
@@ -168,7 +184,7 @@ export default function PlanCreationClient({ clusters }: { clusters: any[] }) {
               className="text-white flex gap-x-2 bg-green items-center p-3 rounded-[10px] font-bold text-center uppercase hover:bg-greener hover:translate-y-px transition-all"
               type="submit"
             >
-              Create plan
+              {isPending ? "Processing Request..." : "Create Plan"}
             </button>
           </form>
         </div>

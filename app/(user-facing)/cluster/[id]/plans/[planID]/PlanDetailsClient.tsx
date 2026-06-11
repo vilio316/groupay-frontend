@@ -10,16 +10,17 @@ import { getSession, useSession } from "@/lib/authClient";
 import { PlanDetails } from "../../ClusterDetailsClient";
 import { useParams, usePathname } from "next/navigation";
 import { redirect } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
   const [isPaying, updatePaymentStatus] = useState(false);
   const { data } = useSession();
   const userId = data?.user.id;
   const params = useParams();
+
   async function handlePlanMembership(isMember: boolean) {
     if (!isMember) {
       const { data } = await getSession();
-      console.log(data);
       const addReq = await fetch(
         `http://localhost:3000/clusters/${params.id}/plans/${params.planID}/members`,
         {
@@ -33,8 +34,6 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
           }),
         },
       );
-      const addRes = await addReq.json();
-      console.log(addRes);
       redirect("/plans");
     } else {
       await fetch(
@@ -50,6 +49,16 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
       redirect("/plans");
     }
   }
+
+  const queryClient = useQueryClient();
+  const { isPending, mutateAsync: handleMembership } = useMutation({
+    mutationFn: () => handlePlanMembership(userDetailsInCluster),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["userPlans"],
+      });
+    },
+  });
 
   const [hasContributed] = useState(false);
 
@@ -77,10 +86,11 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
 
         <div className="w-1/5 flex justify-end p-1 gap-x-4 shrink-0">
           <button
-            onClick={() => handlePlanMembership(userDetailsInCluster)}
+            onClick={() => handleMembership()}
             className={`rounded-xl p-2 uppercase w-full text-red ${userDetailsInCluster ? `border border-red hover:bg-red` : `bg-teal text-white`} hover:text-white hover:scale-105 transition-all shrink-0`}
           >
-            {userDetailsInCluster ? "Exit Plan" : "Join"}
+            {!isPending && userDetailsInCluster ? "Exit Plan" : "Join"}
+            {isPending && "Processing..."}
           </button>
         </div>
       </div>

@@ -10,7 +10,7 @@ import Link from "next/link";
 
 export default function MobileNav() {
   return (
-    <div className="absolute -bottom-3 md:hidden p-1 grid-cols-5 grid z-50 bg-white w-screen justify-center justify-items-center items-center gap-x-4">
+    <div className="absolute -bottom-3 md:hidden p-1 grid-cols-5 grid z-50 bg-white w-screen justify-center justify-items-center items-center gap-x-4 text-[11px]">
       <Link
         href="/dashboard"
         className="grid justify-center justify-items-center text-center p-1 hover:text-green "
@@ -30,7 +30,7 @@ export default function MobileNav() {
         className="grid justify-center justify-items-center p-1 hover:text-green"
       >
         {" "}
-        <PlusCircleIcon className="h-14 w-14 text-white bg-green text-xl p-1 rounded-full z-70" />
+        <PlusCircleIcon className="h-12 w-12 text-white bg-green text-xl p-1 rounded-full z-70" />
       </Link>
       <Link
         href="/plans"

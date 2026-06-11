@@ -1,11 +1,11 @@
 "use client";
 import ClusterClient from "./ClusterClient";
 import { useSession } from "@/lib/authClient";
+import { useQuery } from "@tanstack/react-query";
 import { Suspense, useEffect, useState } from "react";
 
 export default function ClustersPage() {
   const { data } = useSession();
-  const [clusterResponse, updateClustResp] = useState<any[] | null>(null);
 
   async function fetchClust(id: string) {
     const request = await fetch(`http://localhost:3000/clusters/${id}`, {
@@ -16,34 +16,38 @@ export default function ClustersPage() {
     const response = await request.json();
     return response;
   }
+  async function eleba() {
+    const postReq = await fetch("http://localhost:3000/clusters/myClusters", {
+      method: "POST",
+      body: JSON.stringify({
+        userId: data?.user.id,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const postRes = await postReq.json();
+    const fetchedClustIds = postRes.map((clust: any) => clust.clusterId);
+    const promise = await Promise.all(
+      fetchedClustIds.map((clust: any) => fetchClust(clust)),
+    );
+    return promise;
+  }
 
-  useEffect(() => {
-    async function eleba() {
-      const postReq = await fetch("http://localhost:3000/clusters/myClusters", {
-        method: "POST",
-        body: JSON.stringify({
-          userId: data?.user.id,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const postRes = await postReq.json();
-      const fetchedClustIds = postRes.map((clust: any) => clust.clusterId);
-      await Promise.all(
-        fetchedClustIds.map((clust: any) => fetchClust(clust)),
-      ).then((values) => updateClustResp(values));
-    }
-    eleba();
-  }, [data]);
+  const {
+    data: clusterResponse,
+    isLoading,
+    isSuccess,
+  } = useQuery({
+    queryKey: ["userClusters"],
+    queryFn: eleba,
+    staleTime: 1 * 60 * 60 * 1000,
+  });
 
   return (
     <>
-      {clusterResponse ? (
-        <ClusterClient clusterObj={clusterResponse} />
-      ) : (
-        <p>Getting Your Clusters...</p>
-      )}
+      {isSuccess && <ClusterClient clusterObj={clusterResponse} />}
+      {isLoading && <p>Getting Your Clusters...</p>}
     </>
   );
 }

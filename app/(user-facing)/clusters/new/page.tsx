@@ -1,26 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import ClusterCreateSuccessCard, {
-  ClusterCreateFailureCard,
-} from "@/app/components/ClusterCreateStatusCards";
+import ClusterCreateSuccessCard from "@/app/components/ClusterCreateStatusCards";
 import SpinnerLoader from "@/app/components/SpinnerLoader";
 import { soraClass } from "@/app/fonts";
-import {
-  BasketIcon,
-  CreditCardIcon,
-  UsersThreeIcon,
-} from "@phosphor-icons/react/dist/ssr";
+import { UsersThreeIcon } from "@phosphor-icons/react";
+import { useMutation, QueryClient } from "@tanstack/react-query";
 import { useSession } from "@/lib/authClient";
 
 export default function NewClusterPage() {
   const { data } = useSession();
-  const [isSuccessful, showSuccess] = useState(false);
   const [clusterName, updateClusterName] = useState("");
   const [clusterDesc, updateClusterDesc] = useState("");
 
-  async function createCluster(e: any) {
-    e.preventDefault();
+  async function createCluster() {
     await fetch("http://localhost:3000/clusters", {
       method: "POST",
       body: JSON.stringify({
@@ -33,12 +26,25 @@ export default function NewClusterPage() {
         "Content-Type": "application/json",
       },
     });
-    showSuccess(true);
   }
+  const queryClient = new QueryClient();
+
+  const {
+    isPending: isCreating,
+    mutateAsync: create,
+    isSuccess,
+  } = useMutation({
+    mutationFn: createCluster,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["userClusters"],
+      });
+    },
+  });
 
   return (
     <>
-      {!isSuccessful ? (
+      {!isSuccess ? (
         <div className="py-4 px-6 border-4 border-card-border place-self-center w-3/4 shadow-card-border shadow-2xl rounded-xl md:min-h-1/2">
           <p
             className={`${soraClass} font-bold text-2xl my-4 text-green flex gap-2`}
@@ -47,7 +53,12 @@ export default function NewClusterPage() {
             Create A New Cluster
           </p>
           <div>
-            <form onSubmit={createCluster}>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                create();
+              }}
+            >
               <label
                 htmlFor="clusterFunct"
                 className="font-semibold text-sm text-ink-mid block my-2 uppercase"
@@ -83,7 +94,14 @@ export default function NewClusterPage() {
                 className="text-white flex gap-x-2 bg-green items-center p-3 rounded-[10px] font-bold text-center uppercase hover:bg-greener hover:translate-y-px transition-all"
                 type="submit"
               >
-                Create Cluster
+                {isCreating ? (
+                  <span className="flex gap-x-4">
+                    <SpinnerLoader />
+                    <span>Creating Cluster...</span>
+                  </span>
+                ) : (
+                  "Create Cluster"
+                )}
               </button>
             </form>
           </div>

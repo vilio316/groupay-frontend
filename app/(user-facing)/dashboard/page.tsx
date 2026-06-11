@@ -8,7 +8,9 @@ import { BalanceCard } from "@/app/components/BalanceCard";
 import PaymentModal from "@/app/components/PaymentModal";
 import OnboardingStatusCard from "@/app/components/OnboardingStatusCard";
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useSession } from "@/lib/authClient";
+import { clusterDetailsType } from "../cluster/[id]/ClusterDetailsClient";
 
 export default function DashboardPage() {
   const [showModal, updateModalState] = useState(false);
@@ -16,7 +18,6 @@ export default function DashboardPage() {
     "add",
   );
   const { data } = useSession();
-  const [clusterResponse, updateClustResp] = useState<any[] | null>(null);
 
   async function fetchClust(id: string) {
     const request = await fetch(`http://localhost:3000/clusters/${id}`, {
@@ -24,29 +25,37 @@ export default function DashboardPage() {
         "Content-Type": "application/json",
       },
     });
-    const response = await request.json();
+    const response: clusterDetailsType = await request.json();
     return response;
   }
 
-  useEffect(() => {
-    async function eleba() {
-      const postReq = await fetch("http://localhost:3000/clusters/myClusters", {
-        method: "POST",
-        body: JSON.stringify({
-          userId: data?.user.id,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const postRes = await postReq.json();
-      const fetchedClustIds = postRes.map((clust: any) => clust.clusterId);
-      await Promise.all(
-        fetchedClustIds.map((clust: any) => fetchClust(clust)),
-      ).then((values) => updateClustResp(values));
-    }
-    eleba();
-  }, [data]);
+  async function eleba() {
+    const postReq = await fetch("http://localhost:3000/clusters/myClusters", {
+      method: "POST",
+      body: JSON.stringify({
+        userId: data?.user.id,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const postRes = await postReq.json();
+    const fetchedClustIds = postRes.map((clust: any) => clust.clusterId);
+    const results = await Promise.all(
+      fetchedClustIds.map((clust: any) => fetchClust(clust)),
+    );
+    return results;
+  }
+
+  const {
+    data: clusterResponse,
+    isLoading,
+    isSuccess,
+  } = useQuery({
+    queryKey: ["userClusters"],
+    queryFn: eleba,
+    staleTime: 1 * 60 * 60 * 1000,
+  });
 
   return (
     <div className="grid">
@@ -88,11 +97,11 @@ export default function DashboardPage() {
           </p>
           <div className="flex items-center gap-x-6">
             <div className="flex shrink-0 gap-x-3 p-3 my-2 w-[90%] overflow-x-scroll">
-              {clusterResponse && clusterResponse?.length > 0
-                ? clusterResponse.map((cluster) => (
-                    <ClusterCard valuesObj={cluster} className="w-1/4" />
-                  ))
-                : "loading..."}
+              {isSuccess &&
+                clusterResponse.map((cluster) => (
+                  <ClusterCard valuesObj={cluster} key={cluster.id} />
+                ))}
+              {isLoading && <p>Loading cluster details...</p>}
             </div>
 
             <Link href="/clusters">

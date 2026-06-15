@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { Suspense } from "react";
+
 export default function DashboardLayout({
   children,
 }: {
@@ -42,7 +44,7 @@ export default function DashboardLayout({
               <UserIcon className="flex w-8 h-8 fill-green" />
             </Link>
           </div>
-          {children}
+          <Suspense fallback="Loading...">{children}</Suspense>
         </div>
       </div>
     </div>

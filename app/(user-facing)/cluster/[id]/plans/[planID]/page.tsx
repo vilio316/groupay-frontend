@@ -1,5 +1,7 @@
 import { cacheLife } from "next/cache";
 import PlanPage from "./PlanDetailsClient";
+import { Suspense } from "react";
+import { cacheTag } from "next/cache";
 
 export default async function PlanDetailsPage({
   params,
@@ -13,6 +15,7 @@ export default async function PlanDetailsPage({
   async function fetchPlan() {
     "use cache";
     cacheLife("hours");
+    cacheTag(`plan_${planID}`);
     const planDetailsRequest = await fetch(
       `http://localhost:3000/clusters/${id}/plans/${planID}`,
     );
@@ -22,5 +25,9 @@ export default async function PlanDetailsPage({
 
   const planResponse = await fetchPlan();
 
-  return <PlanPage planObj={planResponse} />;
+  return (
+    <Suspense fallback="Fetching Plan Details">
+      <PlanPage planObj={planResponse} />{" "}
+    </Suspense>
+  );
 }

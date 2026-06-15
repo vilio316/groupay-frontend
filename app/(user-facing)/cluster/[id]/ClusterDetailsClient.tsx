@@ -60,7 +60,7 @@ export default function ClusterDetailsClient({
 }: {
   detailsObject: clusterDetailsType;
 }) {
-  const { name, id, desc, accountNumber, members, plans } = detailsObject;
+  const { name, id, desc, accountNumber, plans, members } = detailsObject;
   const [isModalShown, showModal] = useState(false);
   const [promptButton, updatePrompter] = useState<
     "add" | "withdraw" | "transfer"
@@ -78,7 +78,7 @@ export default function ClusterDetailsClient({
           <span className="w-full justify-self-end">
             {detailsObject ? members.length : ""} Members
           </span>
-          <Avatars className="justify-end w-full" />
+          <Avatars className="justify-end w-full" members={members} />
         </Link>
       </div>
       <div className="flex gap-x-2 flex-col md:flex-row ">

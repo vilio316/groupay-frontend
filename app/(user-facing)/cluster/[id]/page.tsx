@@ -1,4 +1,7 @@
-import ClusterDetailsClient from "./ClusterDetailsClient";
+import ClusterDetailsClient, {
+  clusterDetailsType,
+} from "./ClusterDetailsClient";
+import { cacheLife, cacheTag } from "next/cache";
 import { Suspense } from "react";
 
 export default async function ClusterPage({
@@ -9,17 +12,21 @@ export default async function ClusterPage({
   }>;
 }) {
   const { id } = await params;
-  const clusterDetailsRequest = await fetch(
-    `http://localhost:3000/clusters/${id}`,
-    {
-      credentials: "include",
-    },
-  );
-  const clusterDetailsResponse = await clusterDetailsRequest.json();
+  async function fetchCluster() {
+    "use cache";
+    cacheLife("hours");
+    cacheTag(`cluster_${id}`);
+    const clusterDetailsRequest = await fetch(
+      `http://localhost:3000/clusters/${id}`,
+      {
+        credentials: "include",
+      },
+    );
+    const clusterDetailsResponse: clusterDetailsType =
+      await clusterDetailsRequest.json();
+    return clusterDetailsResponse;
+  }
 
-  return (
-    <Suspense fallback={"Loading cluster details..."}>
-      <ClusterDetailsClient detailsObject={clusterDetailsResponse} />{" "}
-    </Suspense>
-  );
+  const clusterDetailsResponse = await fetchCluster();
+  return <ClusterDetailsClient detailsObject={clusterDetailsResponse} />;
 }

@@ -60,6 +60,7 @@ export default function ClusterDetailsClient({
 }: {
   detailsObject: clusterDetailsType;
 }) {
+  console.log(detailsObject);
   const { name, id, desc, accountNumber, plans, members } = detailsObject;
   const [isModalShown, showModal] = useState(false);
   const [promptButton, updatePrompter] = useState<

@@ -64,7 +64,7 @@ export default function PlansPage() {
   } = useQuery({
     queryKey: ["userPlans"],
     queryFn: getUserPlans,
-    staleTime: 2 * 60 * 1000,
+    staleTime: 1 * 60 * 60 * 1000,
   });
 
   return (

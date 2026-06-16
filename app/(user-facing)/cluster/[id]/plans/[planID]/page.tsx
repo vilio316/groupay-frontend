@@ -1,21 +1,11 @@
-import { cacheLife } from "next/cache";
+"use client";
 import PlanPage from "./PlanDetailsClient";
-import { Suspense } from "react";
-import { cacheTag } from "next/cache";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
 
-export default async function PlanDetailsPage({
-  params,
-}: {
-  params: Promise<{
-    id: string;
-    planID: string;
-  }>;
-}) {
-  const { id, planID } = await params;
+export default function PlanDetailsPage() {
+  const { id, planID } = useParams();
   async function fetchPlan() {
-    "use cache";
-    cacheLife("hours");
-    cacheTag(`plan_${planID}`);
     const planDetailsRequest = await fetch(
       `http://localhost:3000/clusters/${id}/plans/${planID}`,
     );
@@ -23,11 +13,20 @@ export default async function PlanDetailsPage({
     return planDetailsResponse;
   }
 
-  const planResponse = await fetchPlan();
+  const {
+    data: planResponse,
+    isSuccess,
+    isLoading,
+  } = useQuery({
+    queryKey: ["plan", planID],
+    queryFn: fetchPlan,
+    staleTime: 1 * 60 * 60 * 1000,
+  });
 
   return (
-    <Suspense fallback="Fetching Plan Details">
-      <PlanPage planObj={planResponse} />{" "}
-    </Suspense>
+    <>
+      {isSuccess && <PlanPage planObj={planResponse} />}
+      {isLoading && <p>Loading...</p>}
+    </>
   );
 }

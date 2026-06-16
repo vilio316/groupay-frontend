@@ -1,21 +1,13 @@
+"use client";
 import ClusterDetailsClient, {
   clusterDetailsType,
 } from "./ClusterDetailsClient";
-import { cacheLife, cacheTag } from "next/cache";
-import { Suspense } from "react";
+import { useParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 
-export default async function ClusterPage({
-  params,
-}: {
-  params: Promise<{
-    id: string;
-  }>;
-}) {
-  const { id } = await params;
+export default function ClusterPage() {
+  const { id } = useParams();
   async function fetchCluster() {
-    "use cache";
-    cacheLife("hours");
-    cacheTag(`cluster_${id}`);
     const clusterDetailsRequest = await fetch(
       `http://localhost:3000/clusters/${id}`,
       {
@@ -27,6 +19,22 @@ export default async function ClusterPage({
     return clusterDetailsResponse;
   }
 
-  const clusterDetailsResponse = await fetchCluster();
-  return <ClusterDetailsClient detailsObject={clusterDetailsResponse} />;
+  const {
+    data: clusterDetailsResponse,
+    isSuccess,
+    isLoading,
+  } = useQuery({
+    queryKey: ["cluster", id],
+    queryFn: fetchCluster,
+    staleTime: 1 * 60 * 60 * 10000,
+  });
+
+  return (
+    <>
+      {isSuccess && (
+        <ClusterDetailsClient detailsObject={clusterDetailsResponse} />
+      )}
+      {isLoading && <p>Loading...</p>}
+    </>
+  );
 }

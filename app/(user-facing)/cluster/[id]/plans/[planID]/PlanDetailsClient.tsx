@@ -48,9 +48,33 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
     }
   }
 
+  async function sendJoinNotification(id: string){
+    const {data} = await getSession()
+    const userId = data?.user.id
+    
+    if (id !== userId){
+      await fetch(`http://localhost:3000/notifications`, {
+        method: "POST", 
+        credentials: "include", 
+        body: JSON.stringify({
+          senderId: userId, 
+          recipientId: id, 
+          type: "join", 
+          message: `${data?.user.name} joined your plan`
+        }),
+          headers: {
+        "Content-Type": "application/json",
+      },
+      })
+    }
+  }
+
   const queryClient = useQueryClient();
   const { isPending, mutateAsync: handleMembership } = useMutation({
-    mutationFn: () => handlePlanMembership(userDetailsInCluster),
+    mutationFn: async () => {
+      await handlePlanMembership(userDetailsInCluster); 
+      await sendJoinNotification(members[0].userId)
+    }, 
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ["userPlans"],

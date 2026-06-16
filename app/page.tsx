@@ -1,582 +1,629 @@
 "use client";
 
 import Link from "next/link";
+import { useRef, useEffect } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
 import { inter, soraClass } from "./fonts";
 import "./globals.css";
-import { AirplaneIcon, ForkKnifeIcon, HouseIcon } from "@phosphor-icons/react";
+
+import {
+  AirplaneIcon,
+  ForkKnifeIcon,
+  HouseIcon,
+} from "@phosphor-icons/react";
+
 import Avatars from "./components/AvatarsCircles";
 import { useSession } from "@/lib/authClient";
 
+gsap.registerPlugin(useGSAP, ScrollTrigger);
+
 export default function HomePage() {
+  const heroRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const { data } = useSession();
+ 
+
+  useGSAP(
+    () => {
+    
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+      tl.from(".hero-badge", { y: -24, opacity: 0, duration: 0.55 })
+        .from(".hero-title", { y: 90, opacity: 0, duration: 0.9 }, "-=0.25")
+        .from(".hero-subtitle", { y: 40, opacity: 0, duration: 0.65 }, "-=0.45")
+        .from(".hero-actions", { y: 30, opacity: 0, duration: 0.5 }, "-=0.35")
+        .from(
+          ".hero-stats .stat",
+          { y: 20, opacity: 0, stagger: 0.12, duration: 0.4 },
+          "-=0.25"
+        )
+        .from(
+          ".mockup-card",
+          { y: 120, opacity: 0, scale: 0.9, duration: 1.1, ease: "power4.out" },
+          "-=0.3"
+        );
+
+      // ── Animated stat counters ──
+      document.querySelectorAll(".stat-count").forEach((el) => {
+        const target = parseFloat(el.getAttribute("data-target") || "0");
+        const isDecimal = el.getAttribute("data-decimal") === "true";
+        gsap.from(
+          { val: 0 },
+          {
+            val: target,
+            duration: 2.2,
+            delay: 1.2,
+            ease: "power2.out",
+            onUpdate: function () {
+              el.textContent = isDecimal
+                ? this.targets()[0].val.toFixed(1)
+                : Math.round(this.targets()[0].val).toString();
+            },
+          }
+        );
+      });
+
+      // ── Ambient blobs ──
+      gsap.to(".blob1", { x: 30, y: -50, duration: 9, repeat: -1, yoyo: true, ease: "sine.inOut" });
+      gsap.to(".blob2", { x: -25, y: 30, duration: 11, repeat: -1, yoyo: true, ease: "sine.inOut" });
+      gsap.to(".blob3", { x: 35, y: -30, duration: 13, repeat: -1, yoyo: true, ease: "sine.inOut" });
+      gsap.to(".blob4", { x: -15, y: 20, duration: 7, repeat: -1, yoyo: true, ease: "sine.inOut" });
+
+      // ── Shimmer on hero highlight ──
+      gsap.to(".hero-highlight", {
+        backgroundPosition: "300% center",
+        repeat: -1,
+        duration: 5,
+        ease: "none",
+      });
+
+      // ── Parallax tilt on mockup ──
+      const hero = heroRef.current;
+      if (hero) {
+        const move = (e: MouseEvent) => {
+          const x = e.clientX / window.innerWidth - 0.5;
+          const y = e.clientY / window.innerHeight - 0.5;
+          gsap.to(cardRef.current, {
+            rotateY: x * 12,
+            rotateX: -y * 8,
+            transformPerspective: 1200,
+            duration: 0.9,
+            ease: "power2.out",
+          });
+          // Also shift blobs slightly on mouse
+          gsap.to(".blob1", { x: x * 20, y: y * 15, duration: 1.5 });
+        };
+        const reset = () => {
+          gsap.to(cardRef.current, { rotateY: 0, rotateX: 0, duration: 1.2, ease: "elastic.out(1, 0.5)" });
+        };
+        hero.addEventListener("mousemove", move);
+        hero.addEventListener("mouseleave", reset);
+        return () => {
+          hero.removeEventListener("mousemove", move);
+          hero.removeEventListener("mouseleave", reset);
+        };
+      }
+    },
+    { scope: heroRef }
+  );
+
+  // ── Scroll-triggered reveals ──
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // How it works steps
+      gsap.from(".step-card", {
+        scrollTrigger: {
+          trigger: "#how-it-works",
+          start: "top 75%",
+        },
+        y: 60,
+        opacity: 0,
+        duration: 0.7,
+        stagger: 0.15,
+        ease: "power3.out",
+      });
+
+      // Section headings
+      gsap.from(".section-reveal", {
+        scrollTrigger: {
+          trigger: ".section-reveal",
+          start: "top 80%",
+          toggleActions: "play none none none",
+        },
+        y: 40,
+        opacity: 0,
+        duration: 0.7,
+        stagger: 0.1,
+        ease: "power3.out",
+      });
+
+      // Feature cards
+      gsap.from(".feature-card", {
+        scrollTrigger: {
+          trigger: "#features",
+          start: "top 70%",
+        },
+        y: 50,
+        opacity: 0,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: "power3.out",
+      });
+
+      // Progress bar fill animate on scroll
+      ScrollTrigger.create({
+        trigger: ".progress-track",
+        start: "top 85%",
+        onEnter: () => {
+          gsap.from(".progress-fill", { scaleX: 0, duration: 1.4, ease: "power3.out", transformOrigin: "left" });
+        },
+      });
+
+      // Expense rows stagger on scroll (for any repeat exposure)
+      gsap.from(".expense-row", {
+        scrollTrigger: { trigger: ".mockup-card", start: "top 80%" },
+        x: -30,
+        opacity: 0,
+        stagger: 0.12,
+        duration: 0.6,
+        ease: "power2.out",
+      });
+
+      // CTA section
+      gsap.from(".cta-inner", {
+        scrollTrigger: { trigger: ".cta-banner", start: "top 80%" },
+        y: 40,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power3.out",
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <div>
-      <nav className="fixed top-0 left-0 z-100 bg-white backdrop-blur-md border-b border-b-solid border-b-card-border">
-        <div className="nav-inner flex items-center justify-between w-screen mx-auto px-6 h-16">
-          <Link
-            href="/"
-            className={`logo ${soraClass} font-bold text-forest flex items-center gap-2 text-xl`}
-          >
-            <div className="bg-green h-8 w-8 rounded-lg flex items-center justify-center">
-              <svg viewBox="0 0 20 20" className="fill-white h-4 w-4">
-                <path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4zm-1 3v4l3.5 2-.7 1.2L8 12.2V7h1z" />
-              </svg>
-            </div>
-            GrouPay
-          </Link>
-          <div className="nav-links flex items-center gap-x-4">
+    <div className="groupay-root">
+      {/* ── NAV ── */}
+      <nav className="fixed top-0 left-0 z-50 w-full">
+        <div
+          className="nav-glass mx-4 mt-4 rounded-2xl border border-white/20 bg-white/80 backdrop-blur-lg shadow-sm"
+        >
+          <div className="flex items-center justify-between px-6 h-[60px]">
             <Link
-              href="/#how-it-works"
-              className="hover:text-forest text-ink-mid"
+              href="/"
+              className={`logo ${soraClass} font-bold text-forest flex items-center gap-2 text-xl`}
             >
-              How it Works
+              <div className="bg-green h-8 w-8 rounded-lg flex items-center justify-center shadow-md shadow-green/30">
+                <svg viewBox="0 0 20 20" className="fill-white h-4 w-4">
+                  <path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4zm-1 3v4l3.5 2-.7 1.2L8 12.2V7h1z" />
+                </svg>
+              </div>
+              GrouPay
             </Link>
-            <Link href="/#features" className="hover:text-forest text-ink-mid">
-              Features
-            </Link>
-            {/* <Link
-              href="#testimonials"
-              className="hover:text-forest text-ink-mid"
-            >
-              Reviews
-            </Link> */}
-          </div>
-          <div className="flex items-center gap-4">
-            <a
-              href={data?.user ? "/dashboard" : "/auth/sign-in"}
-              className="text-[14px] font-semibold text-forest hover:text-teal py-3"
-            >
-              {data && data.user ? data.user.name : "Log In"}
-            </a>
-            <a
-              href={"/auth/sign-up"}
-              className={`bg-green hover:bg-greener text-white inline-flex center gap-2 py-3 px-6 rounded-full font-semibold cursor-pointer transition-all`}
-            >
-              Get Started
-            </a>
+
+            <div className="nav-links hidden md:flex items-center gap-x-6">
+              <Link href="/#how-it-works" className="text-sm font-medium text-ink-mid hover:text-forest transition-colors">
+                How it Works
+              </Link>
+              <Link href="/#features" className="text-sm font-medium text-ink-mid hover:text-forest transition-colors">
+                Features
+              </Link>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <a
+                href={data?.user ? "/dashboard" : "/auth/sign-in"}
+                className="text-[14px] font-semibold text-forest hover:text-teal transition-colors py-2"
+              >
+                {data && data.user ? data.user.name : "Log In"}
+              </a>
+              <a
+                href="/auth/sign-up"
+                className="bg-green hover:bg-greener text-white inline-flex items-center gap-2 py-2.5 px-5 rounded-xl font-semibold text-sm cursor-pointer transition-all shadow-md shadow-green/25 hover:shadow-lg hover:shadow-green/35 hover:-translate-y-px"
+              >
+                Get Started →
+              </a>
+            </div>
           </div>
         </div>
       </nav>
 
-      <div>
-        <section className="hero py-40 pl-6 pr-6 text-center relative overflow-hidden">
-          <div className="hero-bg absolute inset-0 z-0">
-            <div className="hero-blob md:w-100 md:h-100 bg-aqua -top-25 -right-80 absolute rounded-full backdrop-blur-3xl opacity-25 "></div>
-            <div className="blob-2 absolute rounded-full backdrop-blur-3xl opacity-25 md:w-75 md:h-75 bg-green -bottom-15 -left-15 "></div>
-            <div
-              className="blob-3 absolute rounded-full backdrop-blur-3xl opacity-25 bg-teal"
-              style={{
-                width: "200px",
-                height: "200px",
-                bottom: "40px",
-                right: "20%",
-              }}
-            ></div>
-          </div>
-          <div className="hero-content relative z-1 grid justify-center items-center">
-            <div
-              className="hero-badge flex items-center bg-aqua/15 border border-solid border-aqua/40 py-1.5 px-3.5 text-sm font-semibold md:mb-7 rounded-full w-2/5 justify-self-center gap-x-2
-            "
-            >
-              <span className="hero-badge-dot w-2 h-2 bg-aqua rounded-full"></span>{" "}
-              <p className="text-center w-[90%]">New features available!</p>
-            </div>
-            <p
-              className={`${soraClass} text-[48px] font-bold max-w-195 text-forest my-0 md:mx-6 tracking-tight`}
-              style={{
-                margin: "0 auto 24px",
-              }}
-            >
-              Split bills.
-              <br />
-              Chase goals.
-              <br />
-              <span className="text-green">Together.</span>
-            </p>
-            <p
-              className="text-lg/relaxed text-ink-mid md:max-w-140 "
-              style={{
-                margin: "0 auto 40px",
-              }}
-            >
-              GrouPay makes it effortless to split expenses with anyone, track
-              who owes what, and pool money toward shared goals — all in one
-              beautiful place.
-            </p>
-            <div className="hero-actions flex justify-center  flex-wrap gap-4">
-              <a
-                href="/auth/sign-up"
-                className="btn bg-green hover:bg-[#3db029] md:px-9 md:py-4 rounded-full"
-              >
-                Start for free →
-              </a>
-              <a
-                href="#how-it-works"
-                className="btn bg-transparent text-green border border-green border-solid md:px-9 md:py-4 rounded-full"
-              >
-                See how it works
-              </a>
-            </div>
-            <div className="hero-stats md:gap-12 md:my-18 flex justify-center flex-wrap">
-              <div className="stat text-center">
-                <div
-                  className={`${soraClass} text-[32px] font-bold text-forest`}
-                >
-                  2.4<span className="text-green">M+</span>
-                </div>
-                <div className="stat-label text-ink-mid">Active users</div>
-              </div>
-              <div className="stat text-center">
-                <div
-                  className={`${soraClass} text-[32px] font-bold text-forest`}
-                >
-                  ₦<span className="text-green">480B</span>
-                </div>
-                <div className="stat-label text-ink-mid">Settled to date</div>
-              </div>
-              {/* <div className="stat">
-                <div className="stat-num">
-                  4.9<span>★</span>
-                </div>
-                <div className="stat-label">App store rating</div>
-              </div> */}
-              <div className="stat text-center">
-                <div
-                  className={`${soraClass} text-[32px] font-bold text-forest`}
-                >
-                  0<span className="text-green">%</span>
-                </div>
-                <div className="stat-label text-ink-mid">Hidden fees</div>
-              </div>
-            </div>
-          </div>
-        </section>
+      {/* ── HERO ── */}
+      <section
+        ref={heroRef}
+        className="hero relative overflow-hidden min-h-screen flex flex-col items-center justify-center pt-32 pb-12 px-6 text-center"
+      >
+        {/* Blobs */}
+        <div className="hero-bg absolute inset-0 z-0 pointer-events-none">
+          <div className="blob1 absolute rounded-full opacity-30 bg-aqua blur-3xl"
+            style={{ width: 480, height: 480, top: -120, right: -120 }} />
+          <div className="blob2 absolute rounded-full opacity-20 bg-green blur-3xl"
+            style={{ width: 360, height: 360, bottom: -60, left: -60 }} />
+          <div className="blob3 absolute rounded-full opacity-20 bg-teal blur-3xl"
+            style={{ width: 240, height: 240, bottom: 120, right: "18%" }} />
+          <div className="blob4 absolute rounded-full opacity-15 bg-aqua blur-2xl"
+            style={{ width: 180, height: 180, top: "40%", left: "8%" }} />
+          {/* Subtle grid overlay */}
+          <div className="absolute inset-0 opacity-[0.025]"
+            style={{ backgroundImage: "linear-gradient(#0d3d2a 1px, transparent 1px), linear-gradient(90deg, #0d3d2a 1px, transparent 1px)", backgroundSize: "48px 48px" }} />
+        </div>
 
-        <div className="mockup-strip pt-0 px-6 pb-20 flex justify-center">
-          <div className="mockup-card bg-white border border-card-border rounded-2xl p-7 max-w-215 w-full shadow-xl">
-            <div className="mockup-header flex items-center justify-between md:mb-5">
-              <div
-                className={`mockup-title ${soraClass} font-bold text-forest`}
-              >
-                🏖️ Zanzibar Trip — June 2026
-              </div>
-              <span className="py-1 px-3 rounded-full text-sm font-semibold bg-aqua/0.2 text-[#006e8a]">
-                3 of 6 settled
-              </span>
-            </div>
-            <div className="expense-list flex flex-col md:gap-3">
-              <div className="expense-row flex items-center md:gap-4 bg-white border border-card-border rounded-[14px] p-4 ">
-                <div className="expense-icon w-10 h-10 rounded-sm flex place-items-center justify-center shrink-0 bg-teal/25">
-                  <AirplaneIcon className="h-4 w-4" />
-                </div>
-                <div className="expense-info flex-1">
-                  <div className="expense-name font-bold text-[14px] text-forest">
-                    Group flights
-                  </div>
-                  <div className="expense-meta text-ink-mid text-sm mt-0.5">
-                    Paid by Chidi · 6 people · Apr 12
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div
-                    className={`expense-amount ${soraClass} font-bold text-forest text-right`}
-                  >
-                    ₦285,000
-                  </div>
-                  <div className="expense-share text-[11px] text-teal font-semibold">
-                    Your share: ₦47,500
-                  </div>
-                  <span className="text-sm rounded-full text-[#006e8a] text-right bg-green/30 py-1 px-2">
-                    You paid ✓
+        <div className="hero-content relative z-10 flex flex-col items-center max-w-5xl mx-auto">
+          {/* Badge */}
+          <div className="hero-badge inline-flex items-center gap-2 bg-aqua/10 border border-aqua/30 py-1.5 px-4 rounded-full text-sm font-semibold text-forest mb-8 backdrop-blur-sm">
+            <span className="w-2 h-2 bg-aqua rounded-full animate-pulse" />
+            New: Multi-currency group goals are live!
+          </div>
+
+          {/* Title */}
+          <h1 className={`hero-title ${soraClass} font-bold text-forest tracking-tight mb-6`}
+            style={{ fontSize: "clamp(48px, 8vw, 80px)", lineHeight: 1.05 }}>
+            Split bills.
+            <br />
+            Chase goals.
+            <br />
+            <span className="hero-highlight inline-block"
+              style={{
+                background: "linear-gradient(90deg, #1a6b41, #00bd9d, #49c635, #00bd9d, #1a6b41)",
+                backgroundSize: "300% auto",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}>
+              Together.
+            </span>
+          </h1>
+
+          {/* Subtitle */}
+          <p className="hero-subtitle text-lg text-ink-mid max-w-lg mb-10 leading-relaxed">
+            GrouPay makes it effortless to split expenses with anyone, track
+            who owes what, and pool money toward shared goals — all in one
+            beautiful place.
+          </p>
+
+          {/* CTAs */}
+          <div className="hero-actions flex flex-wrap justify-center gap-4 mb-14">
+            <a href="/auth/sign-up"
+              className="inline-flex items-center gap-2 bg-green hover:bg-greener text-white font-semibold px-8 py-4 rounded-full shadow-lg shadow-green/30 hover:shadow-xl hover:shadow-green/40 hover:-translate-y-0.5 transition-all duration-200">
+              Start for free
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </a>
+            <a href="#how-it-works"
+              className="inline-flex items-center gap-2 text-forest border border-forest/25 bg-white/60 hover:bg-white font-semibold px-8 py-4 rounded-full backdrop-blur-sm transition-all duration-200 hover:shadow-md">
+              See how it works
+            </a>
+          </div>
+
+          {/* Stats */}
+          <div className="hero-stats flex flex-wrap justify-center gap-10 mb-16">
+            {[
+              { num: "2.4", suffix: "M+", label: "Active users", decimal: true },
+              { num: "480", prefix: "₦", suffix: "B", label: "Settled to date" },
+              { num: "0", suffix: "%", label: "Hidden fees" },
+            ].map(({ num, prefix, suffix, label, decimal }, i) => (
+              <div key={i} className="stat text-center group">
+                <div className={`${soraClass} text-[36px] font-bold text-forest leading-none flex items-end justify-center gap-0.5`}>
+                  {prefix && <span className="text-[24px] mb-1 text-ink-mid">{prefix}</span>}
+                  <span className="stat-count"
+                    data-target={num}
+                    data-decimal={decimal ? "true" : "false"}>
+                    {num}
                   </span>
+                  <span className="text-green">{suffix}</span>
                 </div>
+                <div className="stat-label text-sm text-ink-mid mt-1">{label}</div>
               </div>
-              <div className="expense-row flex items-center md:gap-4 bg-white border border-card-border rounded-[14px] p-4">
-                <div className="expense-icon w-10 h-10 rounded-sm flex place-items-center justify-center shrink-0 bg-green/30">
-                  <HouseIcon weight="duotone" className="w-4 h-4" />
-                </div>
-                <div className="expense-info flex-1">
-                  <div className="expense-name font-bold text-[14px] text-forest">
-                    Beachfront villa (4 nights)
-                  </div>
-                  <div className="expense-meta text-ink-mid text-sm mt-0.5">
-                    Paid by Amara · 6 people · Apr 14
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div
-                    className={`expense-amount ${soraClass} font-bold text-forest text-right`}
-                  >
-                    ₦360,000
-                  </div>
-                  <div className="expense-share text-[11px] text-teal font-semibold">
-                    Your share: ₦60,000
-                  </div>
-                  <span className="text-sm rounded-full text-[#006e8a] text-right bg-amber-300/30 py-1 px-2">
-                    Pending
-                  </span>
-                </div>
-              </div>
-              <div className="expense-row flex items-center md:gap-4 bg-white border border-card-border rounded-[14px] p-4">
-                <div className="expense-icon w-10 h-10 rounded-sm flex place-items-center justify-center shrink-0 bg-red-500/40">
-                  <ForkKnifeIcon className="w-4 h-4" />
-                </div>
-                <div className="expense-info flex-1">
-                  <div className="expense-name font-bold text-[14px] text-forest">
-                    Rooftop Dinner
-                  </div>
-                  <div className="expense-meta text-ink-mid text-sm mt-0.5 ">
-                    Paid by Emeka · 6 people · Apr 15
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div
-                    className={`expense-amount ${soraClass} font-bold text-forest text-right`}
-                  >
-                    ₦96,000
-                  </div>
-                  <div className="expense-share text-[11px] text-teal font-semibold">
-                    Your share: ₦16,000
-                  </div>
-                  <span className="text-sm rounded-full text-[#006e8a] text-right bg-amber-300/30 py-1 px-2">
-                    Pending
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="progress-section md:mt-5 ">
-              <div className="progress-label flex  justify-between text-sm mb-2">
-                <span className="font-bold text-forest">
-                  Group settlement progress
-                </span>
-                <span className="text-teal font-semibold">50% complete</span>
-              </div>
-              <div className="progress-track h-2.5 rounded-full overflow-hidden w-full bg-mist/45">
-                <div className="progress-fill rounded-full bg-linear-90 from-teal to-green w-1/2 h-2.5"></div>
-              </div>
-              <div className="flex items-center my-2">
-                <Avatars />
-              </div>
-              <button className="w-1/5 text-center rounded-full p-1 justify-self-end bg-teal text-white hover:bg-green hover:shadow-lg -translate-y-1 block hover:scale-105">
-                Settle up ✓
-              </button>
-            </div>
+            ))}
           </div>
         </div>
 
-        <section id="how-it-works" className="py-24 px-6">
-          <div className="container grid">
-            <div className="section-label text-xs uppercase text-teal tracking-wider font-bold my-2">
-              Simple by design
+        {/* ── Mockup Card ── */}
+        <div className="w-full flex justify-center px-2">
+          <div
+            ref={cardRef}
+            onMouseEnter={() => gsap.to(cardRef.current, { scale: 1.015, y: -8, duration: 0.35, ease: "power2.out" })}
+            onMouseLeave={() => gsap.to(cardRef.current, { scale: 1, y: 0, rotateX: 0, rotateY: 0, duration: 0.8, ease: "elastic.out(1,0.6)" })}
+            className="mockup-card relative bg-white border border-card-border rounded-2xl p-7 max-w-[860px] w-full shadow-2xl"
+            style={{ transformStyle: "preserve-3d", willChange: "transform" }}
+          >
+            {/* Inner glow */}
+            <div className="absolute inset-0 rounded-2xl pointer-events-none"
+              style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.04)" }} />
+
+            <div className="mockup-header flex items-center justify-between mb-5">
+              <div className={`mockup-title ${soraClass} font-bold text-forest text-lg`}>
+                🏖️ Zanzibar Trip — June 2026
+              </div>
+              <span className="py-1.5 px-3.5 rounded-full text-xs font-bold tracking-wide uppercase bg-teal/10 text-teal border border-teal/20">
+                3 of 6 settled
+              </span>
             </div>
-            <h2
-              className={`section-title font-bold text-forest md:mb-4 ${soraClass}`}
-            >
-              Up and running in seconds
-            </h2>
-            <p className="section-subtitle text-ink-mid max-w-130 text-[16px]/1.7">
-              No spreadsheets. No awkward reminders. Just GrouPay doing the
-              maths while you enjoy the moment.
-            </p>
-            <div className="steps-grid grid grid-cols-2 w-4/5 gap-3 p-2 justify-self-center">
-              <div className="step-card border border-card-border p-7 shadow-2xs transition-all hover:border-aqua hover:shadow-lg rounded-xl">
-                <div
-                  className={`step-num md:w-11 md:h-11 flex items-center justify-center ${soraClass} text-[18px]`}
-                >
-                  1
+
+            <div className="expense-list flex flex-col gap-3 mb-5">
+              {[
+                {
+                  icon: <AirplaneIcon className="h-4 w-4 text-teal" />,
+                  iconBg: "bg-teal/15",
+                  name: "Group flights",
+                  meta: "Paid by Chidi · 6 people · Apr 12",
+                  amount: "₦285,000",
+                  share: "Your share: ₦47,500",
+                  badge: "You paid ✓",
+                  badgeBg: "bg-green/15 text-green border border-green/20",
+                },
+                {
+                  icon: <HouseIcon weight="duotone" className="h-4 w-4 text-forest" />,
+                  iconBg: "bg-green/20",
+                  name: "Beachfront villa (4 nights)",
+                  meta: "Paid by Amara · 6 people · Apr 14",
+                  amount: "₦360,000",
+                  share: "Your share: ₦60,000",
+                  badge: "Pending",
+                  badgeBg: "bg-amber-400/15 text-amber-700 border border-amber-300/30",
+                },
+                {
+                  icon: <ForkKnifeIcon className="h-4 w-4 text-rose-500" />,
+                  iconBg: "bg-rose-100",
+                  name: "Rooftop Dinner",
+                  meta: "Paid by Emeka · 6 people · Apr 15",
+                  amount: "₦96,000",
+                  share: "Your share: ₦16,000",
+                  badge: "Pending",
+                  badgeBg: "bg-amber-400/15 text-amber-700 border border-amber-300/30",
+                },
+              ].map((row, i) => (
+                <div key={i}
+                  className="expense-row group flex items-center gap-4 bg-white border border-card-border rounded-xl p-4 hover:border-teal/30 hover:shadow-md transition-all duration-200 cursor-default">
+                  <div className={`expense-icon w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${row.iconBg} group-hover:scale-110 transition-transform duration-200`}>
+                    {row.icon}
+                  </div>
+                  <div className="expense-info flex-1 min-w-0">
+                    <div className="font-semibold text-[14px] text-forest">{row.name}</div>
+                    <div className="text-ink-mid text-xs mt-0.5">{row.meta}</div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div className={`${soraClass} font-bold text-forest text-[15px]`}>{row.amount}</div>
+                    <div className="text-[11px] text-teal font-semibold mt-0.5">{row.share}</div>
+                    <span className={`inline-block mt-1 text-[11px] font-semibold rounded-full py-0.5 px-2.5 ${row.badgeBg}`}>
+                      {row.badge}
+                    </span>
+                  </div>
                 </div>
-                <h3 className="mb-2 text-forest">Create a group</h3>
-                <p>
-                  Name your group, set a currency, and invite members by email,
-                  phone, or a shareable link. They're in with one tap.
-                </p>
+              ))}
+            </div>
+
+            {/* Progress */}
+            <div className="progress-section bg-stone-50 rounded-xl p-4 border border-card-border">
+              <div className="flex justify-between items-center mb-3">
+                <span className="font-semibold text-sm text-forest">Group settlement</span>
+                <span className="text-teal font-bold text-sm">50% complete</span>
               </div>
-              <div className="step-card  border border-card-border p-7 shadow-2xs transition-all hover:border-aqua hover:shadow-lg rounded-xl">
-                <div
-                  className={`step-num md:w-11 md:h-11 flex items-center justify-center ${soraClass} text-[18px]`}
-                >
-                  2
-                </div>
-                <h3 className="mb-2 text-forest">Add expenses</h3>
-                <p>
-                  Log any bill — equally split or custom. Snap the receipt for
-                  your records. Everyone sees their share instantly.
-                </p>
+              <div className="progress-track h-2.5 rounded-full overflow-hidden w-full bg-mist/60">
+                <div className="progress-fill h-full rounded-full"
+                  style={{ width: "50%", background: "linear-gradient(90deg, #00bd9d, #49c635)" }} />
               </div>
-              <div className="step-card  border border-card-border p-7 shadow-2xs transition-all hover:border-aqua hover:shadow-lg rounded-xl">
-                <div
-                  className={`step-num md:w-11 md:h-11 flex items-center justify-center ${soraClass} text-[18px]`}
-                >
-                  3
-                </div>
-                <h3 className="mb-2 text-forest">Track & remind</h3>
-                <p>
-                  Watch the live balance dashboard. GrouPay auto-calculates who
-                  owes what, and sends gentle nudges so you don't have to.
-                </p>
-              </div>
-              <div className="step-card  border border-card-border p-7 shadow-2xs transition-all hover:border-aqua hover:shadow-lg rounded-xl">
-                <div
-                  className={`step-num md:w-11 md:h-11 flex items-center justify-center ${soraClass} text-[18px]`}
-                >
-                  4
-                </div>
-                <h3 className="mb-2 text-forest">Settle up</h3>
-                <p>
-                  Our debt-simplification algorithm minimises the number of
-                  transfers. Confirm payment and everyone's balance resets
-                  clean.
-                </p>
+              <div className="flex items-center justify-between mt-3">
+                <Avatars />
+                <button className="text-xs font-bold text-white bg-teal hover:bg-green px-4 py-1.5 rounded-full transition-all hover:shadow-md hover:-translate-y-px">
+                  Settle up ✓
+                </button>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section
-          className="section features-bg pt-24 pb-12 px-6 bg-forest text-white"
-          id="features"
-        >
-          <div className="container grid ">
-            <div className="section-label text-sm uppercase my-2 text-teal">
-              Everything you need
-            </div>
-            <h2 className={`section-title ${soraClass} my-1 text-lg`}>
-              Built for real life
-            </h2>
-            <p className="section-subtitle my-2 text-[16px]/1.7">
-              From spontaneous dinners to year-long savings goals, GrouPay
-              handles every kind of shared money moment.
-            </p>
-            <div className="features-grid grid grid-cols-3 justify-self-center w-4/5 gap-4 md:py-6">
-              <div className="feature-card bg-white/5 border border-solid border-white/20 p-7 transition-all hover:bg-white/10 rounded-xl">
-                <div className="feature-icon">💸</div>
-                <h3 className={`${soraClass} text-bold`}>
-                  Flexible Bill Splitting
-                </h3>
-                <p>
-                  Split equally, by percentage, by exact amounts, or by shares.
-                  Handle complex group bills without the headache.
-                </p>
-              </div>
-              <div className="feature-card bg-white/5 border border-solid border-white/20 p-7 transition-all hover:bg-white/10 rounded-xl">
-                <div className="feature-icon">🎯</div>
-                <h3 className={`${soraClass} text-bold`}>Group Goals</h3>
-                <p>
-                  Pool contributions toward any shared objective — a group gift,
-                  a holiday fund, or a team dinner. Watch the progress bar fill
-                  up.
-                </p>
-              </div>
-              <div className="feature-card bg-white/5 border border-solid border-white/20 p-7 transition-all hover:bg-white/10 rounded-xl">
-                <div className="feature-icon">📊</div>
-                <h3 className={`${soraClass} text-bold`}>
-                  Live Balance Dashboard
-                </h3>
-                <p>
-                  See all your groups, what you owe, and what you're owed — at a
-                  glance, always up to date.
-                </p>
-              </div>
-              <div className="feature-card bg-white/5 border border-solid border-white/20 p-7 transition-all hover:bg-white/10 rounded-xl">
-                <div className="feature-icon">🔔</div>
-                <h3 className={`${soraClass} text-bold`}>Smart Reminders</h3>
-                <p>
-                  Automated, friendly nudges so you never have to be the awkward
-                  one asking for money back.
-                </p>
-              </div>
-              <div className="feature-card bg-white/5 border border-solid border-white/20 p-7 transition-all hover:bg-white/10 rounded-xl">
-                <div className="feature-icon">🧮</div>
-                <h3 className={`${soraClass} text-bold`}>
-                  Debt Simplification
-                </h3>
-                <p>
-                  Our algorithm condenses tangled IOUs into the minimum number
-                  of transfers. Everyone settles fast.
-                </p>
-              </div>
-              <div className="feature-card bg-white/5 border border-solid border-white/20 p-7 transition-all hover:bg-white/10 rounded-xl">
-                <div className="feature-icon">🌍</div>
-                <h3 className={`${soraClass} text-bold`}>Multi-Currency</h3>
-                <p>
-                  Travel the world together. GrouPay handles currency conversion
-                  so cross-border trips don't get messy.
-                </p>
-              </div>
-            </div>
+    
+      <section id="how-it-works" className="py-28 px-6 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <div className="section-reveal text-xs uppercase text-teal tracking-widest font-bold mb-3">
+            Simple by design
           </div>
-        </section>
+          <h2 className={`section-reveal ${soraClass} text-4xl font-bold text-forest mb-4`}>
+            Up and running in seconds
+          </h2>
+          <p className="section-reveal text-ink-mid max-w-md text-base leading-relaxed mb-14">
+            No spreadsheets. No awkward reminders. Just GrouPay doing the
+            maths while you enjoy the moment.
+          </p>
 
-        {/* <section className="section" id="testimonials">
-          <div className="container">
-            <div className="section-label">What people say</div>
-            <h2 className="section-title">Loved by groups everywhere</h2>
-            <p className="section-subtitle">
-              Real people, real expenses, zero awkwardness.
-            </p>
-            <div className="testimonials-grid">
-              <div className="testimonial-card">
-                <div className="stars">★★★★★</div>
-                <div className="testimonial-quote">
-                  We used GrouPay for a 10-person trip to Morocco. The debt
-                  simplification alone saved us hours of confusion at the end.
+          <div className="steps-grid grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {[
+              {
+                num: "01",
+                icon: "👥",
+                title: "Create a group",
+                body: "Name your group, set a currency, and invite members by email, phone, or a shareable link. They're in with one tap.",
+                accent: "from-teal/10 to-aqua/5",
+              },
+              {
+                num: "02",
+                icon: "🧾",
+                title: "Add expenses",
+                body: "Log any bill — equally split or custom. Snap the receipt for your records. Everyone sees their share instantly.",
+                accent: "from-green/10 to-teal/5",
+              },
+              {
+                num: "03",
+                icon: "📡",
+                title: "Track & remind",
+                body: "Watch the live balance dashboard. GrouPay auto-calculates who owes what, and sends gentle nudges so you don't have to.",
+                accent: "from-aqua/10 to-green/5",
+              },
+              {
+                num: "04",
+                icon: "⚡",
+                title: "Settle up",
+                body: "Our debt-simplification algorithm minimises the number of transfers. Confirm payment and everyone's balance resets clean.",
+                accent: "from-teal/10 to-green/5",
+              },
+            ].map((step, i) => (
+              <div key={i}
+                className={`step-card group relative bg-gradient-to-br ${step.accent} border border-card-border p-8 rounded-2xl hover:border-teal/40 hover:shadow-lg transition-all duration-300 overflow-hidden`}>
+                {/* Large ghost number */}
+                <div className={`absolute -top-3 -right-1 ${soraClass} text-[80px] font-black text-forest/5 leading-none select-none pointer-events-none`}>
+                  {step.num}
                 </div>
-                <div className="testimonial-author">
-                  <div className="avatar">AK</div>
-                  <div>
-                    <div className="author-name">Aisha Kamara</div>
-                    <div className="author-handle">Lagos · Travel blogger</div>
+                <div className="text-3xl mb-4">{step.icon}</div>
+                <div className={`${soraClass} text-xs font-bold text-teal tracking-wider uppercase mb-2`}>
+                  Step {step.num}
+                </div>
+                <h3 className={`${soraClass} text-xl font-bold text-forest mb-3`}>{step.title}</h3>
+                <p className="text-ink-mid text-[15px] leading-relaxed">{step.body}</p>
+
+                {/* Connector arrow (right-side, not on last col) */}
+                {(i === 0 || i === 2) && (
+                  <div className="hidden sm:block absolute -right-3 top-1/2 -translate-y-1/2 z-10">
+                    <div className="w-6 h-6 bg-white border border-card-border rounded-full flex items-center justify-center shadow-sm">
+                      <svg className="w-3 h-3 text-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
-              <div className="testimonial-card">
-                <div className="stars">★★★★★</div>
-                <div className="testimonial-quote">
-                  Our house of 5 uses it for rent, groceries, utilities —
-                  everything. No more arguments about who owes what. Absolute
-                  lifesaver.
-                </div>
-                <div className="testimonial-author">
-                  <div className="avatar">JO</div>
-                  <div>
-                    <div className="author-name">James Osei</div>
-                    <div className="author-handle">Accra · Student</div>
-                  </div>
-                </div>
-              </div>
-              <div className="testimonial-card">
-                <div className="stars">★★★★★</div>
-                <div className="testimonial-quote">
-                  The Goals feature is underrated — we pooled for a team offsite
-                  and hit our target two weeks early. Clean UI, everything just
-                  works.
-                </div>
-                <div className="testimonial-author">
-                  <div className="avatar">FN</div>
-                  <div>
-                    <div className="author-name">Fatima Nwosu</div>
-                    <div className="author-handle">Abuja · Product Manager</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
-        </section> */}
+        </div>
+      </section>
 
-        <section className="cta-banner py-20 px-6 bg-linear-150 from-[rgba(73, 198, 53, 0.08)] to-[rgba(0, 189, 157, 0.08)] border border-y-card-border text-center ">
-          <h2 className={`text-[40px] text-forest ${soraClass} font-bold mb-4`}>
+      {/* ── FEATURES ── */}
+      <section id="features" className="relative py-28 px-6 bg-forest text-white overflow-hidden">
+        {/* BG texture */}
+        <div className="absolute inset-0 opacity-[0.04]"
+          style={{ backgroundImage: "radial-gradient(circle, #49c635 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-teal/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-green/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-5xl mx-auto relative z-10">
+          <div className="section-reveal text-xs uppercase tracking-widest font-bold text-teal mb-3">
+            Everything you need
+          </div>
+          <h2 className={`section-reveal ${soraClass} text-4xl font-bold mb-4`}>
+            Built for real life
+          </h2>
+          <p className="section-reveal text-white/60 max-w-md text-base leading-relaxed mb-14">
+            From spontaneous dinners to year-long savings goals, GrouPay
+            handles every kind of shared money moment.
+          </p>
+
+          <div className="features-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { icon: "💸", title: "Flexible Bill Splitting", body: "Split equally, by percentage, by exact amounts, or by shares. Handle complex group bills without the headache." },
+              { icon: "🎯", title: "Group Goals", body: "Pool contributions toward any shared objective — a group gift, a holiday fund, or a team dinner. Watch the progress bar fill up." },
+              { icon: "📊", title: "Live Balance Dashboard", body: "See all your groups, what you owe, and what you're owed — at a glance, always up to date." },
+              { icon: "🔔", title: "Smart Reminders", body: "Automated, friendly nudges so you never have to be the awkward one asking for money back." },
+              { icon: "🧮", title: "Debt Simplification", body: "Our algorithm condenses tangled IOUs into the minimum number of transfers. Everyone settles fast." },
+              { icon: "🌍", title: "Multi-Currency", body: "Travel the world together. GrouPay handles currency conversion so cross-border trips don't get messy." },
+            ].map((f, i) => (
+              <div key={i}
+                className="feature-card group relative bg-white/5 border border-white/10 p-7 rounded-2xl hover:bg-white/10 hover:border-teal/40 transition-all duration-300 overflow-hidden">
+                <div className="absolute inset-0 bg-linear-to-br from-teal/0 to-green/0 group-hover:from-teal/5 group-hover:to-green/5 transition-all duration-500 rounded-2xl" />
+                <div className="relative z-10">
+                  <span className="text-3xl mb-4 block">{f.icon}</span>
+                  <h3 className={`${soraClass} font-bold text-white mb-2 text-lg`}>{f.title}</h3>
+                  <p className="text-white/55 text-[14px] leading-relaxed">{f.body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA BANNER ── */}
+      <section className="cta-banner relative py-24 px-6 text-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-teal/8 via-transparent to-green/8" />
+        <div className="absolute inset-0 opacity-[0.03]"
+          style={{ backgroundImage: "linear-gradient(#0d3d2a 1px, transparent 1px), linear-gradient(90deg, #0d3d2a 1px, transparent 1px)", backgroundSize: "48px 48px" }} />
+
+        <div className="cta-inner relative z-10 max-w-2xl mx-auto">
+          <div className="inline-flex items-center gap-2 bg-green/10 border border-green/20 text-green text-sm font-semibold px-4 py-1.5 rounded-full mb-6">
+            <span className="w-2 h-2 bg-green rounded-full" />
+            Free forever for personal use
+          </div>
+          <h2 className={`${soraClass} text-[clamp(32px,6vw,52px)] font-bold text-forest mb-4 leading-tight`}>
             Ready to end the awkwardness?
           </h2>
-          <p className="text-ink-mid md:mb-9">
+          <p className="text-ink-mid mb-10 text-lg">
             Join 2.4 million people who've made shared money simple.
           </p>
           <Link
             href="/auth/sign-up"
-            className="inline-flex items-center gap-2 py-3 px-7 bg-green rounded-full transition-all cursor-pointer font-semibold hover:bg-[#3db029] hover:translate-y-0.5 hover:shadow-lg"
+            className="inline-flex items-center gap-2 bg-green hover:bg-greener text-white font-semibold text-lg py-4 px-10 rounded-full shadow-xl shadow-green/30 hover:shadow-2xl hover:shadow-green/40 hover:-translate-y-1 transition-all duration-200"
           >
-            Create your free account →
+            Create your free account
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
           </Link>
-        </section>
+          <p className="text-ink-mid/60 text-sm mt-5">No credit card required.</p>
+        </div>
+      </section>
 
-        <footer className="bg-forest text-mist md:pt-14 md:pb-8 md:px-6">
-          <div className="footer-grid grid grid-cols-5 md:gap-8">
-            <div className="footer-brand col-span-2">
-              <div className="logo text-white mb-3">
-                <div className="h-8 w-8 bg-green rounded-sm flex items-center justify-center">
+      {/* ── FOOTER ── */}
+      <footer className="bg-forest text-white/60">
+        <div className="max-w-6xl mx-auto px-6 pt-14 pb-8">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 pb-10 border-b border-white/10">
+            <div className="col-span-2">
+              <div className={`${soraClass} font-bold text-white text-xl flex items-center gap-2 mb-4`}>
+                <div className="h-8 w-8 bg-green rounded-lg flex items-center justify-center shadow-md shadow-green/30">
                   <svg viewBox="0 0 20 20" className="fill-white h-4 w-4">
                     <path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4zm-1 3v4l3.5 2-.7 1.2L8 12.2V7h1z" />
                   </svg>
                 </div>
                 GrouPay
               </div>
-              <p>
-                Making shared spending fair,
-                <br />
-                transparent, and friction-free
-                <br />
-                for groups everywhere.
+              <p className="text-sm leading-relaxed max-w-xs">
+                Making shared spending fair, transparent, and friction-free for
+                groups everywhere.
               </p>
             </div>
-            <div className="footer-col">
-              <p
-                className={`${soraClass} text-sm font-bold text-white tracking-wider uppercase mb-4`}
-              >
-                Product
-              </p>
-              <a href="#" className="block">
-                Bill Splitting
-              </a>
-              <a href="#" className="block">
-                Group Goals
-              </a>
-              <a href="#" className="block">
-                Dashboard
-              </a>
-              <a href="#" className="block">
-                Integrations
-              </a>
-              <a href="#" className="block">
-                Mobile App
-              </a>
-            </div>
-            <div className="footer-col">
-              <p
-                className={`${soraClass} text-sm font-bold text-white tracking-wider uppercase mb-4`}
-              >
-                Company
-              </p>
-              <a href="#" className="block">
-                About
-              </a>
-              <a href="#" className="block">
-                Blog
-              </a>
-              <a href="#" className="block">
-                Careers
-              </a>
-              <a href="#" className="block">
-                Press
-              </a>
-              <a href="#" className="block">
-                Contact
-              </a>
-            </div>
-            <div className="footer-col">
-              <p
-                className={`${soraClass} text-sm font-bold text-white tracking-wider uppercase mb-4`}
-              >
-                Legal
-              </p>
-              <a href="#" className="block text-mist mb-2.5 hover:text-aqua">
-                Privacy Policy
-              </a>
-              <a href="#" className="block">
-                Terms of Service
-              </a>
-              <a href="#" className="block">
-                Cookie Policy
-              </a>
-              <a href="#" className="block">
-                Security
-              </a>
+
+            {[
+              {
+                heading: "Product",
+                links: ["Bill Splitting", "Group Goals", "Dashboard", "Integrations", "Mobile App"],
+              },
+              {
+                heading: "Company",
+                links: ["About", "Blog", "Careers", "Press", "Contact"],
+              },
+              {
+                heading: "Legal",
+                links: ["Privacy Policy", "Terms of Service", "Cookie Policy", "Security"],
+              },
+            ].map((col) => (
+              <div key={col.heading}>
+                <p className={`${soraClass} text-xs font-bold text-white tracking-widest uppercase mb-4`}>
+                  {col.heading}
+                </p>
+                {col.links.map((l) => (
+                  <a key={l} href="#" className="block text-sm text-white/50 hover:text-teal transition-colors mb-2.5">
+                    {l}
+                  </a>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6">
+            <span className="text-sm text-white/40">© 2026 GrouPay Inc. All rights reserved.</span>
+            <div className="flex items-center gap-5">
+              {["Twitter", "Instagram", "LinkedIn"].map((s) => (
+                <a key={s} href="#" className="text-sm text-white/40 hover:text-aqua transition-colors">
+                  {s}
+                </a>
+              ))}
             </div>
           </div>
-          <div className="footer-bottom bt-1 bt-aqua md:pt-6 flex justify-between items-center">
-            <span>© 2026 GrouPay Inc. All rights reserved.</span>
-            <div>
-              <a href="#" className="hover:text-aqua text-mist ml-5">
-                Twitter
-              </a>
-              <a href="#" className="hover:text-aqua text-mist ml-5">
-                Instagram
-              </a>
-              <a href="#" className="hover:text-aqua text-mist ml-5">
-                LinkedIn
-              </a>
-            </div>
-          </div>
-        </footer>
-      </div>
+        </div>
+      </footer>
     </div>
   );
 }

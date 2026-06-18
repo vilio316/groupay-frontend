@@ -69,7 +69,7 @@ export default function ProfilePage() {
           <span className="uppercase">Edit Profile Details</span>
         </Link>
       </div>
-      <div className="flex gap-4 items-center p-4 border border-card-border rounded-xl shadow-sm shadow-green/40">
+      <div className="flex gap-4 items-center p-4 border border-card-border rounded-xl shadow-sm shadow-green/40 my-3">
         <div>
           <img
             className="rounded-full md:h-28 md:w-28 w-24 h-24 object-cover border border-green"
@@ -85,7 +85,7 @@ export default function ProfilePage() {
               @{userDetails ? userDetails.email.split("@")[0] : ""}
             </p>
             <p>
-              Member in 5+ Clusters, including{" "}
+              Member in {userDetails.clusters.length} Clusters, including{" "}
               <span className="font-semibold text-green">mostActive </span>
             </p>
           </div>

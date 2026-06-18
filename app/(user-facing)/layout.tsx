@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 };
 
 import { Suspense } from "react";
+import TopNav from "../components/TopIcons";
 
 export default function DashboardLayout({
   children,
@@ -27,23 +28,7 @@ export default function DashboardLayout({
       <MobileNav />
       <div className="grid md:col-span-3 lg:col-span-5 relative p-2 md:p-0 overflow-y-scroll min-h-screen items-center">
         <div className="h-full my-2 md:p-2">
-          <div className="flex w-full items-center p-2 gap-x-4 justify-end top-icons">
-            <Link
-              href="/notifications"
-              className="relative flex justify-self-end"
-            >
-              <BellIcon className="flex w-8 h-8 fill-green" />
-              <div
-                className="absolute w-4 h-4 px-0.5
-                   text-center -top-1 right-0 rounded-full bg-aqua text-[10px]"
-              >
-                9+
-              </div>
-            </Link>
-            <Link href="/profile">
-              <UserIcon className="flex w-8 h-8 fill-green" />
-            </Link>
-          </div>
+          <TopNav />
           <Suspense fallback="Loading...">{children}</Suspense>
         </div>
       </div>

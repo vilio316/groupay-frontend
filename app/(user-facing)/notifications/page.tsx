@@ -4,6 +4,7 @@ import { soraClass } from "@/app/fonts";
 import { getSession, useSession } from "@/lib/authClient";
 import { BellSimpleSlashIcon, BellSimpleIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
+import { useNotifications } from "@/app/NotificationsProvider";
 
 export function makeDate(date: string) {
   const dateVal = new Date(date);
@@ -17,10 +18,19 @@ export function NotificationComponent({
     id: string;
     message: string;
     createdAt: string;
+    isRead: boolean;
   };
 }) {
+  const { updateNotis, notifications, updateUnread, unreadCount } =
+    useNotifications();
+
   return (
-    <div className="my-2 rounded-2xl border border-card-border flex items-center gap-x-3 p-2">
+    <div
+      className={`my-2 rounded-2xl  ${notif.isRead ? `border-card-border border` : `border-teal border-2`} flex items-center gap-x-3 p-2`}
+      onClick={() => {
+        if (unreadCount > 0) updateUnread((unread) => unread - 1);
+      }}
+    >
       <BellSimpleIcon />
       <div>
         <p key={notif.id} className="my-2 p-1 ">
@@ -33,30 +43,7 @@ export function NotificationComponent({
 }
 
 export default function NotificationsPage() {
-  const { data } = useSession();
-
-  const {
-    data: notifications,
-    isLoading,
-    isSuccess,
-  } = useQuery({
-    queryKey: ["notifications", data?.user.id],
-    queryFn: async () => {
-      const { data } = await getSession();
-      const notificationsRequest = await fetch(
-        `http://localhost:3000/notifications/${data?.user.id}`,
-        {
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-      const notificationsResponse = await notificationsRequest.json();
-      return notificationsResponse;
-    },
-    staleTime: 1 * 60 * 60 * 100,
-  });
+  const { notifications, isSuccess, isLoading } = useNotifications();
 
   return (
     <div className="grid h-full">

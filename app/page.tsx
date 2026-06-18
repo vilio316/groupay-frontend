@@ -1,7 +1,8 @@
+
 "use client";
 
 import Link from "next/link";
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -18,17 +19,19 @@ import {
 import Avatars from "./components/AvatarsCircles";
 import { useSession } from "@/lib/authClient";
 
+
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function HomePage() {
+  const rootRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const { data } = useSession();
- 
+
 
   useGSAP(
     () => {
-    
+     
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
       tl.from(".hero-badge", { y: -24, opacity: 0, duration: 0.55 })
@@ -46,8 +49,8 @@ export default function HomePage() {
           "-=0.3"
         );
 
-      // ── Animated stat counters ──
-      document.querySelectorAll(".stat-count").forEach((el) => {
+      
+      gsap.utils.toArray<HTMLElement>(".stat-count").forEach((el) => {
         const target = parseFloat(el.getAttribute("data-target") || "0");
         const isDecimal = el.getAttribute("data-decimal") === "true";
         gsap.from(
@@ -66,13 +69,13 @@ export default function HomePage() {
         );
       });
 
-      // ── Ambient blobs ──
+  
       gsap.to(".blob1", { x: 30, y: -50, duration: 9, repeat: -1, yoyo: true, ease: "sine.inOut" });
       gsap.to(".blob2", { x: -25, y: 30, duration: 11, repeat: -1, yoyo: true, ease: "sine.inOut" });
       gsap.to(".blob3", { x: 35, y: -30, duration: 13, repeat: -1, yoyo: true, ease: "sine.inOut" });
       gsap.to(".blob4", { x: -15, y: 20, duration: 7, repeat: -1, yoyo: true, ease: "sine.inOut" });
 
-      // ── Shimmer on hero highlight ──
+    
       gsap.to(".hero-highlight", {
         backgroundPosition: "300% center",
         repeat: -1,
@@ -80,10 +83,13 @@ export default function HomePage() {
         ease: "none",
       });
 
-      // ── Parallax tilt on mockup ──
+      
       const hero = heroRef.current;
+      let move: ((e: MouseEvent) => void) | undefined;
+      let reset: (() => void) | undefined;
+
       if (hero) {
-        const move = (e: MouseEvent) => {
+        move = (e: MouseEvent) => {
           const x = e.clientX / window.innerWidth - 0.5;
           const y = e.clientY / window.innerHeight - 0.5;
           gsap.to(cardRef.current, {
@@ -93,32 +99,18 @@ export default function HomePage() {
             duration: 0.9,
             ease: "power2.out",
           });
-          // Also shift blobs slightly on mouse
           gsap.to(".blob1", { x: x * 20, y: y * 15, duration: 1.5 });
         };
-        const reset = () => {
+        reset = () => {
           gsap.to(cardRef.current, { rotateY: 0, rotateX: 0, duration: 1.2, ease: "elastic.out(1, 0.5)" });
         };
         hero.addEventListener("mousemove", move);
         hero.addEventListener("mouseleave", reset);
-        return () => {
-          hero.removeEventListener("mousemove", move);
-          hero.removeEventListener("mouseleave", reset);
-        };
       }
-    },
-    { scope: heroRef }
-  );
 
-  // ── Scroll-triggered reveals ──
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // How it works steps
+     
       gsap.from(".step-card", {
-        scrollTrigger: {
-          trigger: "#how-it-works",
-          start: "top 75%",
-        },
+        scrollTrigger: { trigger: "#how-it-works", start: "top 75%" },
         y: 60,
         opacity: 0,
         duration: 0.7,
@@ -126,26 +118,20 @@ export default function HomePage() {
         ease: "power3.out",
       });
 
-      // Section headings
-      gsap.from(".section-reveal", {
-        scrollTrigger: {
-          trigger: ".section-reveal",
-          start: "top 80%",
-          toggleActions: "play none none none",
-        },
-        y: 40,
-        opacity: 0,
-        duration: 0.7,
-        stagger: 0.1,
-        ease: "power3.out",
+     
+      gsap.utils.toArray<HTMLElement>(".section-reveal-group").forEach((group) => {
+        gsap.from(group.querySelectorAll(".section-reveal"), {
+          scrollTrigger: { trigger: group, start: "top 80%" },
+          y: 40,
+          opacity: 0,
+          duration: 0.7,
+          stagger: 0.1,
+          ease: "power3.out",
+        });
       });
 
-      // Feature cards
       gsap.from(".feature-card", {
-        scrollTrigger: {
-          trigger: "#features",
-          start: "top 70%",
-        },
+        scrollTrigger: { trigger: "#features", start: "top 70%" },
         y: 50,
         opacity: 0,
         duration: 0.6,
@@ -153,7 +139,6 @@ export default function HomePage() {
         ease: "power3.out",
       });
 
-      // Progress bar fill animate on scroll
       ScrollTrigger.create({
         trigger: ".progress-track",
         start: "top 85%",
@@ -162,7 +147,6 @@ export default function HomePage() {
         },
       });
 
-      // Expense rows stagger on scroll (for any repeat exposure)
       gsap.from(".expense-row", {
         scrollTrigger: { trigger: ".mockup-card", start: "top 80%" },
         x: -30,
@@ -172,7 +156,6 @@ export default function HomePage() {
         ease: "power2.out",
       });
 
-      // CTA section
       gsap.from(".cta-inner", {
         scrollTrigger: { trigger: ".cta-banner", start: "top 80%" },
         y: 40,
@@ -180,19 +163,29 @@ export default function HomePage() {
         duration: 0.8,
         ease: "power3.out",
       });
-    });
 
-    return () => ctx.revert();
-  }, []);
+    
+      requestAnimationFrame(() => ScrollTrigger.refresh());
+
+     
+      return () => {
+        if (hero && move && reset) {
+          hero.removeEventListener("mousemove", move);
+          hero.removeEventListener("mouseleave", reset);
+        }
+      };
+    },
+    { scope: rootRef }
+  );
 
   return (
-    <div className="groupay-root">
-      {/* ── NAV ── */}
+    <div className="groupay-root" ref={rootRef}>
+      
       <nav className="fixed top-0 left-0 z-50 w-full">
         <div
           className="nav-glass mx-4 mt-4 rounded-2xl border border-white/20 bg-white/80 backdrop-blur-lg shadow-sm"
         >
-          <div className="flex items-center justify-between px-6 h-[60px]">
+          <div className="flex items-center justify-between px-6 h-15">
             <Link
               href="/"
               className={`logo ${soraClass} font-bold text-forest flex items-center gap-2 text-xl`}
@@ -329,7 +322,7 @@ export default function HomePage() {
             ref={cardRef}
             onMouseEnter={() => gsap.to(cardRef.current, { scale: 1.015, y: -8, duration: 0.35, ease: "power2.out" })}
             onMouseLeave={() => gsap.to(cardRef.current, { scale: 1, y: 0, rotateX: 0, rotateY: 0, duration: 0.8, ease: "elastic.out(1,0.6)" })}
-            className="mockup-card relative bg-white border border-card-border rounded-2xl p-7 max-w-[860px] w-full shadow-2xl"
+            className="mockup-card relative bg-white border border-card-border rounded-2xl p-7 max-w-215 w-full shadow-2xl"
             style={{ transformStyle: "preserve-3d", willChange: "transform" }}
           >
             {/* Inner glow */}
@@ -419,19 +412,21 @@ export default function HomePage() {
         </div>
       </section>
 
-    
+     
       <section id="how-it-works" className="py-28 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
-          <div className="section-reveal text-xs uppercase text-teal tracking-widest font-bold mb-3">
-            Simple by design
+          <div className="section-reveal-group">
+            <div className="section-reveal text-xs uppercase text-teal tracking-widest font-bold mb-3">
+              Simple by design
+            </div>
+            <h2 className={`section-reveal ${soraClass} text-4xl font-bold text-forest mb-4`}>
+              Up and running in seconds
+            </h2>
+            <p className="section-reveal text-ink-mid max-w-md text-base leading-relaxed mb-14">
+              No spreadsheets. No awkward reminders. Just GrouPay doing the
+              maths while you enjoy the moment.
+            </p>
           </div>
-          <h2 className={`section-reveal ${soraClass} text-4xl font-bold text-forest mb-4`}>
-            Up and running in seconds
-          </h2>
-          <p className="section-reveal text-ink-mid max-w-md text-base leading-relaxed mb-14">
-            No spreadsheets. No awkward reminders. Just GrouPay doing the
-            maths while you enjoy the moment.
-          </p>
 
           <div className="steps-grid grid grid-cols-1 sm:grid-cols-2 gap-5">
             {[
@@ -465,7 +460,7 @@ export default function HomePage() {
               },
             ].map((step, i) => (
               <div key={i}
-                className={`step-card group relative bg-gradient-to-br ${step.accent} border border-card-border p-8 rounded-2xl hover:border-teal/40 hover:shadow-lg transition-all duration-300 overflow-hidden`}>
+                className={`step-card group relative bg-linear-to-br ${step.accent} border border-card-border p-8 rounded-2xl hover:border-teal/40 hover:shadow-lg transition-all duration-300 overflow-hidden`}>
                 {/* Large ghost number */}
                 <div className={`absolute -top-3 -right-1 ${soraClass} text-[80px] font-black text-forest/5 leading-none select-none pointer-events-none`}>
                   {step.num}
@@ -502,16 +497,18 @@ export default function HomePage() {
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-green/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-5xl mx-auto relative z-10">
-          <div className="section-reveal text-xs uppercase tracking-widest font-bold text-teal mb-3">
-            Everything you need
+          <div className="section-reveal-group">
+            <div className="section-reveal text-xs uppercase tracking-widest font-bold text-teal mb-3">
+              Everything you need
+            </div>
+            <h2 className={`section-reveal ${soraClass} text-4xl font-bold mb-4`}>
+              Built for real life
+            </h2>
+            <p className="section-reveal text-white/60 max-w-md text-base leading-relaxed mb-14">
+              From spontaneous dinners to year-long savings goals, GrouPay
+              handles every kind of shared money moment.
+            </p>
           </div>
-          <h2 className={`section-reveal ${soraClass} text-4xl font-bold mb-4`}>
-            Built for real life
-          </h2>
-          <p className="section-reveal text-white/60 max-w-md text-base leading-relaxed mb-14">
-            From spontaneous dinners to year-long savings goals, GrouPay
-            handles every kind of shared money moment.
-          </p>
 
           <div className="features-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
@@ -538,7 +535,7 @@ export default function HomePage() {
 
       {/* ── CTA BANNER ── */}
       <section className="cta-banner relative py-24 px-6 text-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-teal/8 via-transparent to-green/8" />
+        <div className="absolute inset-0 bg-linear-to-br from-teal/8 via-transparent to-green/8" />
         <div className="absolute inset-0 opacity-[0.03]"
           style={{ backgroundImage: "linear-gradient(#0d3d2a 1px, transparent 1px), linear-gradient(90deg, #0d3d2a 1px, transparent 1px)", backgroundSize: "48px 48px" }} />
 

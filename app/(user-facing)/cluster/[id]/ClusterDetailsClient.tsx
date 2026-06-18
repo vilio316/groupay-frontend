@@ -91,7 +91,7 @@ export default function ClusterDetailsClient({
         />
         <div className="items-center justify-end flex p-2 gap-x-4 ">
           <ShareNetworkIcon className="w-12 h-12 fill-green" weight="duotone" />
-          <Link href={"/cluster/234/manage"}>
+          <Link href={`/cluster/${id}/manage`}>
             <GearSixIcon className="w-12 h-12 fill-green" weight="duotone" />
           </Link>
         </div>
@@ -121,20 +121,7 @@ export default function ClusterDetailsClient({
 
       <div className="my-3 p-3 rounded-2xl grid items-center border border-card-border shadow-md shadow-card-border">
         <p className="uppercase text-ink-mid font-semibold my-2">activities</p>
-        <div className="grid">
-          <TransactionBlock
-            transactionObject={{
-              status: "success",
-              amount: 4000,
-            }}
-          />
-          <TransactionBlock
-            transactionObject={{
-              status: "pending",
-              amount: 3450.56,
-            }}
-          />{" "}
-        </div>
+        <div className="grid"></div>
       </div>
 
       <PaymentModal

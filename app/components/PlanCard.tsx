@@ -43,9 +43,9 @@ export default function PlanCard({
         </p>
         <div className="flex items-center md:flex-row flex-col">
           <div className={`${minimumContribution ? "w-1/2" : "w-5/6"} w-full`}>
-            <p className="text-[10px] text-ink-mid">
-              Members: {members ? members.length : 6}
-            </p>
+            {members && members.length > 0  && <p className="text-[10px] text-ink-mid">
+              Members: {members.length }
+            </p>}
             <div className="flex items-end self-end">
               <div
                 className={`avatars flex mt-1 ${minimumContribution ? `w-4/5` : `w-5/6`} items-center`}

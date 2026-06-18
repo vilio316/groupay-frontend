@@ -1,16 +1,42 @@
 "use client";
 
 import { soraClass } from "@/app/fonts";
-import { signOut } from "@/lib/authClient";
+import { getSession, signOut } from "@/lib/authClient";
 import { SignOutIcon } from "@phosphor-icons/react/dist/ssr";
 import { redirect } from "next/navigation";
 import { useSession } from "@/lib/authClient";
 import { useEffect } from "react";
 import Link from "next/link";
 import { PencilSimpleLineIcon } from "@phosphor-icons/react";
+import { useQuery } from "@tanstack/react-query";
 
 export default function ProfilePage() {
   const session = useSession();
+
+  const getUserDetails = async () => {
+    const { data } = await getSession();
+    const userRequest = await fetch(
+      `http://localhost:3000/userData?id=${data?.user.id}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      },
+    );
+    const userResponse = await userRequest.json();
+    return userResponse;
+  };
+
+  const {
+    data: userDetails,
+    isLoading,
+    isSuccess,
+  } = useQuery({
+    queryKey: ["userDetails"],
+    queryFn: getUserDetails,
+    staleTime: 1 * 60 * 1000,
+  });
 
   return (
     <div className="p-3 h-full">
@@ -50,18 +76,21 @@ export default function ProfilePage() {
             src={`${session.data?.user.image ? session.data.user.image : "/family.jpg"} `}
           />
         </div>
-        <div>
-          <p className="text-xl font-bold">
-            {session.data?.user ? session.data.user.name : "User Names"}
-          </p>
-          <p className="text-ink-mid font-semibold">
-            @{session.data?.user ? session.data?.user.email.split("@")[0] : ""}
-          </p>
-          <p>
-            Member in 5+ Clusters, including{" "}
-            <span className="font-semibold text-green">mostActive </span>
-          </p>
-        </div>
+        {isSuccess && (
+          <div>
+            <p className="text-xl font-bold">
+              {userDetails ? userDetails.name : "User Names"}
+            </p>
+            <p className="text-ink-mid font-semibold">
+              @{userDetails ? userDetails.email.split("@")[0] : ""}
+            </p>
+            <p>
+              Member in 5+ Clusters, including{" "}
+              <span className="font-semibold text-green">mostActive </span>
+            </p>
+          </div>
+        )}
+        {isLoading && <p>Loading...</p>}
       </div>
       <div
         className={`p-3 border-2 border-card-border my-2 rounded-xl ${soraClass} font-bold h-75`}

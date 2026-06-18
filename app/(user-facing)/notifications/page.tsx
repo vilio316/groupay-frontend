@@ -5,7 +5,7 @@ import { getSession, useSession } from "@/lib/authClient";
 import { BellSimpleSlashIcon, BellSimpleIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 
-function makeDate(date: string) {
+export function makeDate(date: string) {
   const dateVal = new Date(date);
   return dateVal.toLocaleString();
 }

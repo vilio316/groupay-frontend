@@ -33,9 +33,11 @@ export function ManagerViewCategory({
         <span>{count}</span>
         {isIncluded ? <CaretUpIcon /> : <CaretDownIcon />}
       </div>
-      {isIncluded && (
-        <div className="categoryContent px-4 bg-white">{childElement}</div>
-      )}
+      <div
+        className={`categoryContent px-4 bg-white ${isIncluded ? "h-60" : "h-0"} transition-all duration-200`}
+      >
+        {isIncluded && childElement}
+      </div>
     </div>
   );
 }

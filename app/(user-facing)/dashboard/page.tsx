@@ -2,7 +2,10 @@
 import { PlusIcon, ArrowRightIcon } from "@phosphor-icons/react";
 import { soraClass } from "../../fonts";
 import Link from "next/link";
-import { TransactionBlock } from "@/app/components/TransactionStatusBlocks";
+import {
+  EmptyTransaction,
+  TransactionBlock,
+} from "@/app/components/TransactionStatusBlocks";
 import ClusterCard from "@/app/components/ClusterCard";
 import { BalanceCard } from "@/app/components/BalanceCard";
 import PaymentModal from "@/app/components/PaymentModal";
@@ -48,6 +51,20 @@ export default function DashboardPage() {
     return results;
   }
 
+  async function getTransactions() {
+    const transactionsRequest = await fetch(
+      "http://localhost:3000/transactions",
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      },
+    );
+    const transactionsResponse = await transactionsRequest.json();
+    return transactionsResponse;
+  }
+
   const {
     data: clusterResponse,
     isLoading,
@@ -55,6 +72,16 @@ export default function DashboardPage() {
   } = useQuery({
     queryKey: ["userClusters"],
     queryFn: eleba,
+    staleTime: 1 * 60 * 60 * 1000,
+  });
+
+  const {
+    data: transactionData,
+    isLoading: isGettingTxns,
+    isSuccess: transactionsGotten,
+  } = useQuery({
+    queryKey: ["transactions"],
+    queryFn: getTransactions,
     staleTime: 1 * 60 * 60 * 1000,
   });
 
@@ -115,24 +142,18 @@ export default function DashboardPage() {
           <p className="uppercase font-semibold text-ink-mid text-xl my-2">
             Your Transactions
           </p>
-          <TransactionBlock
-            transactionObject={{
-              status: "success",
-              amount: 4000,
-            }}
-          />
-          <TransactionBlock
-            transactionObject={{
-              status: "pending",
-              amount: 3450.56,
-            }}
-          />{" "}
-          <TransactionBlock
-            transactionObject={{
-              status: "fail",
-              amount: 4500.56,
-            }}
-          />
+          {transactionsGotten &&
+            transactionData.length > 0 &&
+            transactionData.map((transaction: any) => (
+              <TransactionBlock
+                transactionObject={transaction}
+                key={transaction.id}
+              />
+            ))}
+          {transactionData && transactionData.length === 0 && (
+            <EmptyTransaction />
+          )}
+          {isGettingTxns && <p>Loading transactions...</p>}
         </div>
       </div>
       <div className="sticky bottom-12 right-8 w-full flex justify-end z-40">

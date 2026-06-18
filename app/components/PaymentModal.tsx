@@ -74,7 +74,9 @@ export default function PaymentModal({
                   GTBank
                 </p>
               </div>
-              <button>I have sent the money</button>
+              <button className="bg-green text-center text-white font-bold rounded-2xl p-2 uppercase hover:bg-greener mx-auto w-3/4">
+                I have sent the money
+              </button>
             </div>
           )}
 
@@ -203,7 +205,9 @@ export default function PaymentModal({
                 <p className="text-forest">0834567111</p>
                 <p className="uppercase text-xl">AMOS EBUBE CIROMA</p>
               </div>
-              <button>I have sent the money</button>
+              <button className="bg-green text-white font-bold rounded-2xl p-2 uppercase hover:bg-greener mx-auto w-3/4">
+                I have sent the money
+              </button>
             </div>
           )}
 

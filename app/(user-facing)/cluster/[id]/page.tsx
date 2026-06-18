@@ -26,7 +26,7 @@ export default function ClusterPage() {
   } = useQuery({
     queryKey: ["cluster", id],
     queryFn: fetchCluster,
-    staleTime: 1 * 60 * 60 * 10000,
+    staleTime: 1 * 60 * 60 * 1000,
   });
 
   return (

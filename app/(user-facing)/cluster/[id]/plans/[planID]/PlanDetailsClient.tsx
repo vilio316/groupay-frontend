@@ -48,33 +48,33 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
     }
   }
 
-  async function sendJoinNotification(id: string){
-    const {data} = await getSession()
-    const userId = data?.user.id
-    
-    if (id !== userId){
+  async function sendJoinNotification(id: string) {
+    const { data } = await getSession();
+    const userId = data?.user.id;
+
+    if (id !== userId) {
       await fetch(`http://localhost:3000/notifications`, {
-        method: "POST", 
-        credentials: "include", 
+        method: "POST",
+        credentials: "include",
         body: JSON.stringify({
-          senderId: userId, 
-          recipientId: id, 
-          type: "join", 
-          message: `${data?.user.name} joined your plan`
+          senderId: userId,
+          recipientId: id,
+          type: "join",
+          message: `${data?.user.name} joined your plan`,
         }),
-          headers: {
-        "Content-Type": "application/json",
-      },
-      })
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
     }
   }
 
   const queryClient = useQueryClient();
   const { isPending, mutateAsync: handleMembership } = useMutation({
     mutationFn: async () => {
-      await handlePlanMembership(userDetailsInCluster); 
-      await sendJoinNotification(members[0].userId)
-    }, 
+      await handlePlanMembership(userDetailsInCluster);
+      await sendJoinNotification(members[0].userId);
+    },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ["userPlans"],
@@ -181,20 +181,7 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
             <p className="text-ink-mid font-bold uppercase text-lg">
               Recent Transactions
             </p>
-            <div className="transactions">
-              <TransactionBlock
-                transactionObject={{
-                  status: "success",
-                  amount: 4000,
-                }}
-              />
-              <TransactionBlock
-                transactionObject={{
-                  status: "pending",
-                  amount: 3450.56,
-                }}
-              />{" "}
-            </div>
+            <div className="transactions"></div>
           </div>
         </div>
       </div>

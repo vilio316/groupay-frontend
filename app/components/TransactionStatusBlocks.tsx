@@ -5,9 +5,10 @@ import {
   XCircleIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
+import { makeDate } from "../(user-facing)/notifications/page";
 
 function getStatusClass(status: string) {
-  if (status === "success") return "text-green";
+  if (status.toLowerCase().includes("success")) return "text-green";
   if (status === "fail") return "text-red";
   if (status === "pending") return "text-amber-300";
 }
@@ -21,21 +22,24 @@ function setBg(status: string) {
 export function TransactionBlock({
   transactionObject,
 }: {
-  transactionObject: {
-    status: "success" | "fail" | "pending";
-    amount: number;
-    heading?: string;
-    type?: "credit" | "debit";
-  };
+  transactionObject:
+    | {
+        status: "success" | "fail" | "pending";
+        amount: number;
+        heading?: string;
+        type?: "credit" | "debit";
+      }
+    | any;
 }) {
-  const { status, amount, heading, type } = transactionObject;
+  const { status, amount, heading, type, createdAt, channel } =
+    transactionObject;
   return (
     <Link
       href="/"
       className={`grid grid-cols-12 gap-x-4 p-1 my-2 items-center border-card-border border bg-linear-to-r ${setBg(status)} to-zinc-200/20 rounded-xl hover:scale-x-102 hover:shadow-2xl hover:shadow-card-border transition-all`}
     >
       <div className="col-span-1">
-        {status === "success" && (
+        {status.toLowerCase().includes("success") && (
           <CheckCircleIcon
             weight="light"
             className="text-3xl text-green p-1 h-10 w-10 "
@@ -57,13 +61,16 @@ export function TransactionBlock({
       <div className="col-span-7 px-3">
         <p className="text-sm md:text-xl">TRANSACTION HEADING</p>
         <p className="text-ink-mid/70 text-[10px] md:text-sm">
-          <span>22/07/2026, 11:30:44 AM </span>|{" "}
-          <span>Transaction Category</span>
+          <span>{makeDate(createdAt)}</span> |{" "}
+          <span>Handled through {channel}</span>
         </p>
       </div>
       <div className={`${getStatusClass(status)} font-bold col-span-4 p-3`}>
         <p className="text-right text-sm md:text-xl ">
-          +&#8358; {amount.toFixed(2).toLocaleString()}
+          +&#8358;{" "}
+          {channel === "SQUAD"
+            ? (Number(amount) / 100).toFixed(2)
+            : amount.toFixed(2)}
         </p>
       </div>
     </Link>

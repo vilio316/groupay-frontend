@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { getSession, useSession } from "@/lib/authClient";
 import { PlanDetails } from "../../ClusterDetailsClient";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 import { redirect } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -34,7 +34,6 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
           }),
         },
       );
-      redirect("/plans");
     } else {
       await fetch(
         `http://localhost:3000/clusters/${params.id}/plans/${params.planID}/members/${userId}`,
@@ -46,17 +45,41 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
           },
         },
       );
-      redirect("/plans");
+    }
+  }
+
+  async function sendJoinNotification(id: string){
+    const {data} = await getSession()
+    const userId = data?.user.id
+    
+    if (id !== userId){
+      await fetch(`http://localhost:3000/notifications`, {
+        method: "POST", 
+        credentials: "include", 
+        body: JSON.stringify({
+          senderId: userId, 
+          recipientId: id, 
+          type: "join", 
+          message: `${data?.user.name} joined your plan`
+        }),
+          headers: {
+        "Content-Type": "application/json",
+      },
+      })
     }
   }
 
   const queryClient = useQueryClient();
   const { isPending, mutateAsync: handleMembership } = useMutation({
-    mutationFn: () => handlePlanMembership(userDetailsInCluster),
+    mutationFn: async () => {
+      await handlePlanMembership(userDetailsInCluster); 
+      await sendJoinNotification(members[0].userId)
+    }, 
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ["userPlans"],
       });
+      redirect("/plans");
     },
   });
 
@@ -67,7 +90,7 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
   );
   const userDetailsInCluster = userDetails.length > 0;
 
-  const { name, desc, minimumContribution, id } = planObj;
+  const { name, desc, minimumContribution, id, members } = planObj;
   return (
     <div className="px-4 my-2 mx-auto">
       <div className="flex items-center">
@@ -89,7 +112,8 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
             onClick={() => handleMembership()}
             className={`rounded-xl p-2 uppercase w-full text-red ${userDetailsInCluster ? `border border-red hover:bg-red` : `bg-teal text-white`} hover:text-white hover:scale-105 transition-all shrink-0`}
           >
-            {!isPending && userDetailsInCluster ? "Exit Plan" : "Join"}
+            {!isPending && userDetailsInCluster && "Exit Plan"}
+            {!isPending && !userDetailsInCluster && "Join"}
             {isPending && "Processing..."}
           </button>
         </div>
@@ -107,7 +131,7 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
             <p className="text-[10px] md:text-sm capitalize text-ink-mid">
               3/6 members paid
             </p>
-            <Avatars className="justify-end" />
+            <Avatars className="justify-end" members={members} />
           </Link>
         </div>
         <div className="details">

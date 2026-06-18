@@ -2,6 +2,7 @@ import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
 import { soraClass } from "../fonts";
 import Link from "next/link";
 import { clusterDetailsType } from "../(user-facing)/cluster/[id]/ClusterDetailsClient";
+import Avatars from "./AvatarsCircles";
 
 export default function ClusterCard({
   className,
@@ -41,7 +42,10 @@ export default function ClusterCard({
           {valuesObj ? valuesObj.desc : "Lorem ipsum dolor amet ...."}
         </p>
         <div className="flex items-end self-end w-full">
-          <div className="w-full flex justify-end">
+          <div className="w-3/4">
+            <Avatars members={valuesObj.members} />
+          </div>
+          <div className="w-1/4 flex justify-end">
             <ArrowRightIcon
               className="text-2xl hover:scale-125 transition-all p-1 text-teal  cursor-pointer"
               weight="bold"

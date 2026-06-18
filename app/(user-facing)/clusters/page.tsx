@@ -27,7 +27,6 @@ export default function ClustersPage() {
     });
     const postRes = await postReq.json();
     const fetchedClustIds = postRes.map((clust: any) => clust.clusterId);
-    console.log(postRes, fetchedClustIds);
     const promise: clusterDetailsType[] = await Promise.all(
       fetchedClustIds.map((clust: any) => fetchClust(clust)),
     );

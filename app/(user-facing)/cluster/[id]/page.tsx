@@ -1,25 +1,40 @@
-import ClusterDetailsClient from "./ClusterDetailsClient";
-import { Suspense } from "react";
+"use client";
+import ClusterDetailsClient, {
+  clusterDetailsType,
+} from "./ClusterDetailsClient";
+import { useParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 
-export default async function ClusterPage({
-  params,
-}: {
-  params: Promise<{
-    id: string;
-  }>;
-}) {
-  const { id } = await params;
-  const clusterDetailsRequest = await fetch(
-    `http://localhost:3000/clusters/${id}`,
-    {
-      credentials: "include",
-    },
-  );
-  const clusterDetailsResponse = await clusterDetailsRequest.json();
+export default function ClusterPage() {
+  const { id } = useParams();
+  async function fetchCluster() {
+    const clusterDetailsRequest = await fetch(
+      `http://localhost:3000/clusters/${id}`,
+      {
+        credentials: "include",
+      },
+    );
+    const clusterDetailsResponse: clusterDetailsType =
+      await clusterDetailsRequest.json();
+    return clusterDetailsResponse;
+  }
+
+  const {
+    data: clusterDetailsResponse,
+    isSuccess,
+    isLoading,
+  } = useQuery({
+    queryKey: ["cluster", id],
+    queryFn: fetchCluster,
+    staleTime: 1 * 60 * 60 * 10000,
+  });
 
   return (
-    <Suspense fallback={"Loading cluster details..."}>
-      <ClusterDetailsClient detailsObject={clusterDetailsResponse} />{" "}
-    </Suspense>
+    <>
+      {isSuccess && (
+        <ClusterDetailsClient detailsObject={clusterDetailsResponse} />
+      )}
+      {isLoading && <p>Loading...</p>}
+    </>
   );
 }

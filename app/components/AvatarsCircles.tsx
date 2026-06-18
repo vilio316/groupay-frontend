@@ -1,11 +1,35 @@
-export default function Avatars({ className }: { className?: string }) {
+import { ClusterMember } from "../(user-facing)/cluster/[id]/ClusterDetailsClient";
+
+export default function Avatars({
+  className,
+  members,
+}: {
+  className?: string;
+  members: ClusterMember[];
+}) {
   return (
-    <div className={`avatars flex m-1 ${className} items-center`}>
-      <Avatar string="C" className="bg-red" />
-      <Avatar string="A" className="bg-green" />
-      <Avatar string="E" className="bg-yellow-300" />
-      <Avatar string="+9" className="bg-teal" />
-    </div>
+    <>
+      {members && members.length > 0 ? (
+        <div
+          className={`avatars flex m-1 ${className} items-center`}
+          title={
+            members &&
+            `${members[0].user.name} ${members.length > 1 && `and ${members.length - 1} others are here`}`
+          }
+        >
+          {members &&
+            members?.map((member) => (
+              <Avatar
+                string={member.user.name.charAt(0)}
+                className="bg-green/50"
+                key={member.userId}
+              />
+            ))}
+        </div>
+      ) : (
+        <p className="md:text-[12px] text-[10px]">No Members</p>
+      )}
+    </>
   );
 }
 

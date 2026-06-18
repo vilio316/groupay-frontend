@@ -25,11 +25,7 @@ export default function HomePage() {
     () => {
       const ctx = gsap.context(() => {
 
-        // ─────────────────────────────────────────────
-        // HERO ENTRANCE
-        // Use fromTo so both start AND end states are
-        // always explicit — no ambiguity on SSR rehydration
-        // ─────────────────────────────────────────────
+    
         const tl = gsap.timeline({ defaults: { ease: "power3.out" }, delay: 0.05 });
 
         tl.fromTo(".hero-badge",
@@ -62,9 +58,7 @@ export default function HomePage() {
             "-=0.3"
           );
 
-        // ─────────────────────────────────────────────
-        // STAT COUNTERS
-        // ─────────────────────────────────────────────
+      
         gsap.utils.toArray<HTMLElement>(".stat-count").forEach((el) => {
           const target = parseFloat(el.getAttribute("data-target") || "0");
           const isDecimal = el.getAttribute("data-decimal") === "true";
@@ -82,17 +76,13 @@ export default function HomePage() {
           });
         });
 
-        // ─────────────────────────────────────────────
-        // AMBIENT BLOBS
-        // ─────────────────────────────────────────────
+       
         gsap.to(".blob1", { x: 30, y: -50, duration: 9, repeat: -1, yoyo: true, ease: "sine.inOut" });
         gsap.to(".blob2", { x: -25, y: 30, duration: 11, repeat: -1, yoyo: true, ease: "sine.inOut" });
         gsap.to(".blob3", { x: 35, y: -30, duration: 13, repeat: -1, yoyo: true, ease: "sine.inOut" });
         gsap.to(".blob4", { x: -15, y: 20, duration: 7, repeat: -1, yoyo: true, ease: "sine.inOut" });
 
-        // ─────────────────────────────────────────────
-        // HERO HIGHLIGHT SHIMMER
-        // ─────────────────────────────────────────────
+       
         gsap.to(".hero-highlight", {
           backgroundPosition: "300% center",
           repeat: -1,
@@ -100,9 +90,7 @@ export default function HomePage() {
           ease: "none",
         });
 
-        // ─────────────────────────────────────────────
-        // CARD TILT ON MOUSEMOVE
-        // ─────────────────────────────────────────────
+       
         const hero = heroRef.current;
         let moveFn: ((e: MouseEvent) => void) | undefined;
         let leaveFn: (() => void) | undefined;
@@ -131,16 +119,7 @@ export default function HomePage() {
           hero.addEventListener("mouseleave", leaveFn);
         }
 
-        // ─────────────────────────────────────────────
-        // SCROLL REVEALS
-        //
-        // KEY FIX: use gsap.fromTo (not gsap.from) so GSAP
-        // always knows both start AND end state.
-        // Add once:true so the trigger fires exactly once
-        // and never gets "stuck" waiting for a recalculation.
-        // ─────────────────────────────────────────────
-
-        // Section heading groups
+        
         gsap.utils.toArray<HTMLElement>(".section-reveal-group").forEach((group) => {
           gsap.fromTo(
             group.querySelectorAll(".section-reveal"),
@@ -162,8 +141,7 @@ export default function HomePage() {
           }
         );
 
-        // Feature cards — each card gets its own trigger so none get
-        // stuck waiting for a shared trigger that misfired
+      
         gsap.utils.toArray<HTMLElement>(".feature-card").forEach((card) => {
           gsap.fromTo(
             card,
@@ -219,11 +197,7 @@ export default function HomePage() {
 
       }, rootRef);
 
-      // ─────────────────────────────────────────────
-      // SCROLLTRIGGER REFRESH
-      // Refresh on both font-ready and full window load
-      // to get accurate trigger positions after layout settles
-      // ─────────────────────────────────────────────
+      
       const refresh = () => ScrollTrigger.refresh();
 
       document.fonts?.ready.then(refresh);
@@ -238,13 +212,7 @@ export default function HomePage() {
   );
 
   return (
-    // ─────────────────────────────────────────────
-    // CSS INITIAL STATES
-    // Setting opacity/transform via Tailwind on the
-    // elements themselves means they're invisible from
-    // the very first paint — no GSAP race condition possible.
-    // GSAP then animates them TO visible.
-    // ─────────────────────────────────────────────
+  
     <div className="groupay-root" ref={rootRef}>
 
       {/* ── NAV ── */}
@@ -411,7 +379,7 @@ export default function HomePage() {
                 <div className="progress-fill h-full rounded-full" style={{ width: "50%", background: "linear-gradient(90deg, #00bd9d, #49c635)" }} />
               </div>
               <div className="flex items-center justify-between mt-3">
-                <Avatars />
+                <Avatars className="" members=''/>
                 <button className="text-xs font-bold text-white bg-teal hover:bg-green px-4 py-1.5 rounded-full transition-all hover:shadow-md hover:-translate-y-px">Settle up ✓</button>
               </div>
             </div>
@@ -419,7 +387,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── HOW IT WORKS ── */}
+    
       <section id="how-it-works" className="py-28 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
           <div className="section-reveal-group mb-14">

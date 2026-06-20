@@ -1,230 +1,285 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-import { inter, soraClass } from "./fonts";
+import { soraClass } from "./fonts";
 import "./globals.css";
 
 import { AirplaneIcon, ForkKnifeIcon, HouseIcon } from "@phosphor-icons/react";
-
 import { useSession } from "@/lib/authClient";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function HomePage() {
+  const rootRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const { data } = useSession();
 
   useGSAP(
     () => {
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      const ctx = gsap.context(() => {
+        const tl = gsap.timeline({
+          defaults: { ease: "power3.out" },
+          delay: 0.05,
+        });
 
-      tl.from(".hero-badge", { y: -24, opacity: 0, duration: 0.55 })
-        .from(".hero-title", { y: 90, opacity: 0, duration: 0.9 }, "-=0.25")
-        .from(".hero-subtitle", { y: 40, opacity: 0, duration: 0.65 }, "-=0.45")
-        .from(".hero-actions", { y: 30, opacity: 0, duration: 0.5 }, "-=0.35")
-        .from(
-          ".hero-stats .stat",
-          { y: 20, opacity: 0, stagger: 0.12, duration: 0.4 },
-          "-=0.25",
+        tl.fromTo(
+          ".hero-badge",
+          { y: -24, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.55 },
         )
-        .from(
-          ".mockup-card",
-          { y: 120, opacity: 0, scale: 0.9, duration: 1.1, ease: "power4.out" },
-          "-=0.3",
-        );
+          .fromTo(
+            ".hero-title",
+            { y: 80, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.9 },
+            "-=0.25",
+          )
+          .fromTo(
+            ".hero-subtitle",
+            { y: 40, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.65 },
+            "-=0.45",
+          )
+          .fromTo(
+            ".hero-actions",
+            { y: 30, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.5 },
+            "-=0.35",
+          )
+          .fromTo(
+            ".hero-stats .stat",
+            { y: 20, opacity: 0 },
+            { y: 0, opacity: 1, stagger: 0.12, duration: 0.4 },
+            "-=0.25",
+          )
+          .fromTo(
+            ".mockup-card",
+            { y: 100, opacity: 0, scale: 0.92 },
+            { y: 0, opacity: 1, scale: 1, duration: 1.1, ease: "power4.out" },
+            "-=0.3",
+          );
 
-      // ── Animated stat counters ──
-      document.querySelectorAll(".stat-count").forEach((el) => {
-        const target = parseFloat(el.getAttribute("data-target") || "0");
-        const isDecimal = el.getAttribute("data-decimal") === "true";
-        gsap.from(
-          { val: 0 },
-          {
+        gsap.utils.toArray<HTMLElement>(".stat-count").forEach((el) => {
+          const target = parseFloat(el.getAttribute("data-target") || "0");
+          const isDecimal = el.getAttribute("data-decimal") === "true";
+          const proxy = { val: 0 };
+          gsap.to(proxy, {
             val: target,
             duration: 2.2,
             delay: 1.2,
             ease: "power2.out",
-            onUpdate: function () {
+            onUpdate() {
               el.textContent = isDecimal
-                ? this.targets()[0].val.toFixed(1)
-                : Math.round(this.targets()[0].val).toString();
+                ? proxy.val.toFixed(1)
+                : String(Math.round(proxy.val));
+            },
+          });
+        });
+
+        gsap.to(".blob1", {
+          x: 30,
+          y: -50,
+          duration: 9,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
+        gsap.to(".blob2", {
+          x: -25,
+          y: 30,
+          duration: 11,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
+        gsap.to(".blob3", {
+          x: 35,
+          y: -30,
+          duration: 13,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
+        gsap.to(".blob4", {
+          x: -15,
+          y: 20,
+          duration: 7,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
+
+        gsap.to(".hero-highlight", {
+          backgroundPosition: "300% center",
+          repeat: -1,
+          duration: 5,
+          ease: "none",
+        });
+
+        const hero = heroRef.current;
+        let moveFn: ((e: MouseEvent) => void) | undefined;
+        let leaveFn: (() => void) | undefined;
+
+        if (hero) {
+          moveFn = (e: MouseEvent) => {
+            const x = e.clientX / window.innerWidth - 0.5;
+            const y = e.clientY / window.innerHeight - 0.5;
+            gsap.to(cardRef.current, {
+              rotateY: x * 12,
+              rotateX: -y * 8,
+              transformPerspective: 1200,
+              duration: 0.9,
+              ease: "power2.out",
+            });
+            gsap.to(".blob1", { x: x * 20, y: y * 15, duration: 1.5 });
+          };
+          leaveFn = () => {
+            gsap.to(cardRef.current, {
+              rotateY: 0,
+              rotateX: 0,
+              duration: 1.2,
+              ease: "elastic.out(1, 0.5)",
+            });
+          };
+          hero.addEventListener("mousemove", moveFn);
+          hero.addEventListener("mouseleave", leaveFn);
+        }
+
+        gsap.utils
+          .toArray<HTMLElement>(".section-reveal-group")
+          .forEach((group) => {
+            gsap.fromTo(
+              group.querySelectorAll(".section-reveal"),
+              { y: 40, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                duration: 0.7,
+                stagger: 0.1,
+                ease: "power3.out",
+                scrollTrigger: { trigger: group, start: "top 85%", once: true },
+              },
+            );
+          });
+
+        // How it works steps
+        gsap.fromTo(
+          ".step-card",
+          { y: 60, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.7,
+            stagger: 0.15,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: "#how-it-works",
+              start: "top 85%",
+              once: true,
             },
           },
         );
-      });
 
-      // ── Ambient blobs ──
-      gsap.to(".blob1", {
-        x: 30,
-        y: -50,
-        duration: 9,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
-      gsap.to(".blob2", {
-        x: -25,
-        y: 30,
-        duration: 11,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
-      gsap.to(".blob3", {
-        x: 35,
-        y: -30,
-        duration: 13,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
-      gsap.to(".blob4", {
-        x: -15,
-        y: 20,
-        duration: 7,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
+        gsap.utils.toArray<HTMLElement>(".feature-card").forEach((card) => {
+          gsap.fromTo(
+            card,
+            { y: 50, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.6,
+              ease: "power3.out",
+              scrollTrigger: { trigger: card, start: "top 90%", once: true },
+            },
+          );
+        });
 
-      // ── Shimmer on hero highlight ──
-      gsap.to(".hero-highlight", {
-        backgroundPosition: "300% center",
-        repeat: -1,
-        duration: 5,
-        ease: "none",
-      });
+        // Expense rows
+        gsap.utils.toArray<HTMLElement>(".expense-row").forEach((row) => {
+          gsap.fromTo(
+            row,
+            { x: -30, opacity: 0 },
+            {
+              x: 0,
+              opacity: 1,
+              duration: 0.6,
+              ease: "power2.out",
+              scrollTrigger: { trigger: row, start: "top 90%", once: true },
+            },
+          );
+        });
 
-      // ── Parallax tilt on mockup ──
-      const hero = heroRef.current;
-      if (hero) {
-        const move = (e: MouseEvent) => {
-          const x = e.clientX / window.innerWidth - 0.5;
-          const y = e.clientY / window.innerHeight - 0.5;
-          gsap.to(cardRef.current, {
-            rotateY: x * 12,
-            rotateX: -y * 8,
-            transformPerspective: 1200,
-            duration: 0.9,
-            ease: "power2.out",
-          });
-          // Also shift blobs slightly on mouse
-          gsap.to(".blob1", { x: x * 20, y: y * 15, duration: 1.5 });
-        };
-        const reset = () => {
-          gsap.to(cardRef.current, {
-            rotateY: 0,
-            rotateX: 0,
-            duration: 1.2,
-            ease: "elastic.out(1, 0.5)",
-          });
-        };
-        hero.addEventListener("mousemove", move);
-        hero.addEventListener("mouseleave", reset);
+        // Progress bar
+        ScrollTrigger.create({
+          trigger: ".progress-track",
+          start: "top 90%",
+          once: true,
+          onEnter: () => {
+            gsap.fromTo(
+              ".progress-fill",
+              { scaleX: 0 },
+              {
+                scaleX: 1,
+                duration: 1.4,
+                ease: "power3.out",
+                transformOrigin: "left",
+              },
+            );
+          },
+        });
+
+        // CTA section
+        gsap.fromTo(
+          ".cta-inner",
+          { y: 40, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: ".cta-banner",
+              start: "top 85%",
+              once: true,
+            },
+          },
+        );
+
         return () => {
-          hero.removeEventListener("mousemove", move);
-          hero.removeEventListener("mouseleave", reset);
+          if (hero && moveFn && leaveFn) {
+            hero.removeEventListener("mousemove", moveFn);
+            hero.removeEventListener("mouseleave", leaveFn);
+          }
         };
-      }
+      }, rootRef);
+
+      const refresh = () => ScrollTrigger.refresh();
+
+      document.fonts?.ready.then(refresh);
+      window.addEventListener("load", refresh);
+
+      return () => {
+        window.removeEventListener("load", refresh);
+        ctx.revert();
+      };
     },
-    { scope: heroRef },
+    { scope: rootRef },
   );
 
-  // ── Scroll-triggered reveals ──
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // How it works steps
-      gsap.from(".step-card", {
-        scrollTrigger: {
-          trigger: "#how-it-works",
-          start: "top 75%",
-        },
-        y: 60,
-        opacity: 0,
-        duration: 0.7,
-        stagger: 0.15,
-        ease: "power3.out",
-      });
-
-      // Section headings
-      gsap.from(".section-reveal", {
-        scrollTrigger: {
-          trigger: ".section-reveal",
-          start: "top 80%",
-          toggleActions: "play none none none",
-        },
-        y: 40,
-        opacity: 0,
-        duration: 0.7,
-        stagger: 0.1,
-        ease: "power3.out",
-      });
-
-      // Feature cards
-      gsap.from(".feature-card", {
-        scrollTrigger: {
-          trigger: "#features",
-          start: "top 70%",
-        },
-        y: 50,
-        opacity: 0,
-        duration: 0.6,
-        stagger: 0.1,
-        ease: "power3.out",
-      });
-
-      // Progress bar fill animate on scroll
-      ScrollTrigger.create({
-        trigger: ".progress-track",
-        start: "top 85%",
-        onEnter: () => {
-          gsap.from(".progress-fill", {
-            scaleX: 0,
-            duration: 1.4,
-            ease: "power3.out",
-            transformOrigin: "left",
-          });
-        },
-      });
-
-      // Expense rows stagger on scroll (for any repeat exposure)
-      gsap.from(".expense-row", {
-        scrollTrigger: { trigger: ".mockup-card", start: "top 80%" },
-        x: -30,
-        opacity: 0,
-        stagger: 0.12,
-        duration: 0.6,
-        ease: "power2.out",
-      });
-
-      // CTA section
-      gsap.from(".cta-inner", {
-        scrollTrigger: { trigger: ".cta-banner", start: "top 80%" },
-        y: 40,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power3.out",
-      });
-    });
-
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <div className="groupay-root">
+    <div className="groupay-root" ref={rootRef}>
       {/* ── NAV ── */}
-      <nav className="fixed top-0 left-0 z-50 w-full">
-        <div className="nav-glass mx-4 mt-4 rounded-2xl border border-white/20 bg-white/80 backdrop-blur-lg shadow-sm">
+      <nav className="fixed top-0 left-0 z-50 w-full pointer-events-none">
+        <div className="pointer-events-auto mx-4 mt-4 rounded-2xl border border-white/20 bg-white/80 backdrop-blur-lg shadow-sm">
           <div className="flex items-center justify-between px-6 h-15">
             <Link
               href="/"
-              className={`logo ${soraClass} font-bold text-forest flex items-center gap-2 text-xl`}
+              className={`${soraClass} font-bold text-forest flex items-center gap-2 text-xl`}
             >
               <div className="bg-green h-8 w-8 rounded-lg flex items-center justify-center shadow-md shadow-green/30">
                 <svg viewBox="0 0 20 20" className="fill-white h-4 w-4">
@@ -233,8 +288,7 @@ export default function HomePage() {
               </div>
               GrouPay
             </Link>
-
-            <div className="nav-links hidden md:flex items-center gap-x-6">
+            <div className="hidden md:flex items-center gap-x-6">
               <Link
                 href="/#how-it-works"
                 className="text-sm font-medium text-ink-mid hover:text-forest transition-colors"
@@ -248,17 +302,16 @@ export default function HomePage() {
                 Features
               </Link>
             </div>
-
             <div className="flex items-center gap-3">
               <a
                 href={data?.user ? "/dashboard" : "/auth/sign-in"}
                 className="text-[14px] font-semibold text-forest hover:text-teal transition-colors py-2"
               >
-                {data && data.user ? data.user.name : "Log In"}
+                {data?.user ? data.user.name : "Log In"}
               </a>
               <a
                 href="/auth/sign-up"
-                className="bg-green hover:bg-greener text-white inline-flex items-center gap-2 py-2.5 px-5 rounded-xl font-semibold text-sm cursor-pointer transition-all shadow-md shadow-green/25 hover:shadow-lg hover:shadow-green/35 hover:-translate-y-px"
+                className="bg-green hover:bg-greener text-white inline-flex items-center gap-2 py-2.5 px-5 rounded-xl font-semibold text-sm transition-all shadow-md shadow-green/25 hover:shadow-lg hover:shadow-green/35 hover:-translate-y-px"
               >
                 Get Started →
               </a>
@@ -272,8 +325,7 @@ export default function HomePage() {
         ref={heroRef}
         className="hero relative overflow-hidden min-h-screen flex flex-col items-center justify-center pt-32 pb-12 px-6 text-center"
       >
-        {/* Blobs */}
-        <div className="hero-bg absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute inset-0 z-0 pointer-events-none">
           <div
             className="blob1 absolute rounded-full opacity-30 bg-aqua blur-3xl"
             style={{ width: 480, height: 480, top: -120, right: -120 }}
@@ -290,7 +342,6 @@ export default function HomePage() {
             className="blob4 absolute rounded-full opacity-15 bg-aqua blur-2xl"
             style={{ width: 180, height: 180, top: "40%", left: "8%" }}
           />
-          {/* Subtle grid overlay */}
           <div
             className="absolute inset-0 opacity-[0.025]"
             style={{
@@ -302,15 +353,14 @@ export default function HomePage() {
         </div>
 
         <div className="hero-content relative z-10 flex flex-col items-center max-w-5xl mx-auto">
-          {/* Badge */}
-          <div className="hero-badge inline-flex items-center gap-2 bg-aqua/10 border border-aqua/30 py-1.5 px-4 rounded-full text-sm font-semibold text-forest mb-8 backdrop-blur-sm">
+          {/* opacity-0 here = CSS sets initial state, GSAP animates to opacity-1 */}
+          <div className="hero-badge opacity-0 inline-flex items-center gap-2 bg-aqua/10 border border-aqua/30 py-1.5 px-4 rounded-full text-sm font-semibold text-forest mb-8 backdrop-blur-sm">
             <span className="w-2 h-2 bg-aqua rounded-full animate-pulse" />
             New: Multi-currency group goals are live!
           </div>
 
-          {/* Title */}
           <h1
-            className={`hero-title ${soraClass} font-bold text-forest tracking-tight mb-6`}
+            className={`hero-title opacity-0 ${soraClass} font-bold text-forest tracking-tight mb-6`}
             style={{ fontSize: "clamp(48px, 8vw, 80px)", lineHeight: 1.05 }}
           >
             Split bills.
@@ -332,15 +382,13 @@ export default function HomePage() {
             </span>
           </h1>
 
-          {/* Subtitle */}
-          <p className="hero-subtitle text-lg text-ink-mid max-w-lg mb-10 leading-relaxed">
+          <p className="hero-subtitle opacity-0 text-lg text-ink-mid max-w-lg mb-10 leading-relaxed">
             GrouPay makes it effortless to split expenses with anyone, track who
             owes what, and pool money toward shared goals — all in one beautiful
             place.
           </p>
 
-          {/* CTAs */}
-          <div className="hero-actions flex flex-wrap justify-center gap-4 mb-14">
+          <div className="hero-actions opacity-0 flex flex-wrap justify-center gap-4 mb-14">
             <a
               href="/auth/sign-up"
               className="inline-flex items-center gap-2 bg-green hover:bg-greener text-white font-semibold px-8 py-4 rounded-full shadow-lg shadow-green/30 hover:shadow-xl hover:shadow-green/40 hover:-translate-y-0.5 transition-all duration-200"
@@ -368,7 +416,6 @@ export default function HomePage() {
             </a>
           </div>
 
-          {/* Stats */}
           <div className="hero-stats flex flex-wrap justify-center gap-10 mb-16">
             {[
               {
@@ -385,7 +432,7 @@ export default function HomePage() {
               },
               { num: "0", suffix: "%", label: "Hidden fees" },
             ].map(({ num, prefix, suffix, label, decimal }, i) => (
-              <div key={i} className="stat text-center group">
+              <div key={i} className="stat opacity-0 text-center">
                 <div
                   className={`${soraClass} text-[36px] font-bold text-forest leading-none flex items-end justify-center gap-0.5`}
                 >
@@ -411,7 +458,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* ── Mockup Card ── */}
+        {/* Mockup Card */}
         <div className="w-full flex justify-center px-2">
           <div
             ref={cardRef}
@@ -433,10 +480,9 @@ export default function HomePage() {
                 ease: "elastic.out(1,0.6)",
               })
             }
-            className="mockup-card relative bg-white border border-card-border rounded-2xl p-7 max-w-215 w-full shadow-2xl"
+            className="mockup-card opacity-0 relative bg-white border border-card-border rounded-2xl p-7 max-215 w-full shadow-2xl"
             style={{ transformStyle: "preserve-3d", willChange: "transform" }}
           >
-            {/* Inner glow */}
             <div
               className="absolute inset-0 rounded-2xl pointer-events-none"
               style={{
@@ -446,9 +492,7 @@ export default function HomePage() {
             />
 
             <div className="mockup-header flex items-center justify-between mb-5">
-              <div
-                className={`mockup-title ${soraClass} font-bold text-forest text-lg`}
-              >
+              <div className={`${soraClass} font-bold text-forest text-lg`}>
                 🏖️ Zanzibar Trip — June 2026
               </div>
               <span className="py-1.5 px-3.5 rounded-full text-xs font-bold tracking-wide uppercase bg-teal/10 text-teal border border-teal/20">
@@ -501,11 +545,11 @@ export default function HomePage() {
                   className="expense-row group flex items-center gap-4 bg-white border border-card-border rounded-xl p-4 hover:border-teal/30 hover:shadow-md transition-all duration-200 cursor-default"
                 >
                   <div
-                    className={`expense-icon w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${row.iconBg} group-hover:scale-110 transition-transform duration-200`}
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${row.iconBg} group-hover:scale-110 transition-transform duration-200`}
                   >
                     {row.icon}
                   </div>
-                  <div className="expense-info flex-1 min-w-0">
+                  <div className="flex-1 min-w-0">
                     <div className="font-semibold text-[14px] text-forest">
                       {row.name}
                     </div>
@@ -532,7 +576,6 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* Progress */}
             <div className="progress-section bg-stone-50 rounded-xl p-4 border border-card-border">
               <div className="flex justify-between items-center mb-3">
                 <span className="font-semibold text-sm text-forest">
@@ -563,20 +606,22 @@ export default function HomePage() {
 
       <section id="how-it-works" className="py-28 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
-          <div className="section-reveal text-xs uppercase text-teal tracking-widest font-bold mb-3">
-            Simple by design
+          <div className="section-reveal-group mb-14">
+            <div className="section-reveal opacity-0 text-xs uppercase text-teal tracking-widest font-bold mb-3">
+              Simple by design
+            </div>
+            <h2
+              className={`section-reveal opacity-0 ${soraClass} text-4xl font-bold text-forest mb-4`}
+            >
+              Up and running in seconds
+            </h2>
+            <p className="section-reveal opacity-0 text-ink-mid max-w-md text-base leading-relaxed">
+              No spreadsheets. No awkward reminders. Just GrouPay doing the
+              maths while you enjoy the moment.
+            </p>
           </div>
-          <h2
-            className={`section-reveal ${soraClass} text-4xl font-bold text-forest mb-4`}
-          >
-            Up and running in seconds
-          </h2>
-          <p className="section-reveal text-ink-mid max-w-md text-base leading-relaxed mb-14">
-            No spreadsheets. No awkward reminders. Just GrouPay doing the maths
-            while you enjoy the moment.
-          </p>
 
-          <div className="steps-grid grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {[
               {
                 num: "01",
@@ -609,9 +654,8 @@ export default function HomePage() {
             ].map((step, i) => (
               <div
                 key={i}
-                className={`step-card group relative bg-linear-to-br ${step.accent} border border-card-border p-8 rounded-2xl hover:border-teal/40 hover:shadow-lg transition-all duration-300 overflow-hidden`}
+                className={`step-card opacity-0 group relative bg-linear-to-br ${step.accent} border border-card-border p-8 rounded-2xl hover:border-teal/40 hover:shadow-lg transition-all duration-300 overflow-hidden`}
               >
-                {/* Large ghost number */}
                 <div
                   className={`absolute -top-3 -right-1 ${soraClass} text-[80px] font-black text-forest/5 leading-none select-none pointer-events-none`}
                 >
@@ -631,8 +675,6 @@ export default function HomePage() {
                 <p className="text-ink-mid text-[15px] leading-relaxed">
                   {step.body}
                 </p>
-
-                {/* Connector arrow (right-side, not on last col) */}
                 {(i === 0 || i === 2) && (
                   <div className="hidden sm:block absolute -right-3 top-1/2 -translate-y-1/2 z-10">
                     <div className="w-6 h-6 bg-white border border-card-border rounded-full flex items-center justify-center shadow-sm">
@@ -663,7 +705,6 @@ export default function HomePage() {
         id="features"
         className="relative py-28 px-6 bg-forest text-white overflow-hidden"
       >
-        {/* BG texture */}
         <div
           className="absolute inset-0 opacity-[0.04]"
           style={{
@@ -676,18 +717,22 @@ export default function HomePage() {
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-green/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-5xl mx-auto relative z-10">
-          <div className="section-reveal text-xs uppercase tracking-widest font-bold text-teal mb-3">
-            Everything you need
+          <div className="section-reveal-group mb-14">
+            <div className="section-reveal opacity-0 text-xs uppercase tracking-widest font-bold text-teal mb-3">
+              Everything you need
+            </div>
+            <h2
+              className={`section-reveal opacity-0 ${soraClass} text-4xl font-bold mb-4`}
+            >
+              Built for real life
+            </h2>
+            <p className="section-reveal opacity-0 text-white/60 max-w-md text-base leading-relaxed">
+              From spontaneous dinners to year-long savings goals, GrouPay
+              handles every kind of shared money moment.
+            </p>
           </div>
-          <h2 className={`section-reveal ${soraClass} text-4xl font-bold mb-4`}>
-            Built for real life
-          </h2>
-          <p className="section-reveal text-white/60 max-w-md text-base leading-relaxed mb-14">
-            From spontaneous dinners to year-long savings goals, GrouPay handles
-            every kind of shared money moment.
-          </p>
 
-          <div className="features-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               {
                 icon: "💸",
@@ -722,7 +767,7 @@ export default function HomePage() {
             ].map((f, i) => (
               <div
                 key={i}
-                className="feature-card group relative bg-white/5 border border-white/10 p-7 rounded-2xl hover:bg-white/10 hover:border-teal/40 transition-all duration-300 overflow-hidden"
+                className="feature-card opacity-0 group relative bg-white/5 border border-white/10 p-7 rounded-2xl hover:bg-white/10 hover:border-teal/40 transition-all duration-300 overflow-hidden"
               >
                 <div className="absolute inset-0 bg-linear-to-br from-teal/0 to-green/0 group-hover:from-teal/5 group-hover:to-green/5 transition-all duration-500 rounded-2xl" />
                 <div className="relative z-10">
@@ -753,8 +798,7 @@ export default function HomePage() {
             backgroundSize: "48px 48px",
           }}
         />
-
-        <div className="cta-inner relative z-10 max-w-2xl mx-auto">
+        <div className="cta-inner opacity-0 relative z-10 max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-2 bg-green/10 border border-green/20 text-green text-sm font-semibold px-4 py-1.5 rounded-full mb-6">
             <span className="w-2 h-2 bg-green rounded-full" />
             Free forever for personal use
@@ -812,7 +856,6 @@ export default function HomePage() {
                 groups everywhere.
               </p>
             </div>
-
             {[
               {
                 heading: "Product",
@@ -856,7 +899,6 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6">
             <span className="text-sm text-white/40">
               © 2026 GrouPay Inc. All rights reserved.

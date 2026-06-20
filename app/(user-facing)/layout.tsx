@@ -1,37 +1,107 @@
-import { Metadata } from "next";
-import React from "react";
-import Sidebar from "./dashboard/Sidebar";
+"use client";
+
+import React, { useRef, useEffect } from "react";
+import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
+
 import { BellIcon, UserIcon } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
+import Sidebar from "./dashboard/Sidebar";
 import MobileNav from "../components/MobileNavigationBar";
-export const metadata: Metadata = {
-  title: "Your GrouPay Dashboard",
-  description: "GrouPay Dashboard for User",
-  icons: {
-    icon: "/family.jpg",
-  },
-};
 
-import { Suspense } from "react";
-import TopNav from "../components/TopIcons";
+gsap.registerPlugin(useGSAP);
+import { useNotifications } from "../NotificationsProvider";
 
-export default function DashboardLayout({
+export default function DashboardClient({
   children,
 }: {
-  children: React.ReactElement;
+  children: React.ReactNode;
 }) {
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const topIconsRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    gsap.from(sidebarRef.current, {
+      x: -100,
+      opacity: 0,
+      duration: 0.8,
+      ease: "power3.out",
+    });
+
+    gsap.from(contentRef.current, {
+      y: 30,
+      opacity: 0,
+      duration: 0.8,
+      delay: 0.2,
+      ease: "power2.out",
+    });
+
+    gsap.from(topIconsRef.current?.children || [], {
+      scale: 0,
+      opacity: 0,
+      duration: 0.5,
+      stagger: 0.15,
+      delay: 0.4,
+      ease: "back.out(1.7)",
+    });
+  }, []);
+
+  useEffect(() => {
+    const badge = document.querySelector(".notification-badge");
+    if (badge) {
+      gsap.to(badge, {
+        scale: 1.2,
+        repeat: -1,
+        yoyo: true,
+        duration: 1,
+        ease: "sine.inOut",
+      });
+    }
+  }, []);
+
+  const { unreadCount } = useNotifications();
+
   return (
-    <div className="grid md:grid-cols-4 lg:grid-cols-6 gap-x-2 md:p-4 p-2 h-screen">
-      <div className="md:col-span-1 hidden md:grid md:p-2 h-[95vh] border-r-2 border-ink-mid/25 text-ink">
+    <div className="flex h-screen overflow-hidden bg-white ">
+      <aside
+        ref={sidebarRef}
+        className="hidden md:flex md:flex-col w-64 h-full sticky top-0 bg-whiteborder-r border-gray-200 shadow-lg z-20 "
+      >
         <Sidebar />
-      </div>
-      <MobileNav />
-      <div className="grid md:col-span-3 lg:col-span-5 relative p-2 md:p-0 overflow-y-scroll min-h-screen items-center">
-        <div className="h-full my-2 md:p-2">
-          <TopNav />
-          <Suspense fallback="Loading...">{children}</Suspense>
+      </aside>
+
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+        <div
+          ref={topIconsRef}
+          className="flex items-center justify-end gap-4  p-4  dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700"
+        >
+          <Link
+            href="/notifications"
+            className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          >
+            <BellIcon className="w-6 h-6 text-gray-700 dark:text-gray-200" />
+            <span className="notification-badge absolute -top-0.5 -right-0.5 flex items-center justify-center w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full">
+              {unreadCount}
+            </span>
+          </Link>
+          <Link
+            href="/profile"
+            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          >
+            <UserIcon className="w-6 h-6 text-gray-700 dark:text-gray-200" />
+          </Link>
+        </div>
+
+        <div
+          ref={contentRef}
+          className="flex-1 ml-5 overflow-y-auto p-4 md:p-6  bg-white"
+        >
+          {children}
         </div>
       </div>
+
+      <MobileNav />
     </div>
   );
 }

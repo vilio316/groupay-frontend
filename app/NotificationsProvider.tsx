@@ -9,7 +9,7 @@ interface NotifContextType {
   updateNotis: React.Dispatch<SetStateAction<any[]>>;
   isLoading: boolean;
   isSuccess: boolean;
-  unreadCount?: number;
+  unreadCount: number;
   updateUnread: React.Dispatch<SetStateAction<number>>;
 }
 

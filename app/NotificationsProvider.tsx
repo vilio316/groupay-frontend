@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, SetStateAction, useContext } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSession } from "@/lib/authClient";
 import { useState } from "react";
 
@@ -11,6 +11,7 @@ interface NotifContextType {
   isSuccess: boolean;
   unreadCount: number;
   updateUnread: React.Dispatch<SetStateAction<number>>;
+  sendReadToDB: (id: string) => void;
 }
 
 const NotificationContext = createContext<NotifContextType>(
@@ -26,6 +27,8 @@ export default function NotificationsProvider({
 }) {
   const [notifs, updateNotis] = useState<any[]>([]);
   const [unreadCount, updateUnread] = useState(0);
+
+  const queryClient = useQueryClient();
 
   const {
     data: notifications,
@@ -45,28 +48,43 @@ export default function NotificationsProvider({
         },
       );
       const notificationsResponse = await notificationsRequest.json();
-      const uppedNotis =
+      const unreadNotis =
         notificationsResponse &&
-        notificationsResponse.map((notif: any) => ({
-          ...notif,
-          isRead: false,
-        }));
-      updateNotis(uppedNotis);
-      updateUnread(uppedNotis.length);
+        notificationsResponse.filter((notif: any) => notif.isRead === false);
+      updateUnread(unreadNotis.length);
+      updateNotis(notificationsResponse);
       return notificationsResponse;
     },
     staleTime: 1 * 60 * 60 * 100,
   });
 
+  const { mutateAsync: sendReadToDB } = useMutation({
+    mutationFn: async (id: string) => {
+      await fetch(`http://localhost:3000/notifications/item/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["notifications"],
+      });
+    },
+  });
+
   return (
     <NotificationContext
       value={{
-        notifications: notifs,
+        notifications,
         isSuccess,
         isLoading,
         updateNotis,
         unreadCount,
         updateUnread,
+        sendReadToDB,
       }}
     >
       {children}

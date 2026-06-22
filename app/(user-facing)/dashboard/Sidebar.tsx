@@ -14,12 +14,13 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { useNotifications } from "@/app/NotificationsProvider";
+import { useSession } from "@/lib/authClient";
 
 const bottomLinks = [{ href: "/settings", label: "Settings", Icon: GearIcon }];
 
 export default function Sidebar() {
   const pathname = usePathname();
-
+  const { data } = useSession();
   const { unreadCount } = useNotifications();
 
   const navLinks = [
@@ -31,7 +32,7 @@ export default function Sidebar() {
       href: "/notifications",
       label: "Notifications",
       Icon: BellIcon,
-      badge: unreadCount,
+      badge: unreadCount > 0 ? unreadCount : null,
     },
   ];
 
@@ -173,10 +174,10 @@ export default function Sidebar() {
           <p
             className={`${soraClass} text-[13px] font-semibold text-forest truncate leading-tight`}
           >
-            Your Account
+            {data?.user.name ? data.user.name : "User Account"}
           </p>
           <p className="text-[11px] text-ink-mid/70 truncate leading-tight">
-            Free plan
+            Tier 1
           </p>
         </div>
         <Link

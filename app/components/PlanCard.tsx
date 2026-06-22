@@ -43,9 +43,11 @@ export default function PlanCard({
         </p>
         <div className="flex items-center md:flex-row flex-col">
           <div className={`${minimumContribution ? "w-1/2" : "w-5/6"} w-full`}>
-            {members && members.length > 0  && <p className="text-[10px] text-ink-mid">
-              Members: {members.length }
-            </p>}
+            {members && members.length > 0 && (
+              <p className="text-[10px] text-ink-mid">
+                Members: {members.length}
+              </p>
+            )}
             <div className="flex items-end self-end">
               <div
                 className={`avatars flex mt-1 ${minimumContribution ? `w-4/5` : `w-5/6`} items-center`}
@@ -56,8 +58,8 @@ export default function PlanCard({
           </div>
           {minimumContribution && (
             <div className="text-right md:w-1/3 w-full flex flex-col justify-end">
-              <p className="md:text-sm text-[10px]">
-                &#8358; {minimumContribution}
+              <p className="md:text-sm text-[8px]">
+                &#8358; {Number(minimumContribution).toLocaleString()}
               </p>
               <p className="lg:text-[10px] text-[7px] text-ink-mid">
                 Avg. Contribution

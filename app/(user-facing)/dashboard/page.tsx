@@ -28,6 +28,16 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
+const dateFunct = () => {
+  const dateValue = new Date().toLocaleDateString("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
+
+  return dateValue;
+};
+
 export default function DashboardPage() {
   const rootRef = useRef<HTMLDivElement>(null);
   const [showModal, updateModalState] = useState(false);
@@ -212,11 +222,7 @@ export default function DashboardPage() {
         <div className="dash-greeting opacity-0 flex items-center justify-between mb-5">
           <div>
             <p className="text-sm text-ink-mid font-medium mb-0.5">
-              {new Date().toLocaleDateString("en-GB", {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-              })}
+              {dateFunct()}
             </p>
             <h1
               className={`${soraClass} text-2xl font-bold text-forest leading-tight`}
@@ -278,6 +284,13 @@ export default function DashboardPage() {
               {label}
             </button>
           ))}
+          <Link
+            href={"/clusters/new"}
+            className={`action-btn opacity-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-px hover:shadow-md bg-teal/50 text-white `}
+          >
+            <PlusIcon weight="bold" className="w-4 h-4" />
+            Create New Cluster
+          </Link>
         </div>
       </div>
 
@@ -288,7 +301,7 @@ export default function DashboardPage() {
       <div className="px-6 mt-6">
         <div className="flex items-center justify-between mb-3">
           <p
-            className={`section-heading opacity-0 ${soraClass} font-bold text-forest text-lg`}
+            className={`section-heading ${soraClass} font-bold text-forest text-lg`}
           >
             Your Clusters
           </p>
@@ -311,10 +324,7 @@ export default function DashboardPage() {
             ))}
           {isSuccess &&
             clusterResponse.map((cluster) => (
-              <div
-                key={cluster.id}
-                className="cluster-card-item opacity-0 shrink-0"
-              >
+              <div key={cluster.id} className="cluster-card-item shrink-0">
                 <ClusterCard valuesObj={cluster} />
               </div>
             ))}
@@ -333,9 +343,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="px-6 mt-7" id="transactions">
-        <p
-          className={`section-heading ${soraClass} font-bold text-forest text-lg`}
-        >
+        <p className={`${soraClass} font-bold text-forest text-lg`}>
           Recent Transactions
         </p>
         {transactionsGotten &&
@@ -367,7 +375,7 @@ export default function DashboardPage() {
           ))} 
         </div> */}
 
-      <div className="fixed bottom-8 right-8 z-40">
+      {/* <div className="fixed bottom-8 right-8 z-40">
         <Link
           href="/clusters/new"
           title="Create New Cluster"
@@ -375,7 +383,7 @@ export default function DashboardPage() {
         >
           <PlusIcon className="w-6 h-6" weight="bold" />
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 }

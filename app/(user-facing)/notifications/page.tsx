@@ -21,20 +21,25 @@ export function NotificationComponent({
     isRead: boolean;
   };
 }) {
-  const { updateNotis, notifications, updateUnread, unreadCount } =
+  const { id, message, createdAt, isRead } = notif;
+  const { updateNotis, notifications, updateUnread, sendReadToDB } =
     useNotifications();
+
+  const markAsRead = async (id: string) => {
+    sendReadToDB(id);
+  };
 
   return (
     <div
-      className={`my-2 rounded-2xl  ${notif.isRead ? `border-card-border border` : `border-teal border-2`} flex items-center gap-x-3 p-2`}
+      className={`my-2 rounded-2xl  ${isRead ? `border-card-border border` : `border-teal border-2`} flex items-center gap-x-3 p-2`}
       onClick={() => {
-        if (unreadCount > 0) updateUnread((unread) => unread - 1);
+        markAsRead(id);
       }}
     >
       <BellSimpleIcon />
       <div>
-        <p key={notif.id} className="my-2 p-1 ">
-          {notif.message}
+        <p key={id} className="my-2 p-1 ">
+          {message}
         </p>
         <p className="text-[10px]">{makeDate(notif.createdAt)}</p>
       </div>

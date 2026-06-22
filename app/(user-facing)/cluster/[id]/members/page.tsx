@@ -20,7 +20,7 @@ export default async function MembersPage({
 
   return (
     <Suspense fallback="Loading...">
-      <MembersClient members={members} />
+      <MembersClient members={members.reverse()} />
     </Suspense>
   );
 }

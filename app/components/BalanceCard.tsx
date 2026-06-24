@@ -10,8 +10,10 @@ import { usePathname } from "next/navigation";
 
 export function BalanceCard({
   payFunct,
+  balance,
 }: {
   payFunct: (string?: string) => void;
+  balance?: number;
 }) {
   const session = useSession();
   const pathname = usePathname();
@@ -32,7 +34,8 @@ export function BalanceCard({
           Total Balance:
         </p>
         <p className="font-bold text-2xl ">
-          &#8358; {(1023433.89).toLocaleString()}
+          &#8358;{" "}
+          {balance ? (balance / 100).toFixed(2) : (1023433.89).toLocaleString()}
         </p>
       </div>
       <div className="col-span-3 justify-end flex items-center gap-x-4 text-center">

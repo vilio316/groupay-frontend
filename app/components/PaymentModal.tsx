@@ -6,10 +6,14 @@ import {
   AtIcon,
   BankIcon,
   XIcon,
+  MoneyWavyIcon,
 } from "@phosphor-icons/react";
 import { soraClass } from "../fonts";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/authClient";
 
 export default function PaymentModal({
   isShown,
@@ -24,12 +28,52 @@ export default function PaymentModal({
 }) {
   const [paymentStage, updatePaymentStage] = useState(0);
   const pathname = usePathname();
+  const params = useParams();
   const [contributionSource, changeSource] = useState("");
+  const [trxAmount, updateAmount] = useState(500);
+  const [transactionHeading, updateHeading] = useState("");
+  const [paymentMethod, updatePaymentMethod] = useState("");
 
   const handleClick = () => {
     onClick();
     updatePaymentStage(0);
   };
+
+  const { mutateAsync: initiatePayment, isPending } = useMutation({
+    mutationFn: async () => {
+      const { data } = await getSession();
+      const payReq = await fetch(
+        `http://localhost:3000/squad/transaction/initiate`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            email: data?.user.email,
+            amount: trxAmount * 100,
+            initiate_type: "inline",
+            currency: "NGN",
+            customer_name: data?.user.name,
+            callback_url: `http://localhost:9909/cluster/${params.id}`,
+            payment_channels: ["transfer", "ussd", "card"],
+            metadata: {
+              clusterId: params.id,
+              senderId: data?.user.id,
+              transactionHeading: transactionHeading,
+            },
+            pass_charge: true,
+            is_recurring: false,
+          }),
+        },
+      );
+      return payReq.json();
+    },
+    onSuccess: (queryResult) => {
+      redirect(queryResult.data.checkout_url);
+    },
+  });
 
   return (
     isShown && (
@@ -55,30 +99,128 @@ export default function PaymentModal({
           >
             {prompter !== "plan" ? `${prompter} Money` : "Contribute to Plan"}
           </p>
-
-          {prompter === "add" && (
+          {prompter === "add" && paymentStage === 0 && (
             <div className="flex justify-center flex-col">
-              <p>Send the money to the account below: </p>
-              <div className="text-center text-3xl font-bold my-3">
-                <p className="text-forest">
-                  {accountNumber && accountNumber.length > 0
-                    ? accountNumber
-                    : "0834556789"}
-                </p>
+              <p className="p-1 etxt-xl text-forest my-2">
+                Choose Payment Method
+              </p>
 
-                <p className="uppercase text-xl">AMOS EBUBE CIROMA</p>
-                <p
-                  className="
-                text-lg my-2"
-                >
-                  GTBank
-                </p>
+              <div className="flex flex-col justify-center py-2 w-full gap-x-4">
+                <div className="rounded-xl p-2 gap-x-2 has-checked:border-green has-checked:scale-110 md:w-4/5 flex border hover:border-green transition-all my-2">
+                  <input
+                    type="radio"
+                    name="payment_method"
+                    id="virtual_account"
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        updatePaymentMethod("virtual");
+                        updatePaymentStage(1);
+                      }
+                    }}
+                  />
+                  <label htmlFor="virtual_account">
+                    <BankIcon weight="bold" />
+                    <span className="font-bold px-0.5">
+                      Transfer to Virtual Account{" "}
+                    </span>{" "}
+                    (carries 0.2% charge)
+                  </label>
+                </div>
+
+                <div className="rounded-xl p-2 gap-x-2 has-checked:border-green has-checked:scale-110 md:w-4/5 my-2 flex border hover:border-green transition-all">
+                  <input
+                    type="radio"
+                    name="payment_method"
+                    id="squadPayment"
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        updatePaymentMethod("squad");
+                        updatePaymentStage(1);
+                      }
+                    }}
+                  />
+                  <label htmlFor="squadPayment">
+                    <MoneyWavyIcon weight="bold" />
+                    <span className="font-bold px-0.5">
+                      Use Squad Checkout{" "}
+                    </span>{" "}
+                    (carries 1% charge on payments)
+                  </label>
+                </div>
               </div>
-              <button className="bg-green text-center text-white font-bold rounded-2xl p-2 uppercase hover:bg-greener mx-auto w-3/4">
-                I have sent the money
-              </button>
             </div>
           )}
+
+          {prompter === "add" &&
+            paymentStage === 1 &&
+            paymentMethod === "squad" && (
+              <div className="flex justify-center flex-col">
+                <p className="text-xl text-forest font-bold">
+                  Transaction Details
+                </p>
+
+                <div className="my-2 p-1">
+                  <label htmlFor="trxAmount my-2">
+                    How much do you want to send?{" "}
+                  </label>
+                  <div className="flex gap-x-2 items-center">
+                    <p className="text-ink">NGN</p>
+                    <input
+                      type="number"
+                      id="trxAmount"
+                      autoFocus
+                      className="text-forest text-3xl outline-none border-0 "
+                      min={100}
+                      max={1000000}
+                      step={100}
+                      defaultValue={trxAmount}
+                      onChange={(e) => updateAmount(Number(e.target.value))}
+                    />
+                  </div>
+                </div>
+
+                <label htmlFor="trxHeading my-2">Transaction Heading</label>
+                <input
+                  type="text"
+                  id="trxHeading"
+                  className="outline-none block p-1 border focus:border-green rounded-xl w-3/4"
+                  onChange={(e) => updateHeading(e.target.value)}
+                  defaultValue={"Cluster Funding"}
+                />
+
+                <button
+                  className={`w-3/4 flex justify-self-center justify-center uppercase bg-green text-white rounded-xl p-2 my-2`}
+                  onClick={() => initiatePayment()}
+                >
+                  <span>{isPending ? "Processing..." : "Confirm"}</span>
+                </button>
+              </div>
+            )}
+
+          {prompter === "add" &&
+            paymentStage === 1 &&
+            paymentMethod === "virtual" && (
+              <div className="flex justify-center flex-col">
+                <p>Send the money to the account below: </p>
+                <div className="font-bold my-3">
+                  <p className="text-forest">
+                    Account Number:{" "}
+                    {accountNumber && accountNumber.length > 0
+                      ? accountNumber
+                      : "0834556789"}
+                  </p>
+                  <p
+                    className="
+              my-2"
+                  >
+                    Bank: GTBank
+                  </p>
+                </div>
+                <button className="bg-green text-center text-white font-bold rounded-2xl p-2 uppercase hover:bg-greener mx-auto w-3/4">
+                  I have sent the money
+                </button>
+              </div>
+            )}
 
           {prompter === "withdraw" && pathname.includes("cluster") && (
             <div className="grid">

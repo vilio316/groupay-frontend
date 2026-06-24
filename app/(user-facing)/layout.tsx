@@ -64,47 +64,49 @@ export default function DashboardClient({
   const { unreadCount } = useNotifications();
 
   return (
-    <div className="flex h-screen overflow-hidden bg-white ">
-      <aside
-        ref={sidebarRef}
-        className="hidden md:flex md:flex-col w-64 h-full sticky top-0 bg-whiteborder-r border-gray-200 shadow-lg z-20 "
-      >
-        <Sidebar />
-      </aside>
-
-      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-        <div
-          ref={topIconsRef}
-          className="flex items-center justify-end gap-4  p-4  dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700"
+    <Suspense fallback="Loading...">
+      <div className="flex h-screen overflow-hidden bg-white ">
+        <aside
+          ref={sidebarRef}
+          className="hidden md:flex md:flex-col w-64 h-full sticky top-0 bg-whiteborder-r border-gray-200 shadow-lg z-20 "
         >
-          <Link
-            href="/notifications"
-            className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          <Sidebar />
+        </aside>
+
+        <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+          <div
+            ref={topIconsRef}
+            className="flex items-center justify-end gap-4  p-4  dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700"
           >
-            <BellIcon className="w-6 h-6 text-gray-700 dark:text-gray-200" />
-            {unreadCount > 0 && (
-              <span className="notification-badge absolute -top-0.5 -right-0.5 flex items-center justify-center w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full">
-                {unreadCount}
-              </span>
-            )}
-          </Link>
-          <Link
-            href="/profile"
-            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            <Link
+              href="/notifications"
+              className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            >
+              <BellIcon className="w-6 h-6 text-gray-700 dark:text-gray-200" />
+              {unreadCount > 0 && (
+                <span className="notification-badge absolute -top-0.5 -right-0.5 flex items-center justify-center w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full">
+                  {unreadCount}
+                </span>
+              )}
+            </Link>
+            <Link
+              href="/profile"
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            >
+              <UserIcon className="w-6 h-6 text-gray-700 dark:text-gray-200" />
+            </Link>
+          </div>
+
+          <div
+            ref={contentRef}
+            className="flex-1 ml-5 overflow-y-auto p-4 md:p-6  bg-white"
           >
-            <UserIcon className="w-6 h-6 text-gray-700 dark:text-gray-200" />
-          </Link>
+            <Suspense fallback="loading...">{children}</Suspense>
+          </div>
         </div>
 
-        <div
-          ref={contentRef}
-          className="flex-1 ml-5 overflow-y-auto p-4 md:p-6  bg-white"
-        >
-          <Suspense fallback="loading...">{children}</Suspense>
-        </div>
+        <MobileNav />
       </div>
-
-      <MobileNav />
-    </div>
+    </Suspense>
   );
 }

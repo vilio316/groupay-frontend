@@ -24,6 +24,7 @@ export interface clusterDetailsType {
   members: ClusterMember[];
   plans: PlanDetails[];
   transactions: any[];
+  accountBalance: string;
 }
 
 export interface PlanDetails {
@@ -60,8 +61,8 @@ export default function ClusterDetailsClient({
 }: {
   detailsObject: clusterDetailsType;
 }) {
-  console.log(detailsObject);
-  const { name, id, desc, accountNumber, plans, members } = detailsObject;
+  const { name, id, desc, accountNumber, plans, members, accountBalance } =
+    detailsObject;
   const [isModalShown, showModal] = useState(false);
   const [promptButton, updatePrompter] = useState<
     "add" | "withdraw" | "transfer"
@@ -84,6 +85,7 @@ export default function ClusterDetailsClient({
       </div>
       <div className="flex gap-x-2 flex-col md:flex-row ">
         <BalanceCard
+          balance={Number(accountBalance)}
           payFunct={(string: any) => {
             showModal(true);
             updatePrompter(string);

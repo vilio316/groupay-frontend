@@ -26,16 +26,14 @@ export function TransactionBlock({
     | {
         status: "success" | "fail" | "pending";
         amount: number;
-        heading?: string;
-        type?: "credit" | "debit";
+        transactionHeading: string;
       }
     | any;
 }) {
-  const { status, amount, heading, type, createdAt, channel } =
+  const { status, amount, type, createdAt, channel, transactionHeading } =
     transactionObject;
   return (
-    <Link
-      href="/"
+    <div
       className={`grid grid-cols-12 gap-x-4 p-1 my-2 items-center border-card-border border bg-linear-to-r ${setBg(status)} to-zinc-200/20 rounded-xl hover:scale-x-102 hover:shadow-2xl hover:shadow-card-border transition-all`}
     >
       <div className="col-span-1">
@@ -59,7 +57,7 @@ export function TransactionBlock({
         )}
       </div>
       <div className="col-span-7 px-3">
-        <p className="text-sm md:text-xl">TRANSACTION HEADING</p>
+        <p className="text-sm md:text-xl">{transactionHeading}</p>
         <p className="text-ink-mid/70 text-[10px] md:text-sm">
           <span>{makeDate(createdAt)}</span> |{" "}
           <span>Handled through {channel}</span>
@@ -73,7 +71,7 @@ export function TransactionBlock({
             : amount.toFixed(2)}
         </p>
       </div>
-    </Link>
+    </div>
   );
 }
 

@@ -94,10 +94,10 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
   return (
     <div className="md:px-4 px-2 md:my-2 my-1 mx-auto">
       <div className="flex items-center">
-        <div className="w-4/5 p-2">
+        <div className="md:w-4/5 w-3/5 p-2">
           <p
             className={`
-                ${soraClass} my-3 font-bold text-green text-3xl
+                ${soraClass} md:my-3 my-1 font-bold text-green md:text-3xl text-2xl
                 `}
           >
             {planObj ? name : "PlanName"}
@@ -107,7 +107,7 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
           </span>
         </div>
 
-        <div className="w-1/5 flex justify-end p-1 gap-x-4 shrink-0">
+        <div className="md:w-1/5 w-2/5 flex justify-end p-1 gap-x-4 shrink-0">
           <button
             onClick={() => handleMembership()}
             className={`rounded-xl p-2 uppercase w-full text-red ${userDetailsInCluster ? `border border-red hover:bg-red` : `bg-teal text-white`} hover:text-white hover:scale-105 transition-all shrink-0`}

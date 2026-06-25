@@ -20,11 +20,11 @@ import PaymentModal from "@/app/components/PaymentModal";
 import OnboardingStatusCard from "@/app/components/OnboardingStatusCard";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getSession, useSession } from "@/lib/authClient";
-import { clusterDetailsType } from "../cluster/[id]/ClusterDetailsClient";
+import { useSession } from "@/lib/authClient";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useMyClusters } from "@/app/hooks/queryHooks";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -65,29 +65,6 @@ export default function DashboardPage() {
   );
   const { data } = useSession();
 
-  async function fetchClust(id: string) {
-    const request = await fetch(`http://localhost:3000/clusters/${id}`, {
-      headers: { "Content-Type": "application/json" },
-    });
-    const response: clusterDetailsType = await request.json();
-    return response;
-  }
-
-  async function eleba() {
-    const { data } = await getSession();
-    const postReq = await fetch("http://localhost:3000/clusters/myClusters", {
-      method: "POST",
-      body: JSON.stringify({ userId: data?.user.id }),
-      headers: { "Content-Type": "application/json" },
-    });
-    const postRes: myClustersResponse[] = await postReq.json();
-    const fetchedClustIds = postRes.map((clust) => clust.clusterId);
-    const results = await Promise.all(
-      fetchedClustIds.map((clust: any) => fetchClust(clust)),
-    );
-    return results;
-  }
-
   async function getTransactions() {
     const transactionsRequest = await fetch(
       "http://localhost:3000/transactions",
@@ -102,16 +79,7 @@ export default function DashboardPage() {
       await transactionsRequest.json();
     return transactionsResponse;
   }
-
-  const {
-    data: clusterResponse,
-    isLoading,
-    isSuccess,
-  } = useQuery({
-    queryKey: ["userClusters"],
-    queryFn: eleba,
-    staleTime: 1 * 60 * 60 * 1000,
-  });
+  const { clusterResponse, isLoading, isSuccess } = useMyClusters();
 
   const {
     data: transactionData,
@@ -343,12 +311,13 @@ export default function DashboardPage() {
               />
             ))}
           {isSuccess &&
+            clusterResponse &&
             clusterResponse.map((cluster) => (
               <div key={cluster.id} className="cluster-card-item shrink-0">
                 <ClusterCard valuesObj={cluster} />
               </div>
             ))}
-          {isSuccess && clusterResponse.length === 0 && (
+          {isSuccess && clusterResponse && clusterResponse.length === 0 && (
             <div className="flex flex-col items-center justify-center w-full py-10 text-center">
               <p className="text-ink-mid text-sm mb-3">No clusters yet</p>
               <Link

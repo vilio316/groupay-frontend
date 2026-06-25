@@ -9,34 +9,11 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { PencilSimpleLineIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
+import { useMyUserData } from "@/app/hooks/queryHooks";
 
 export default function ProfilePage() {
   const session = useSession();
-
-  const getUserDetails = async () => {
-    const { data } = await getSession();
-    const userRequest = await fetch(
-      `http://localhost:3000/userData?id=${data?.user.id}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      },
-    );
-    const userResponse = await userRequest.json();
-    return userResponse;
-  };
-
-  const {
-    data: userDetails,
-    isLoading,
-    isSuccess,
-  } = useQuery({
-    queryKey: ["userDetails"],
-    queryFn: getUserDetails,
-    staleTime: 1 * 60 * 1000,
-  });
+  const { userDetails, isLoading, isSuccess } = useMyUserData();
 
   return (
     <div className="p-3 h-full">
@@ -76,7 +53,7 @@ export default function ProfilePage() {
             src={`${session.data?.user.image ? session.data.user.image : "/family.jpg"} `}
           />
         </div>
-        {isSuccess && (
+        {isSuccess && userDetails && (
           <div>
             <p className="text-xl font-bold">
               {userDetails ? userDetails.name : "User Names"}

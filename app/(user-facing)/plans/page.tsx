@@ -8,8 +8,9 @@ import { useEffect, useState } from "react";
 import { useSession } from "@/lib/authClient";
 import { PlanDetails } from "../cluster/[id]/ClusterDetailsClient";
 import { useQuery } from "@tanstack/react-query";
+import { useMyPlans } from "@/app/hooks/queryHooks";
 
-interface PlanByUser {
+export interface PlanByUser {
   id: string;
   createdAt: string;
   updatedAt: string;
@@ -21,51 +22,8 @@ interface PlanByUser {
   memberCount: number;
 }
 
-async function fetchPlan(clustId: string, planId: string) {
-  const planReq = await fetch(
-    `http://localhost:3000/clusters/${clustId}/plans/${planId}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    },
-  );
-  const planRes: PlanDetails = await planReq.json();
-  return planRes;
-}
-
 export default function PlansPage() {
-  const { data } = useSession();
-
-  async function getUserPlans() {
-    const userPlansRequest = await fetch(
-      `http://localhost:3000/users/${data?.user.id}/plans`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-    const userPlansResponse: PlanByUser[] = await userPlansRequest.json();
-    const requiredIds = userPlansResponse.map((plan) => ({
-      planId: plan.id,
-      clustId: plan.cluster.id,
-    }));
-    const results = await Promise.all(
-      requiredIds.map(({ planId, clustId }) => fetchPlan(clustId, planId)),
-    );
-    return results;
-  }
-
-  const {
-    data: userPlans,
-    isLoading,
-    isSuccess,
-  } = useQuery({
-    queryKey: ["userPlans"],
-    queryFn: getUserPlans,
-    staleTime: 1 * 60 * 60 * 1000,
-  });
+  const { isSuccess, isLoading, userPlans } = useMyPlans();
 
   return (
     <div className="p-4 mx-auto border border-card-border rounded-xl">
@@ -85,6 +43,7 @@ export default function PlansPage() {
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {isSuccess &&
+          userPlans &&
           userPlans.map((plan) => <PlanCard planObject={plan} key={plan.id} />)}
         {isLoading && "Loading your plans..."}
       </div>

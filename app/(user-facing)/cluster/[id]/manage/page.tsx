@@ -13,35 +13,16 @@ import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import type { clusterDetailsType, PlanDetails } from "../ClusterDetailsClient";
-import { useQuery } from "@tanstack/react-query";
+import { useClusterDetails } from "@/app/hooks/queryHooks";
 import { makeDate } from "@/app/(user-facing)/notifications/page";
 import PlanCard from "@/app/components/PlanCard";
 
 export default function ManageClusterPage() {
   const [activeTabs, updateActiveTabs] = useState<string[]>([]);
   const { id } = useParams();
-
-  async function fetchCluster() {
-    const clusterDetailsRequest = await fetch(
-      `http://localhost:3000/clusters/${id}`,
-      {
-        credentials: "include",
-      },
-    );
-    const clusterDetailsResponse: clusterDetailsType =
-      await clusterDetailsRequest.json();
-    return clusterDetailsResponse;
-  }
-
-  const {
-    data: clusterDetailsResponse,
-    isSuccess,
-    isLoading,
-  } = useQuery({
-    queryKey: ["cluster", id],
-    queryFn: fetchCluster,
-    staleTime: 1 * 60 * 60 * 1000,
-  });
+  const { clusterDetailsResponse, isSuccess, isLoading } = useClusterDetails(
+    String(id),
+  );
 
   const handleCategoryClick = (category: string) => {
     if (activeTabs.includes(category)) {
@@ -81,7 +62,7 @@ export default function ManageClusterPage() {
 
   return (
     <>
-      {isSuccess && (
+      {isSuccess && clusterDetailsResponse && (
         <div className="p-4 mx-4 border-2 border-card-border rounded-xl">
           <div className="flex gap-x-4">
             <p

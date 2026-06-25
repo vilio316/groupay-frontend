@@ -92,7 +92,7 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
 
   const { name, desc, minimumContribution, id, members } = planObj;
   return (
-    <div className="px-4 my-2 mx-auto">
+    <div className="md:px-4 px-2 md:my-2 my-1 mx-auto">
       <div className="flex items-center">
         <div className="w-4/5 p-2">
           <p

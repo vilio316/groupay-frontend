@@ -3,35 +3,17 @@ import ClusterDetailsClient, {
   clusterDetailsType,
 } from "./ClusterDetailsClient";
 import { useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useClusterDetails } from "@/app/hooks/queryHooks";
 
 export default function ClusterPage() {
   const { id } = useParams();
-  async function fetchCluster() {
-    const clusterDetailsRequest = await fetch(
-      `http://localhost:3000/clusters/${id}`,
-      {
-        credentials: "include",
-      },
-    );
-    const clusterDetailsResponse: clusterDetailsType =
-      await clusterDetailsRequest.json();
-    return clusterDetailsResponse;
-  }
 
-  const {
-    data: clusterDetailsResponse,
-    isSuccess,
-    isLoading,
-  } = useQuery({
-    queryKey: ["cluster", id],
-    queryFn: fetchCluster,
-    staleTime: 1 * 60 * 60 * 1000,
-  });
-
+  const { isSuccess, isLoading, clusterDetailsResponse } = useClusterDetails(
+    String(id),
+  );
   return (
     <>
-      {isSuccess && (
+      {isSuccess && clusterDetailsResponse && (
         <ClusterDetailsClient detailsObject={clusterDetailsResponse} />
       )}
       {isLoading && <p>Loading...</p>}

@@ -38,6 +38,25 @@ const dateFunct = () => {
   return dateValue;
 };
 
+interface myClustersResponse {
+  id: string;
+  createdAt: string;
+  clusterId: string;
+  userId: string;
+}
+
+interface Transaction {
+  id: string;
+  clusterId: string | null;
+  planId: string | null;
+  transactionRef: string;
+  transactionHeading: string;
+  amount: number;
+  channel: string;
+  status: string;
+  createdAt: string;
+}
+
 export default function DashboardPage() {
   const rootRef = useRef<HTMLDivElement>(null);
   const [showModal, updateModalState] = useState(false);
@@ -61,8 +80,8 @@ export default function DashboardPage() {
       body: JSON.stringify({ userId: data?.user.id }),
       headers: { "Content-Type": "application/json" },
     });
-    const postRes = await postReq.json();
-    const fetchedClustIds = postRes.map((clust: any) => clust.clusterId);
+    const postRes: myClustersResponse[] = await postReq.json();
+    const fetchedClustIds = postRes.map((clust) => clust.clusterId);
     const results = await Promise.all(
       fetchedClustIds.map((clust: any) => fetchClust(clust)),
     );
@@ -79,7 +98,8 @@ export default function DashboardPage() {
         credentials: "include",
       },
     );
-    const transactionsResponse = await transactionsRequest.json();
+    const transactionsResponse: Transaction[] =
+      await transactionsRequest.json();
     return transactionsResponse;
   }
 
@@ -248,7 +268,7 @@ export default function DashboardPage() {
           />
         </div>
 
-        <div className="dash-quick-actions flex gap-3 mt-4">
+        <div className="dash-quick-actions md:flex-row md:flex grid grid-cols-2 gap-3 mt-4">
           {[
             {
               label: "Add Money",

@@ -9,11 +9,12 @@ import {
   MoneyWavyIcon,
 } from "@phosphor-icons/react";
 import { soraClass } from "../fonts";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, usePathname } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/authClient";
+import type { User } from "../(user-facing)/cluster/[id]/ClusterDetailsClient";
 
 export default function PaymentModal({
   isShown,
@@ -33,11 +34,35 @@ export default function PaymentModal({
   const [trxAmount, updateAmount] = useState(500);
   const [transactionHeading, updateHeading] = useState("");
   const [paymentMethod, updatePaymentMethod] = useState("");
+  const [mailQuery, updateMailQuery] = useState<undefined | string>();
 
   const handleClick = () => {
     onClick();
     updatePaymentStage(0);
   };
+
+  const {
+    data: userResults,
+    isLoading,
+    isSuccess,
+    refetch,
+  } = useQuery({
+    queryKey: ["usersByEmail", mailQuery],
+    queryFn: async () => {
+      const req = await fetch(
+        `http://localhost:3000/userData/query/${mailQuery}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        },
+      );
+      const res: User[] = await req.json();
+      return res;
+    },
+    enabled: !!mailQuery,
+  });
 
   const { mutateAsync: initiatePayment, isPending } = useMutation({
     mutationFn: async () => {
@@ -106,7 +131,7 @@ export default function PaymentModal({
               </p>
 
               <div className="flex flex-col justify-center py-2 w-full gap-x-4">
-                <div className="rounded-xl p-2 gap-x-2 has-checked:border-green has-checked:scale-110 md:w-4/5 flex border hover:border-green transition-all my-2">
+                <div className="rounded-xl p-4 gap-x-2 has-checked:border-green has-checked:scale-110 md:w-4/5 flex border hover:border-green transition-all my-2">
                   <input
                     type="radio"
                     name="payment_method"
@@ -160,7 +185,7 @@ export default function PaymentModal({
                 </p>
 
                 <div className="my-2 p-1">
-                  <label htmlFor="trxAmount my-2">
+                  <label htmlFor="trxAmount my-2 block">
                     How much do you want to send?{" "}
                   </label>
                   <div className="flex gap-x-2 items-center">
@@ -179,7 +204,9 @@ export default function PaymentModal({
                   </div>
                 </div>
 
-                <label htmlFor="trxHeading my-2">Transaction Heading</label>
+                <label htmlFor="trxHeading my-2 block">
+                  Transaction Heading
+                </label>
                 <input
                   type="text"
                   id="trxHeading"
@@ -455,7 +482,7 @@ export default function PaymentModal({
                   </button>
                   <button
                     className="flex justify-center items-center w-2/5"
-                    onClick={() => updatePaymentStage(3)}
+                    onClick={() => updatePaymentStage(2)}
                   >
                     <span>
                       Continue <ArrowRightIcon className="inline" />{" "}
@@ -470,50 +497,73 @@ export default function PaymentModal({
             contributionSource === "groupay" && (
               <div>
                 <p className="italic">Sending to GrouPay User</p>
-                <label className="uppercase text-ink-mid font-bold">
-                  enter username here
-                </label>
-                <input
-                  type="text"
-                  className="outline-none block p-1 border focus:border-green rounded-xl"
-                />
-                <button className="uppercase text-white font-bold hover:bg-greener bg-green hover:scale-105 block p-2 rounded-2xl justify-self-center my-2 w-1/2">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    updateMailQuery(e.target.emailQuery.value);
+                  }}
+                >
+                  <label className="uppercase text-ink-mid font-bold">
+                    enter username or email here
+                  </label>
+                  <input
+                    type="email"
+                    name="emailQuery"
+                    className="outline-none indent-2 block p-1 border focus:border-green rounded-xl w-3/4 my-1"
+                    required
+                  />
+                </form>
+                <button
+                  className="uppercase text-white font-bold hover:bg-greener bg-green hover:scale-105 block p-2 rounded-2xl justify-self-center my-2 w-1/2"
+                  type="submit"
+                >
                   Confirm
                 </button>
+
+                {userResults && userResults[0].name && (
+                  <p>{userResults[0].name}</p>
+                )}
               </div>
             )}
 
-          {paymentStage === 2 && prompter === "transfer" && (
-            <div>
-              <p className={`${soraClass} text-2xl font-bold my-3`}>
-                Transaction Details
-              </p>
-              <p>
-                Transaction Amount:{" "}
-                <span className="text-xl font-bold">
-                  &#8358; {Number((54603456.44234).toFixed(2)).toLocaleString()}
-                </span>
-              </p>
-              <p>Recipient Account Number (NUBAN): 1234567890</p>
-              <p>Recipient Name: ADIKA REGINALD SUKI</p>
-              <p>Recipient Bank: Moniepoint</p>
+          {paymentStage === 2 &&
+            prompter === "transfer" &&
+            contributionSource === "groupay" && <div></div>}
 
-              <div className="justify-self-center w-full flex gap-x-4 justify-center p-4">
-                <button
-                  onClick={() => {
-                    onClick();
-                    updatePaymentStage(1);
-                  }}
-                  className="uppercase"
-                >
-                  Cancel
-                </button>
-                <button className="uppercase text-white bg-green rounded-xl p-2">
-                  Make Payment
-                </button>
+          {paymentStage === 2 &&
+            prompter === "transfer" &&
+            contributionSource === "external" && (
+              <div>
+                <p className={`${soraClass} text-2xl font-bold my-3`}>
+                  Transaction Details
+                </p>
+                <p>
+                  Transaction Amount:{" "}
+                  <span className="text-xl font-bold">
+                    &#8358;{" "}
+                    {Number((54603456.44234).toFixed(2)).toLocaleString()}
+                  </span>
+                </p>
+                <p>Recipient Account Number (NUBAN): 1234567890</p>
+                <p>Recipient Name: ADIKA REGINALD SUKI</p>
+                <p>Recipient Bank: Moniepoint</p>
+
+                <div className="justify-self-center w-full flex gap-x-4 justify-center p-4">
+                  <button
+                    onClick={() => {
+                      onClick();
+                      updatePaymentStage(1);
+                    }}
+                    className="uppercase"
+                  >
+                    Cancel
+                  </button>
+                  <button className="uppercase text-white bg-green rounded-xl p-2">
+                    Make Payment
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
           {/* end */}
         </div>
       </div>

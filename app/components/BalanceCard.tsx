@@ -18,7 +18,7 @@ export function BalanceCard({
   const session = useSession();
   const pathname = usePathname();
   return (
-    <div className="md:grid md:w-[90%] grid-cols-8 items-center border border-card-border shadow-md p-4 rounded-xl shadow-card-border/40 my-2">
+    <div className="grid md:w-[90%] md:grid-cols-8 items-center border border-card-border shadow-md p-4 rounded-xl shadow-card-border/40 my-2">
       {!pathname.includes("cluster") && (
         <div className="col-span-1">
           <img

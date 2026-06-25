@@ -30,7 +30,7 @@ async function fetchPlan(clustId: string, planId: string) {
       },
     },
   );
-  const planRes = await planReq.json();
+  const planRes: PlanDetails = await planReq.json();
   return planRes;
 }
 
@@ -51,7 +51,7 @@ export default function PlansPage() {
       planId: plan.id,
       clustId: plan.cluster.id,
     }));
-    const results: PlanDetails[] = await Promise.all(
+    const results = await Promise.all(
       requiredIds.map(({ planId, clustId }) => fetchPlan(clustId, planId)),
     );
     return results;

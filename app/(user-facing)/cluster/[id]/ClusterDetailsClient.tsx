@@ -70,7 +70,9 @@ export default function ClusterDetailsClient({
   return (
     <div className="p-4 mx-auto">
       <div className="flex gap-x-4 items-center">
-        <p className={`${soraClass} w-5/6 text-3xl font-bold text-forest my-3`}>
+        <p
+          className={`${soraClass} md:w-5/6 w-2/3 md:text-3xl text-xl font-bold text-forest my-3`}
+        >
           {detailsObject ? name : "ClusterName"}
         </p>
         <Link

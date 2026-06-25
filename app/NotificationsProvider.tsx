@@ -5,7 +5,7 @@ import { getSession } from "@/lib/authClient";
 import { useState } from "react";
 
 interface NotifContextType {
-  notifications: any[];
+  notifications: Notification[] | undefined;
   updateNotis: React.Dispatch<SetStateAction<any[]>>;
   isLoading: boolean;
   isSuccess: boolean;
@@ -20,12 +20,22 @@ const NotificationContext = createContext<NotifContextType>(
 
 export const useNotifications = () => useContext(NotificationContext);
 
+interface Notification {
+  id: string;
+  senderId: string;
+  recipientId: string;
+  type: string;
+  isRead: boolean;
+  message: string;
+  createdAt: string;
+}
+
 export default function NotificationsProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [notifs, updateNotis] = useState<any[]>([]);
+  const [notifs, updateNotis] = useState<Notification[]>([]);
   const [unreadCount, updateUnread] = useState(0);
 
   const queryClient = useQueryClient();
@@ -47,12 +57,12 @@ export default function NotificationsProvider({
           },
         },
       );
-      const notificationsResponse = await notificationsRequest.json();
+      const notificationsResponse: Notification[] =
+        await notificationsRequest.json();
       const unreadNotis =
         notificationsResponse &&
-        notificationsResponse.filter((notif: any) => notif.isRead === false);
+        notificationsResponse.filter((notif) => notif.isRead === false);
       updateUnread(unreadNotis.length);
-      updateNotis(notificationsResponse);
       return notificationsResponse;
     },
     staleTime: 1 * 60 * 60 * 100,

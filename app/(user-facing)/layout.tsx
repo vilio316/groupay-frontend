@@ -99,7 +99,7 @@ export default function DashboardClient({
 
           <div
             ref={contentRef}
-            className="flex-1 ml-5 overflow-y-auto p-4 md:p-6  bg-white"
+            className="flex-1 ml-5 overflow-y-auto p-2 md:p-6 bg-white"
           >
             <Suspense fallback="loading...">{children}</Suspense>
           </div>

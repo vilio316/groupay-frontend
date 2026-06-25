@@ -11,7 +11,7 @@ export default function ClustersPage() {
         "Content-Type": "application/json",
       },
     });
-    const response = await request.json();
+    const response: clusterDetailsType = await request.json();
     return response;
   }
   async function eleba() {

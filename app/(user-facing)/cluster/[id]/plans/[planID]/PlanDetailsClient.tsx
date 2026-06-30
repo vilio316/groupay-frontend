@@ -1,7 +1,6 @@
 "use client";
 import Avatars from "@/app/components/AvatarsCircles";
 import PaymentModal from "@/app/components/PaymentModal";
-import { TransactionBlock } from "@/app/components/TransactionStatusBlocks";
 import { soraClass } from "@/app/fonts";
 import { CheckCircleIcon, HandDepositIcon } from "@phosphor-icons/react";
 import Link from "next/link";

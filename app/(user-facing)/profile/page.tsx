@@ -1,14 +1,12 @@
 "use client";
 
 import { soraClass } from "@/app/fonts";
-import { getSession, signOut } from "@/lib/authClient";
+import { signOut } from "@/lib/authClient";
 import { SignOutIcon } from "@phosphor-icons/react/dist/ssr";
 import { redirect } from "next/navigation";
 import { useSession } from "@/lib/authClient";
-import { useEffect } from "react";
 import Link from "next/link";
 import { PencilSimpleLineIcon } from "@phosphor-icons/react";
-import { useQuery } from "@tanstack/react-query";
 import { useMyUserData } from "@/app/hooks/queryHooks";
 
 export default function ProfilePage() {
@@ -16,7 +14,7 @@ export default function ProfilePage() {
   const { userDetails, isLoading, isSuccess } = useMyUserData();
 
   return (
-    <div className="p-3 h-full">
+    <div className="p-2 h-full">
       <div className="flex gap-x-2 items-center">
         <p
           className={`text-3xl ${soraClass} md:w-3/5 w-4/5 font-bold text-green my-3`}

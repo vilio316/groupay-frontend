@@ -274,7 +274,7 @@ export default function DashboardPage() {
           ))}
           <Link
             href={"/clusters/new"}
-            className={`action-btn opacity-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-px hover:shadow-md bg-teal/50 text-white `}
+            className={`action-btn opacity-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-px hover:shadow-md bg-teal/80 text-white `}
           >
             <PlusIcon weight="bold" className="w-4 h-4" />
             Create New Cluster
@@ -331,7 +331,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="px-6 mt-7" id="transactions">
+      <div className="md:px-6 px-2 md:mt-7 mt-3" id="transactions">
         <p className={`${soraClass} font-bold text-forest text-lg`}>
           Recent Transactions
         </p>

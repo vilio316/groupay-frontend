@@ -57,14 +57,18 @@ export function TransactionBlock({
         )}
       </div>
       <div className="col-span-7 px-3">
-        <p className="text-sm md:text-xl">{transactionHeading}</p>
+        <p className="text-sm md:text-xl h-8 w-full truncate">
+          {transactionHeading}
+        </p>
         <p className="text-ink-mid/70 text-[10px] md:text-sm">
           <span>{makeDate(createdAt)}</span> |{" "}
           <span>Handled through {channel}</span>
         </p>
       </div>
-      <div className={`${getStatusClass(status)} font-bold col-span-4 p-3`}>
-        <p className="text-right text-sm md:text-xl ">
+      <div
+        className={`${getStatusClass(status)} font-bold col-span-4 md:p-3 p-1`}
+      >
+        <p className="text-right text-[10px] md:text-xl ">
           +&#8358;{" "}
           {channel === "SQUAD"
             ? (Number(amount) / 100).toFixed(2)

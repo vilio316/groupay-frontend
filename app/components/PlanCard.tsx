@@ -22,7 +22,7 @@ export default function PlanCard({
       <div>
         <img
           src="/family.jpg"
-          className="md:h-48 lg:h-60 h-44 w-full object-cover rounded-2xl"
+          className="md:h-48 lg:h-60 h-50 w-full object-cover rounded-2xl"
         />
       </div>
       <div className="absolute bottom-0 h-[90%] z-20 bg-white rounded-2xl border-2 border-card-border w-full shadow-xl shadow-card-border p-2 grid">

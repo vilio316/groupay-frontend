@@ -45,7 +45,7 @@ export default function NewClusterPage() {
   return (
     <>
       {!isSuccess ? (
-        <div className="py-4 px-6 border-4 border-card-border place-self-center w-3/4 shadow-card-border shadow-2xl rounded-xl md:min-h-1/2">
+        <div className="md:py-4 py-2 px-3 md:px-6 border-4 border-card-border place-self-center md:w-3/4 w-[90%] shadow-card-border shadow-2xl rounded-xl md:min-h-1/2 min-h-3/4 items-center">
           <p
             className={`${soraClass} font-bold text-2xl my-4 text-green flex gap-2`}
           >
@@ -72,7 +72,7 @@ export default function NewClusterPage() {
                 required
                 onChange={(e) => updateClusterName(e.target.value)}
                 placeholder="The name of your cluster"
-                className="w-3/4 block mb-4 mt-2 p-2 indent-4 border-card-border border-2 rounded-[10px] outline-none focus:border-green"
+                className="md:w-3/4 w-full block mb-4 mt-2 p-2 indent-4 border-card-border border-2 rounded-[10px] outline-none focus:border-green"
               />
 
               <label
@@ -87,7 +87,7 @@ export default function NewClusterPage() {
                 required
                 onChange={(e) => updateClusterDesc(e.target.value)}
                 placeholder="A brief description for the members of your cluster..."
-                className="w-3/4 block mb-4 p-2 indent-4 border-card-border focus:border-green border-2 rounded-[10px] outline-none"
+                className="md:w-3/4 w-full block mb-4 p-2 indent-4 border-card-border focus:border-green border-2 rounded-[10px] outline-none"
               />
 
               <button

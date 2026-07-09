@@ -7,6 +7,7 @@ import {
   ArrowUpIcon,
   ArrowDownIcon,
   ArrowsLeftRightIcon,
+  ArrowSquareOutIcon,
 } from "@phosphor-icons/react";
 import { soraClass } from "../../fonts";
 import Link from "next/link";
@@ -15,7 +16,8 @@ import {
   TransactionBlock,
 } from "@/app/components/TransactionStatusBlocks";
 import ClusterCard from "@/app/components/ClusterCard";
-import { BalanceCard } from "@/app/components/BalanceCard";
+import { BalanceCard, UserAccountModal } from "@/app/components/BalanceCard";
+import ClusterTransferModal from "@/app/components/ClusterTransferModal";
 import PaymentModal from "@/app/components/PaymentModal";
 import OnboardingStatusCard from "@/app/components/OnboardingStatusCard";
 import { useQuery } from "@tanstack/react-query";
@@ -62,6 +64,8 @@ export default function DashboardPage() {
   const [prompter, updatePrompter] = useState<"add" | "withdraw" | "transfer">(
     "add",
   );
+  const [showUserAccount, setShowUserAccount] = useState(false);
+  const [showClusterTransfer, setShowClusterTransfer] = useState(false);
   const { data } = useSession();
 
   async function getTransactions() {
@@ -187,6 +191,14 @@ export default function DashboardPage() {
 
   return (
     <div ref={rootRef} className="min-h-screen bg-[#f7faf7] pb-24">
+      <UserAccountModal
+        isShown={showUserAccount}
+        onClose={() => setShowUserAccount(false)}
+      />
+      <ClusterTransferModal
+        isShown={showClusterTransfer}
+        onClose={() => setShowClusterTransfer(false)}
+      />
       <PaymentModal
         isShown={showModal}
         onClick={() => updateModalState(!showModal)}
@@ -220,6 +232,7 @@ export default function DashboardPage() {
               updateModalState(true);
               updatePrompter(string);
             }}
+            onAccountClick={() => setShowUserAccount(true)}
           />
         </div>
 
@@ -259,6 +272,13 @@ export default function DashboardPage() {
               {label}
             </button>
           ))}
+          <button
+            onClick={() => setShowClusterTransfer(true)}
+            className={`action-btn opacity-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-px hover:shadow-md bg-teal/10 text-teal hover:bg-teal hover:text-white border border-teal/20`}
+          >
+            <ArrowSquareOutIcon weight="bold" className="w-4 h-4" />
+            Fund Cluster
+          </button>
           <Link
             href={"/clusters/new"}
             className={`action-btn opacity-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-px hover:shadow-md bg-teal/80 text-white `}

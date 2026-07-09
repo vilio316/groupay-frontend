@@ -5,6 +5,7 @@ import {
   ArrowRightIcon,
   AtIcon,
   BankIcon,
+  WalletIcon,
   XIcon,
   MoneyWavyIcon,
 } from "@phosphor-icons/react";
@@ -35,6 +36,8 @@ export default function PaymentModal({
   const [transactionHeading, updateHeading] = useState("Cluster Funding");
   const [paymentMethod, updatePaymentMethod] = useState("");
   const [mailQuery, updateMailQuery] = useState<undefined | string>();
+  const [isPayingFromAccount, setIsPayingFromAccount] = useState(false);
+  const [payError, setPayError] = useState("");
 
   const handleClick = () => {
     onClick();
@@ -106,6 +109,35 @@ export default function PaymentModal({
     },
   });
 
+  const handleGroupayPayment = async () => {
+    setIsPayingFromAccount(true);
+    setPayError("");
+    try {
+      const { data } = await getSession();
+      const res = await fetch(
+        `http://localhost:3000/clusters/${params.id}/pay-from-account`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: data?.user.id,
+            amount: trxAmount * 100,
+          }),
+          credentials: "include",
+        },
+      );
+      if (!res.ok) {
+        const err = await res.json().catch(() => null);
+        throw new Error(err?.message || "Payment failed");
+      }
+      updatePaymentStage(2);
+    } catch (e: any) {
+      setPayError(e.message || "Something went wrong");
+    } finally {
+      setIsPayingFromAccount(false);
+    }
+  };
+
   return (
     isShown && (
       <div className="fixed -top-12 left-0 min-h-screen w-full bg-gray-100/60  z-70  mx-auto grid p-3">
@@ -176,6 +208,27 @@ export default function PaymentModal({
                       Use Squad Checkout{" "}
                     </span>{" "}
                     (carries 1% charge on payments)
+                  </label>
+                </div>
+
+                <div className="rounded-xl p-2 gap-x-2 has-checked:border-green has-checked:scale-110 md:w-4/5 my-2 flex border hover:border-green transition-all">
+                  <input
+                    type="radio"
+                    name="payment_method"
+                    id="groupayAccount"
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        updatePaymentMethod("groupay");
+                        updatePaymentStage(1);
+                      }
+                    }}
+                  />
+                  <label htmlFor="groupayAccount">
+                    <WalletIcon weight="bold" />
+                    <span className="font-bold px-0.5">
+                      Pay from GrouPay Account{" "}
+                    </span>{" "}
+                    (instant, no extra charge)
                   </label>
                 </div>
               </div>
@@ -254,6 +307,84 @@ export default function PaymentModal({
                 </button>
               </div>
             )}
+
+          {prompter === "add" &&
+            paymentStage === 1 &&
+            paymentMethod === "groupay" && (
+              <div className="flex justify-center flex-col">
+                <p className="text-xl text-forest font-bold">
+                  Transaction Details
+                </p>
+
+                <div className="my-2 p-1">
+                  <label htmlFor="trxAmount my-2 block">
+                    How much do you want to send?{" "}
+                  </label>
+                  <div className="flex gap-x-3 items-center my-2">
+                    <p className="text-ink text-2xl text-bold">NGN</p>
+                    <input
+                      type="number"
+                      id="trxAmount"
+                      autoFocus
+                      className="text-forest text-3xl outline-none rounded-xl p-2"
+                      min={100}
+                      max={1000000}
+                      step={100}
+                      defaultValue={trxAmount}
+                      onChange={(e) => updateAmount(Number(e.target.value))}
+                    />
+                  </div>
+                </div>
+
+                <label htmlFor="trxHeading my-2 block">
+                  Transaction Heading
+                </label>
+                <input
+                  type="text"
+                  id="trxHeading"
+                  className="outline-none block p-1 border focus:border-green rounded-xl w-3/4"
+                  onChange={(e) => updateHeading(e.target.value)}
+                  defaultValue={"Cluster Funding"}
+                />
+
+                {payError && (
+                  <p className="text-red-500 text-sm bg-red/5 rounded-xl px-3 py-2 my-2">
+                    {payError}
+                  </p>
+                )}
+
+                <button
+                  className={`w-3/4 flex justify-self-center justify-center uppercase bg-green text-white rounded-xl p-2 my-2`}
+                  onClick={handleGroupayPayment}
+                  disabled={isPayingFromAccount}
+                >
+                  <span>
+                    {isPayingFromAccount ? "Processing..." : "Confirm"}
+                  </span>
+                </button>
+              </div>
+            )}
+
+          {paymentStage === 2 && paymentMethod === "groupay" && (
+            <div className="text-center py-6">
+              <div className="w-16 h-16 rounded-full bg-green/10 flex items-center justify-center mx-auto mb-4">
+                <BankIcon className="w-8 h-8 fill-green" weight="fill" />
+              </div>
+              <h3 className={`${soraClass} text-xl font-bold text-forest mb-2`}>
+                Payment Successful
+              </h3>
+              <p className="text-sm text-ink-mid mb-2">
+                &#8358; {trxAmount.toLocaleString()} has been sent from your
+                GrouPay account.
+              </p>
+              <button
+                onClick={handleClick}
+                className="mt-4 uppercase bg-green text-white font-bold rounded-xl p-2 px-6 hover:bg-greener transition-all"
+              >
+                Done
+              </button>
+            </div>
+          )}
 
           {prompter === "withdraw" && pathname.includes("cluster") && (
             <div className="grid">

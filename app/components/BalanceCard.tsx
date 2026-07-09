@@ -1,25 +1,30 @@
 "use client";
 
 import { useSession } from "@/lib/authClient";
-import { PaperPlaneTiltIcon } from "@phosphor-icons/react";
+import { PaperPlaneTiltIcon, BankIcon, XIcon, CopyIcon, CheckCircleIcon, ArrowLeftIcon } from "@phosphor-icons/react";
 import {
   HandDepositIcon,
   HandWithdrawIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { usePathname } from "next/navigation";
+import { useState, useCallback, useEffect } from "react";
+import { soraClass } from "../fonts";
 
 export function BalanceCard({
   payFunct,
   balance,
+  onAccountClick,
 }: {
   payFunct: (string?: string) => void;
   balance?: number;
+  onAccountClick?: () => void;
 }) {
   const session = useSession();
   const pathname = usePathname();
+  const isDashboard = !pathname.includes("cluster");
   return (
     <div className="grid md:w-[90%] md:grid-cols-8 items-center border border-card-border shadow-md p-4 rounded-xl shadow-card-border/40 my-2">
-      {!pathname.includes("cluster") && (
+      {isDashboard && (
         <div className="col-span-1">
           <img
             src={`${session.data?.user.image ? session.data.user.image : "/family.jpg"}`}
@@ -28,7 +33,7 @@ export function BalanceCard({
         </div>
       )}
       <div
-        className={`${pathname.includes("cluster") ? "col-span-5" : "col-span-4"}`}
+        className={`${!isDashboard ? "col-span-5" : "col-span-3"}`}
       >
         <p className="text-ink-mid font-semibold uppercase my-2">
           Total Balance:
@@ -40,7 +45,19 @@ export function BalanceCard({
             : (1023433.89).toLocaleString()}
         </p>
       </div>
-      <div className="col-span-3 justify-end flex items-center gap-x-4 text-center">
+      <div className="col-span-4 justify-end flex items-center gap-x-4 text-center">
+        {isDashboard && onAccountClick && (
+          <button title="My Account">
+            <div className="flex justify-center">
+              <BankIcon
+                weight="duotone"
+                className="rounded-full bg-teal/30 text-teal shadow-xl shadow-card-border h-8 w-8 md:h-12 md:w-12 p-2 hover:bg-teal hover:text-white hover:font-bold hover:scale-105 transition-all duration-100"
+                onClick={onAccountClick}
+              />
+            </div>
+            <span className="text-sm text-ink-mid">Account</span>
+          </button>
+        )}
         <button title="Add Money">
           <div className="flex justify-center">
             <HandDepositIcon
@@ -63,7 +80,7 @@ export function BalanceCard({
           <span className="text-ink-mid text-sm">Withdraw</span>
         </button>
 
-        {!pathname.includes("cluster") && (
+        {isDashboard && (
           <button title="Make Transfer">
             <div className="flex justify-center">
               <PaperPlaneTiltIcon
@@ -76,6 +93,362 @@ export function BalanceCard({
           </button>
         )}
       </div>
+    </div>
+  );
+}
+
+const DEFAULT_ACCOUNT_NUMBER = "1234567890";
+
+export function UserAccountModal({
+  isShown,
+  onClose,
+}: {
+  isShown: boolean;
+  onClose: () => void;
+}) {
+  const { data } = useSession();
+  const [accountData, setAccountData] = useState<{ accountNumber: string } | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [showRequestForm, setShowRequestForm] = useState(false);
+
+  useEffect(() => {
+    if (isShown && data?.user?.id) {
+      setLoading(true);
+      setShowRequestForm(false);
+      fetch(`http://localhost:3000/userData/account/${data.user.id}`, {
+        credentials: "include",
+      })
+        .then((res) => res.json())
+        .then((acc) => {
+          if (acc && acc.accountNumber && acc.accountNumber !== DEFAULT_ACCOUNT_NUMBER) {
+            setAccountData(acc);
+          } else {
+            setAccountData(null);
+          }
+        })
+        .catch(() => setAccountData(null))
+        .finally(() => setLoading(false));
+    } else {
+      setAccountData(null);
+      setShowRequestForm(false);
+    }
+  }, [isShown, data]);
+
+  const handleRequestSuccess = () => {
+    setShowRequestForm(false);
+    if (data?.user?.id) {
+      setLoading(true);
+      fetch(`http://localhost:3000/userData/account/${data.user.id}`, {
+        credentials: "include",
+      })
+        .then((res) => res.json())
+        .then((acc) => {
+          if (acc && acc.accountNumber && acc.accountNumber !== DEFAULT_ACCOUNT_NUMBER) {
+            setAccountData(acc);
+          } else {
+            setAccountData(null);
+          }
+        })
+        .catch(() => setAccountData(null))
+        .finally(() => setLoading(false));
+    }
+  };
+
+  if (!isShown) return null;
+
+  if (showRequestForm) {
+    return (
+      <RequestAccountFormModal
+        onBack={() => setShowRequestForm(false)}
+        onClose={onClose}
+        onSuccess={handleRequestSuccess}
+      />
+    );
+  }
+
+  const userName = data?.user?.name || "User";
+
+  return (
+    <div className="fixed inset-0 z-70 flex items-center justify-center bg-forest/50 p-3">
+      <div className="bg-white rounded-[20px] max-w-[520px] w-full p-6 shadow-modal relative">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-ink hover:text-red transition-colors"
+        >
+          <XIcon className="w-6 h-6" weight="bold" />
+        </button>
+
+        {loading ? (
+          <div className="text-center py-10">
+            <div className="animate-spin w-8 h-8 border-2 border-teal border-t-transparent rounded-full mx-auto" />
+            <p className="text-ink-mid mt-4">Loading account info...</p>
+          </div>
+        ) : accountData ? (
+          <div className="text-center">
+            <div className="w-16 h-16 rounded-full bg-teal/10 flex items-center justify-center mx-auto mb-4">
+              <BankIcon className="w-8 h-8 fill-teal" weight="fill" />
+            </div>
+            <h3 className={`${soraClass} text-xl font-bold text-forest mb-2`}>
+              Your Account
+            </h3>
+            <p className="text-sm text-ink-mid mb-6">
+              Your GrouPay account number is below.
+            </p>
+
+            <div className="border border-card-border rounded-xl p-4 mb-4 text-left space-y-3">
+              <div>
+                <p className="text-xs uppercase font-semibold text-ink-mid tracking-wider mb-1">
+                  Account Name
+                </p>
+                <p className="text-forest font-bold text-lg">{userName}</p>
+              </div>
+              <div className="border-t border-card-border/50" />
+              <div>
+                <p className="text-xs uppercase font-semibold text-ink-mid tracking-wider mb-1">
+                  Account Number
+                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-forest font-bold text-lg tracking-widest">
+                    {accountData.accountNumber}
+                  </p>
+                  <CopyButton text={accountData.accountNumber} />
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={onClose}
+              className="w-full py-3 rounded-full bg-teal text-white font-bold hover:bg-teal/90 transition-all"
+            >
+              Done
+            </button>
+          </div>
+        ) : (
+          <div className="text-center">
+            <div className="w-16 h-16 rounded-full bg-mist/20 flex items-center justify-center mx-auto mb-4">
+              <BankIcon className="w-8 h-8 fill-mist" weight="duotone" />
+            </div>
+            <h3 className={`${soraClass} text-xl font-bold text-forest mb-2`}>
+              No Account Yet
+            </h3>
+            <p className="text-sm text-ink-mid mb-6">
+              You haven&apos;t set up your GrouPay account yet. Request one to get started.
+            </p>
+
+            <button
+              onClick={() => setShowRequestForm(true)}
+              className="w-full py-3 rounded-full bg-teal text-white font-bold hover:bg-teal/90 transition-all mb-3"
+            >
+              Request Account
+            </button>
+            <button
+              onClick={onClose}
+              className="w-full py-3 rounded-full border border-card-border text-ink-mid font-semibold hover:bg-gray-50 transition-all"
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = useCallback(async () => {
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }, [text]);
+  return (
+    <button
+      onClick={handleCopy}
+      className="p-2 rounded-lg hover:bg-teal/10 transition-all shrink-0"
+      title="Copy account number"
+    >
+      {copied ? (
+        <CheckCircleIcon className="w-5 h-5 fill-teal" weight="bold" />
+      ) : (
+        <CopyIcon className="w-5 h-5 text-ink-mid" weight="bold" />
+      )}
+    </button>
+  );
+}
+
+function RequestAccountFormModal({
+  onBack,
+  onClose,
+  onSuccess,
+}: {
+  onBack: () => void;
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const { data } = useSession();
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  const nameParts = (data?.user?.name || "").split(" ");
+  const prefillFirstName = nameParts[0] || "";
+  const prefillLastName = nameParts.slice(1).join(" ") || "";
+  const prefillEmail = data?.user?.email || "";
+  const prefillPhone = data?.user?.phone || "";
+
+  const [formData, setFormData] = useState({
+    first_name: prefillFirstName,
+    last_name: prefillLastName,
+    email: prefillEmail,
+    mobile_num: prefillPhone,
+    bvn: "",
+    dob: "",
+    address: "",
+    gender: "",
+    beneficiary_account: "",
+  });
+
+  const isComplete =
+    formData.first_name.trim() &&
+    formData.last_name.trim() &&
+    formData.email.trim() &&
+    formData.mobile_num.trim() &&
+    formData.bvn.trim() &&
+    formData.dob.trim() &&
+    formData.address.trim() &&
+    formData.gender.trim() &&
+    formData.beneficiary_account.trim();
+
+  const updateField = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async () => {
+    if (!isComplete) return;
+    setSubmitting(true);
+    setError("");
+    try {
+      const res = await fetch("http://localhost:3000/squad/virtual", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          customer_identifier: prefillEmail,
+        }),
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => null);
+        throw new Error(errBody?.message || `Request failed (${res.status})`);
+      }
+      onSuccess();
+    } catch (e: any) {
+      setError(e.message || "Something went wrong");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-70 flex items-center justify-center bg-forest/50 p-3">
+      <div className="bg-white rounded-[20px] max-w-[520px] w-full p-6 shadow-modal relative max-h-[90vh] overflow-y-auto">
+        <button
+          onClick={onBack}
+          className="absolute top-4 left-4 text-ink hover:text-teal transition-colors"
+          title="Go back"
+        >
+          <ArrowLeftIcon className="w-6 h-6" weight="bold" />
+        </button>
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-ink hover:text-red transition-colors"
+        >
+          <XIcon className="w-6 h-6" weight="bold" />
+        </button>
+
+        <div className="text-center mb-6 mt-4">
+          <h3 className={`${soraClass} text-xl font-bold text-forest`}>
+            Request Account
+          </h3>
+          <p className="text-sm text-ink-mid mt-1">
+            Fill in your details to create a GrouPay account.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <FormField label="First Name" value={formData.first_name} onChange={(v) => updateField("first_name", v)} placeholder="John" />
+            <FormField label="Last Name" value={formData.last_name} onChange={(v) => updateField("last_name", v)} placeholder="Doe" />
+          </div>
+          <FormField label="Email" type="email" value={formData.email} onChange={(v) => updateField("email", v)} placeholder="john@example.com" />
+          <FormField label="Mobile Number" type="tel" value={formData.mobile_num} onChange={(v) => updateField("mobile_num", v)} placeholder="08012345678" />
+          <FormField label="BVN" value={formData.bvn} onChange={(v) => updateField("bvn", v)} placeholder="Enter your BVN" maxLength={11} />
+          <FormField label="Date of Birth" type="date" value={formData.dob} onChange={(v) => updateField("dob", v)} />
+          <FormField label="Address" value={formData.address} onChange={(v) => updateField("address", v)} placeholder="Your residential address" />
+          <div>
+            <label className="block text-xs uppercase font-semibold text-ink-mid tracking-wider mb-1">Gender</label>
+            <select
+              value={formData.gender}
+              onChange={(e) => updateField("gender", e.target.value)}
+              className="w-full rounded-xl border border-card-border px-4 py-2.5 text-sm text-forest bg-white focus:outline-none focus:ring-2 focus:ring-teal/40 focus:border-teal transition-all"
+            >
+              <option value="">Select gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <FormField label="Beneficiary Account" value={formData.beneficiary_account} onChange={(v) => updateField("beneficiary_account", v)} placeholder="Default settlement account number" />
+
+          {error && (
+            <p className="text-sm text-red-600 bg-red/5 rounded-xl px-4 py-2">{error}</p>
+          )}
+
+          <button
+            onClick={handleSubmit}
+            disabled={!isComplete || submitting}
+            className="w-full py-3 rounded-full bg-teal text-white font-bold hover:bg-teal/90 transition-all disabled:opacity-40 disabled:cursor-not-allowed mt-2"
+          >
+            {submitting ? (
+              <span className="flex items-center justify-center gap-2">
+                <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+                Submitting...
+              </span>
+            ) : (
+              "Submit"
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FormField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+  maxLength,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  type?: string;
+  maxLength?: number;
+}) {
+  return (
+    <div>
+      <label className="block text-xs uppercase font-semibold text-ink-mid tracking-wider mb-1">{label}</label>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        maxLength={maxLength}
+        className="w-full rounded-xl border border-card-border px-4 py-2.5 text-sm text-forest bg-white focus:outline-none focus:ring-2 focus:ring-teal/40 focus:border-teal transition-all"
+      />
     </div>
   );
 }

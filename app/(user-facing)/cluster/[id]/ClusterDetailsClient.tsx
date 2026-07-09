@@ -13,11 +13,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { useState, useCallback } from "react";
-import {
-  XIcon,
-  CopyIcon,
-  CheckCircleIcon,
-} from "@phosphor-icons/react";
+import { XIcon, CopyIcon, CheckCircleIcon } from "@phosphor-icons/react";
 
 export interface clusterDetailsType {
   id: string;
@@ -163,7 +159,7 @@ export default function ClusterDetailsClient({
       {/* Account Modal */}
       {showAccountModal && (
         <div className="fixed inset-0 z-70 flex items-center justify-center bg-forest/50 p-3">
-          <div className="bg-white rounded-[20px] max-w-[520px] w-full p-6 shadow-modal relative">
+          <div className="bg-white rounded-[20px] max-w-130 w-full p-6 shadow-modal relative">
             <button
               onClick={() => setShowAccountModal(false)}
               className="absolute top-4 right-4 text-ink hover:text-red transition-colors"
@@ -176,7 +172,9 @@ export default function ClusterDetailsClient({
                 <div className="w-16 h-16 rounded-full bg-green/10 flex items-center justify-center mx-auto mb-4">
                   <BankIcon className="w-8 h-8 fill-green" weight="fill" />
                 </div>
-                <h3 className={`${soraClass} text-xl font-bold text-forest mb-2`}>
+                <h3
+                  className={`${soraClass} text-xl font-bold text-forest mb-2`}
+                >
                   Cluster Account
                 </h3>
                 <p className="text-sm text-ink-mid mb-6">
@@ -205,9 +203,15 @@ export default function ClusterDetailsClient({
                         title="Copy account number"
                       >
                         {copied ? (
-                          <CheckCircleIcon className="w-5 h-5 fill-green" weight="bold" />
+                          <CheckCircleIcon
+                            className="w-5 h-5 fill-green"
+                            weight="bold"
+                          />
                         ) : (
-                          <CopyIcon className="w-5 h-5 text-ink-mid" weight="bold" />
+                          <CopyIcon
+                            className="w-5 h-5 text-ink-mid"
+                            weight="bold"
+                          />
                         )}
                       </button>
                     </div>
@@ -226,12 +230,14 @@ export default function ClusterDetailsClient({
                 <div className="w-16 h-16 rounded-full bg-mist/20 flex items-center justify-center mx-auto mb-4">
                   <BankIcon className="w-8 h-8 fill-mist" weight="duotone" />
                 </div>
-                <h3 className={`${soraClass} text-xl font-bold text-forest mb-2`}>
+                <h3
+                  className={`${soraClass} text-xl font-bold text-forest mb-2`}
+                >
                   No Account Yet
                 </h3>
                 <p className="text-sm text-ink-mid mb-6">
-                  This cluster doesn't have a dedicated account yet. Create one to
-                  receive payments directly.
+                  This cluster doesn't have a dedicated account yet. Create one
+                  to receive payments directly.
                 </p>
 
                 <button

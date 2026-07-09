@@ -169,6 +169,27 @@ export default function PaymentModal({
               </p>
 
               <div className="flex flex-col justify-center py-2 w-full gap-x-4">
+                <div className="rounded-xl p-2 gap-x-2 has-checked:border-green has-checked:scale-110 md:w-4/5 my-2 flex border hover:border-green transition-all">
+                  <input
+                    type="radio"
+                    name="payment_method"
+                    id="groupayAccount"
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        updatePaymentMethod("groupay");
+                        updatePaymentStage(1);
+                      }
+                    }}
+                  />
+                  <label htmlFor="groupayAccount">
+                    <WalletIcon weight="bold" />
+                    <span className="font-bold px-0.5">
+                      Pay from GrouPay Account{" "}
+                    </span>{" "}
+                    (instant, no extra charge)
+                  </label>
+                </div>
+
                 <div className="rounded-xl p-4 gap-x-2 has-checked:border-green has-checked:scale-110 md:w-4/5 flex border hover:border-green transition-all my-2">
                   <input
                     type="radio"
@@ -208,27 +229,6 @@ export default function PaymentModal({
                       Use Squad Checkout{" "}
                     </span>{" "}
                     (carries 1% charge on payments)
-                  </label>
-                </div>
-
-                <div className="rounded-xl p-2 gap-x-2 has-checked:border-green has-checked:scale-110 md:w-4/5 my-2 flex border hover:border-green transition-all">
-                  <input
-                    type="radio"
-                    name="payment_method"
-                    id="groupayAccount"
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        updatePaymentMethod("groupay");
-                        updatePaymentStage(1);
-                      }
-                    }}
-                  />
-                  <label htmlFor="groupayAccount">
-                    <WalletIcon weight="bold" />
-                    <span className="font-bold px-0.5">
-                      Pay from GrouPay Account{" "}
-                    </span>{" "}
-                    (instant, no extra charge)
                   </label>
                 </div>
               </div>

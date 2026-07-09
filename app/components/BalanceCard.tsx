@@ -1,7 +1,14 @@
 "use client";
 
-import { useSession } from "@/lib/authClient";
-import { PaperPlaneTiltIcon, BankIcon, XIcon, CopyIcon, CheckCircleIcon, ArrowLeftIcon } from "@phosphor-icons/react";
+import { getSession, useSession } from "@/lib/authClient";
+import {
+  PaperPlaneTiltIcon,
+  BankIcon,
+  XIcon,
+  CopyIcon,
+  CheckCircleIcon,
+  ArrowLeftIcon,
+} from "@phosphor-icons/react";
 import {
   HandDepositIcon,
   HandWithdrawIcon,
@@ -32,17 +39,13 @@ export function BalanceCard({
           />
         </div>
       )}
-      <div
-        className={`${!isDashboard ? "col-span-5" : "col-span-3"}`}
-      >
+      <div className={`${!isDashboard ? "col-span-5" : "col-span-3"}`}>
         <p className="text-ink-mid font-semibold uppercase my-2">
           Total Balance:
         </p>
         <p className="font-bold text-2xl ">
           &#8358;{" "}
-          {balance
-            ? (balance / 100).toLocaleString()
-            : (1023433.89).toLocaleString()}
+          {balance ? (balance / 100).toLocaleString() : (0).toLocaleString()}
         </p>
       </div>
       <div className="col-span-4 justify-end flex items-center gap-x-4 text-center">
@@ -107,7 +110,9 @@ export function UserAccountModal({
   onClose: () => void;
 }) {
   const { data } = useSession();
-  const [accountData, setAccountData] = useState<{ accountNumber: string } | null>(null);
+  const [accountData, setAccountData] = useState<{
+    accountNumber: string;
+  } | null>(null);
   const [loading, setLoading] = useState(false);
   const [showRequestForm, setShowRequestForm] = useState(false);
 
@@ -120,7 +125,11 @@ export function UserAccountModal({
       })
         .then((res) => res.json())
         .then((acc) => {
-          if (acc && acc.accountNumber && acc.accountNumber !== DEFAULT_ACCOUNT_NUMBER) {
+          if (
+            acc &&
+            acc.accountNumber &&
+            acc.accountNumber !== DEFAULT_ACCOUNT_NUMBER
+          ) {
             setAccountData(acc);
           } else {
             setAccountData(null);
@@ -143,7 +152,11 @@ export function UserAccountModal({
       })
         .then((res) => res.json())
         .then((acc) => {
-          if (acc && acc.accountNumber && acc.accountNumber !== DEFAULT_ACCOUNT_NUMBER) {
+          if (
+            acc &&
+            acc.accountNumber &&
+            acc.accountNumber !== DEFAULT_ACCOUNT_NUMBER
+          ) {
             setAccountData(acc);
           } else {
             setAccountData(null);
@@ -170,7 +183,7 @@ export function UserAccountModal({
 
   return (
     <div className="fixed inset-0 z-70 flex items-center justify-center bg-forest/50 p-3">
-      <div className="bg-white rounded-[20px] max-w-[520px] w-full p-6 shadow-modal relative">
+      <div className="bg-white rounded-[20px] max-w-130 w-full p-6 shadow-modal relative">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-ink hover:text-red transition-colors"
@@ -232,7 +245,8 @@ export function UserAccountModal({
               No Account Yet
             </h3>
             <p className="text-sm text-ink-mid mb-6">
-              You haven&apos;t set up your GrouPay account yet. Request one to get started.
+              You haven&apos;t set up your GrouPay account yet. Request one to
+              get started.
             </p>
 
             <button
@@ -289,6 +303,10 @@ function RequestAccountFormModal({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
+  const formatDOB = (date: string) => {
+    const stringChunks = date.split("-");
+    return `${stringChunks[1]}/${stringChunks[2]}/${stringChunks[0]}`;
+  };
   const nameParts = (data?.user?.name || "").split(" ");
   const prefillFirstName = nameParts[0] || "";
   const prefillLastName = nameParts.slice(1).join(" ") || "";
@@ -304,7 +322,6 @@ function RequestAccountFormModal({
     dob: "",
     address: "",
     gender: "",
-    beneficiary_account: "",
   });
 
   const isComplete =
@@ -315,8 +332,7 @@ function RequestAccountFormModal({
     formData.bvn.trim() &&
     formData.dob.trim() &&
     formData.address.trim() &&
-    formData.gender.trim() &&
-    formData.beneficiary_account.trim();
+    formData.gender.trim();
 
   const updateField = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -327,15 +343,21 @@ function RequestAccountFormModal({
     setSubmitting(true);
     setError("");
     try {
-      const res = await fetch("http://localhost:3000/squad/virtual", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          customer_identifier: prefillEmail,
-        }),
-        credentials: "include",
-      });
+      const { data } = await getSession();
+      const res = await fetch(
+        `http://localhost:3000/squad/virtual/${data?.user.id}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...formData,
+            dob: formatDOB(formData.dob),
+            customer_identifier: prefillEmail,
+            beneficiary_account: process.env.NEXT_PUBLIC_BENEFICIARY_ACCOUNT,
+          }),
+          credentials: "include",
+        },
+      );
       if (!res.ok) {
         const errBody = await res.json().catch(() => null);
         throw new Error(errBody?.message || `Request failed (${res.status})`);
@@ -350,7 +372,7 @@ function RequestAccountFormModal({
 
   return (
     <div className="fixed inset-0 z-70 flex items-center justify-center bg-forest/50 p-3">
-      <div className="bg-white rounded-[20px] max-w-[520px] w-full p-6 shadow-modal relative max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-[20px] max-w-130 w-full p-6 shadow-modal relative max-h-[90vh] overflow-y-auto">
         <button
           onClick={onBack}
           className="absolute top-4 left-4 text-ink hover:text-teal transition-colors"
@@ -376,31 +398,72 @@ function RequestAccountFormModal({
 
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
-            <FormField label="First Name" value={formData.first_name} onChange={(v) => updateField("first_name", v)} placeholder="John" />
-            <FormField label="Last Name" value={formData.last_name} onChange={(v) => updateField("last_name", v)} placeholder="Doe" />
+            <FormField
+              label="First Name"
+              value={formData.first_name}
+              onChange={(v) => updateField("first_name", v)}
+              placeholder="John"
+            />
+            <FormField
+              label="Last Name"
+              value={formData.last_name}
+              onChange={(v) => updateField("last_name", v)}
+              placeholder="Doe"
+            />
           </div>
-          <FormField label="Email" type="email" value={formData.email} onChange={(v) => updateField("email", v)} placeholder="john@example.com" />
-          <FormField label="Mobile Number" type="tel" value={formData.mobile_num} onChange={(v) => updateField("mobile_num", v)} placeholder="08012345678" />
-          <FormField label="BVN" value={formData.bvn} onChange={(v) => updateField("bvn", v)} placeholder="Enter your BVN" maxLength={11} />
-          <FormField label="Date of Birth" type="date" value={formData.dob} onChange={(v) => updateField("dob", v)} />
-          <FormField label="Address" value={formData.address} onChange={(v) => updateField("address", v)} placeholder="Your residential address" />
+          <FormField
+            label="Email"
+            type="email"
+            value={formData.email}
+            onChange={(v) => updateField("email", v)}
+            placeholder="john@example.com"
+          />
+          <FormField
+            label="Mobile Number"
+            type="tel"
+            value={formData.mobile_num}
+            onChange={(v) => updateField("mobile_num", v)}
+            placeholder="08012345678"
+          />
+          <FormField
+            label="BVN"
+            value={formData.bvn}
+            onChange={(v) => updateField("bvn", v)}
+            placeholder="Enter your BVN"
+            maxLength={11}
+          />
+          <FormField
+            label="Date of Birth"
+            type="date"
+            value={formData.dob}
+            onChange={(v) => updateField("dob", v)}
+          />
+          <FormField
+            label="Address"
+            value={formData.address}
+            onChange={(v) => updateField("address", v)}
+            placeholder="Your residential address"
+          />
           <div>
-            <label className="block text-xs uppercase font-semibold text-ink-mid tracking-wider mb-1">Gender</label>
+            <label className="block text-xs uppercase font-semibold text-ink-mid tracking-wider mb-1">
+              Gender
+            </label>
             <select
               value={formData.gender}
               onChange={(e) => updateField("gender", e.target.value)}
               className="w-full rounded-xl border border-card-border px-4 py-2.5 text-sm text-forest bg-white focus:outline-none focus:ring-2 focus:ring-teal/40 focus:border-teal transition-all"
             >
               <option value="">Select gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
+              <option value="1">Male</option>
+              <option value="2">Female</option>
+              <option value="null">Other</option>
             </select>
           </div>
-          <FormField label="Beneficiary Account" value={formData.beneficiary_account} onChange={(v) => updateField("beneficiary_account", v)} placeholder="Default settlement account number" />
 
           {error && (
-            <p className="text-sm text-red-600 bg-red/5 rounded-xl px-4 py-2">{error}</p>
+            <p className="text-sm text-red-600 bg-red/5 rounded-xl px-4 py-2">
+              {error}
+            </p>
           )}
 
           <button
@@ -440,7 +503,9 @@ function FormField({
 }) {
   return (
     <div>
-      <label className="block text-xs uppercase font-semibold text-ink-mid tracking-wider mb-1">{label}</label>
+      <label className="block text-xs uppercase font-semibold text-ink-mid tracking-wider mb-1">
+        {label}
+      </label>
       <input
         type={type}
         value={value}

@@ -21,7 +21,7 @@ import ClusterTransferModal from "@/app/components/ClusterTransferModal";
 import PaymentModal from "@/app/components/PaymentModal";
 import OnboardingStatusCard from "@/app/components/OnboardingStatusCard";
 import { useQuery } from "@tanstack/react-query";
-import { useSession } from "@/lib/authClient";
+import { useSession, getSession } from "@/lib/authClient";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -91,6 +91,26 @@ export default function DashboardPage() {
   } = useQuery({
     queryKey: ["transactions"],
     queryFn: getTransactions,
+    staleTime: 1 * 60 * 60 * 1000,
+  });
+
+  const { data: accountDetails, isSuccess: balanceRetrieved } = useQuery({
+    queryKey: ["account_details"],
+    queryFn: async () => {
+      try {
+        const { data } = await getSession();
+        const accountRequest = await fetch(
+          `http://localhost:3000/userData/account/${data?.user.id}`,
+          {
+            credentials: "include",
+          },
+        );
+        const accountResponse = await accountRequest.json();
+        return accountResponse;
+      } catch (error) {
+        throw new Error("An error occured while fetching your details");
+      }
+    },
     staleTime: 1 * 60 * 60 * 1000,
   });
 
@@ -164,7 +184,12 @@ export default function DashboardPage() {
           opacity: 1,
           duration: 0.5,
           ease: "power2.out",
-          scrollTrigger: { trigger: card, start: "left 90%", horizontal: false, once: true },
+          scrollTrigger: {
+            trigger: card,
+            start: "left 90%",
+            horizontal: false,
+            once: true,
+          },
         },
       );
     });
@@ -228,6 +253,7 @@ export default function DashboardPage() {
 
         <div className="dash-balance opacity-0">
           <BalanceCard
+            balance={balanceRetrieved ? accountDetails.accountBalance : 1000}
             payFunct={(string: any) => {
               updateModalState(true);
               updatePrompter(string);
@@ -237,7 +263,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="dash-quick-actions md:flex-row md:flex grid grid-cols-2 gap-3 mt-4">
-          {[
+          {/* {[
             {
               label: "Add Money",
               type: "add" as const,
@@ -271,7 +297,8 @@ export default function DashboardPage() {
               <Icon weight="bold" className="w-4 h-4" />
               {label}
             </button>
-          ))}
+          ))} */}
+
           <button
             onClick={() => setShowClusterTransfer(true)}
             className={`action-btn opacity-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-px hover:shadow-md bg-teal/10 text-teal hover:bg-teal hover:text-white border border-teal/20`}

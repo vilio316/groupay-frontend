@@ -49,6 +49,7 @@ export function NotificationComponent({
 
 export default function NotificationsPage() {
   const { notifications, isSuccess, isLoading } = useNotifications();
+  console.log(notifications);
 
   return (
     <div className="grid h-full">
@@ -57,12 +58,13 @@ export default function NotificationsPage() {
           Your Notifications
         </p>
         {isSuccess &&
-          notifications.length > 1 &&
+          notifications &&
+          notifications.length > 0 &&
           notifications.map((notif: any) => (
             <NotificationComponent key={notif.id} notif={notif} />
           ))}
 
-        {isSuccess && notifications.length == 0 && (
+        {isSuccess && notifications && notifications.length == 0 && (
           <div className="m-4 p-4 text-center border-2 border-card-border rounded-xl grid">
             <div className="grid justify-center">
               <BellSimpleSlashIcon
@@ -79,7 +81,7 @@ export default function NotificationsPage() {
           </div>
         )}
 
-        {isLoading && <p>Loading...</p>}
+        {isLoading && <p>Loading your notifications...</p>}
       </div>
     </div>
   );

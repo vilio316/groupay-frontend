@@ -94,7 +94,11 @@ export default function DashboardPage() {
     staleTime: 1 * 60 * 60 * 1000,
   });
 
-  const { data: accountDetails, isSuccess: balanceRetrieved } = useQuery({
+  const {
+    data: accountDetails,
+    isSuccess: balanceRetrieved,
+    isLoading: loadingBalance,
+  } = useQuery({
     queryKey: ["account_details"],
     queryFn: async () => {
       try {
@@ -252,14 +256,18 @@ export default function DashboardPage() {
         </div>
 
         <div className="dash-balance opacity-0">
-          <BalanceCard
-            balance={balanceRetrieved ? accountDetails.accountBalance : 1000}
-            payFunct={(string: any) => {
-              updateModalState(true);
-              updatePrompter(string);
-            }}
-            onAccountClick={() => setShowUserAccount(true)}
-          />
+          {!loadingBalance ? (
+            <BalanceCard
+              balance={accountDetails.accountBalance}
+              payFunct={(string: any) => {
+                updateModalState(true);
+                updatePrompter(string);
+              }}
+              onAccountClick={() => setShowUserAccount(true)}
+            />
+          ) : (
+            <p>Loading balance...</p>
+          )}
         </div>
 
         <div className="dash-quick-actions md:flex-row md:flex grid grid-cols-2 gap-3 mt-4">

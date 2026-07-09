@@ -39,7 +39,7 @@ export function BalanceCard({
           />
         </div>
       )}
-      <div className={`${!isDashboard ? "col-span-5" : "col-span-3"}`}>
+      <div className={`${!isDashboard ? "col-span-4" : "col-span-3"}`}>
         <p className="text-ink-mid font-semibold uppercase my-2">
           Total Balance:
         </p>

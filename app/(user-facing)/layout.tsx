@@ -22,6 +22,8 @@ export default function DashboardClient({
   const contentRef = useRef<HTMLDivElement>(null);
   const topIconsRef = useRef<HTMLDivElement>(null);
 
+  const { unreadCount } = useNotifications();
+
   useGSAP(() => {
     gsap.from(sidebarRef.current, {
       x: -100,
@@ -59,9 +61,7 @@ export default function DashboardClient({
         ease: "sine.inOut",
       });
     }
-  }, []);
-
-  const { unreadCount } = useNotifications();
+  }, [unreadCount]);
 
   return (
     <Suspense fallback="Loading...">

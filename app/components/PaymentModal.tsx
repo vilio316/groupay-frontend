@@ -32,7 +32,7 @@ export default function PaymentModal({
   const params = useParams();
   const [contributionSource, changeSource] = useState("");
   const [trxAmount, updateAmount] = useState(500);
-  const [transactionHeading, updateHeading] = useState("");
+  const [transactionHeading, updateHeading] = useState("Cluster Funding");
   const [paymentMethod, updatePaymentMethod] = useState("");
   const [mailQuery, updateMailQuery] = useState<undefined | string>();
 
@@ -67,33 +67,39 @@ export default function PaymentModal({
   const { mutateAsync: initiatePayment, isPending } = useMutation({
     mutationFn: async () => {
       const { data } = await getSession();
-      const payReq = await fetch(
-        `http://localhost:3000/squad/transaction/initiate`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            email: data?.user.email,
-            amount: trxAmount * 100,
-            initiate_type: "inline",
-            currency: "NGN",
-            customer_name: data?.user.name,
-            callback_url: `http://localhost:9909/cluster/${params.id}`,
-            payment_channels: ["transfer", "ussd", "card"],
-            metadata: {
-              clusterId: params.id,
-              senderId: data?.user.id,
-              transactionHeading: transactionHeading,
+      try {
+        const payReq = await fetch(
+          `http://localhost:3000/squad/transaction/initiate`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
             },
-            pass_charge: true,
-            is_recurring: false,
-          }),
-        },
-      );
-      return payReq.json();
+            credentials: "include",
+            body: JSON.stringify({
+              email: data?.user.email,
+              amount: trxAmount * 100,
+              initiate_type: "inline",
+              currency: "NGN",
+              customer_name: data?.user.name,
+              callback_url: `http://localhost:9909/cluster/${params.id}`,
+              payment_channels: ["transfer", "ussd", "card"],
+              metadata: {
+                clusterId: params.id,
+                senderId: data?.user.id,
+                transactionHeading: transactionHeading,
+              },
+              pass_charge: true,
+              is_recurring: false,
+            }),
+          },
+        );
+        return payReq.json();
+      } catch (error) {
+        throw new Error(
+          "Error experienced while initiating payment request to Squad Checkout",
+        );
+      }
     },
     onSuccess: (queryResult) => {
       redirect(queryResult.data.checkout_url);
@@ -188,13 +194,13 @@ export default function PaymentModal({
                   <label htmlFor="trxAmount my-2 block">
                     How much do you want to send?{" "}
                   </label>
-                  <div className="flex gap-x-2 items-center">
-                    <p className="text-ink">NGN</p>
+                  <div className="flex gap-x-3 items-center my-2">
+                    <p className="text-ink text-2xl text-bold">NGN</p>
                     <input
                       type="number"
                       id="trxAmount"
                       autoFocus
-                      className="text-forest text-3xl outline-none border-0 "
+                      className="text-forest text-3xl outline-none rounded-xl p-2"
                       min={100}
                       max={1000000}
                       step={100}
@@ -501,6 +507,7 @@ export default function PaymentModal({
                   onSubmit={(e) => {
                     e.preventDefault();
                     updateMailQuery(e.target.emailQuery.value);
+                    refetch();
                   }}
                 >
                   <label className="uppercase text-ink-mid font-bold">
@@ -512,16 +519,18 @@ export default function PaymentModal({
                     className="outline-none indent-2 block p-1 border focus:border-green rounded-xl w-3/4 my-1"
                     required
                   />
+                  <button
+                    className="uppercase text-white font-bold hover:bg-greener bg-green hover:scale-105 block p-2 rounded-2xl justify-self-center my-2 w-1/2"
+                    type="submit"
+                  >
+                    Confirm
+                  </button>
                 </form>
-                <button
-                  className="uppercase text-white font-bold hover:bg-greener bg-green hover:scale-105 block p-2 rounded-2xl justify-self-center my-2 w-1/2"
-                  type="submit"
-                >
-                  Confirm
-                </button>
 
-                {userResults && userResults[0].name && (
+                {userResults && userResults.length > 0 ? (
                   <p>{userResults[0].name}</p>
+                ) : (
+                  <p>No matching users found</p>
                 )}
               </div>
             )}

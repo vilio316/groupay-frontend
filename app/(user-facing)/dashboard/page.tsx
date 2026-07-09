@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import {
   PlusIcon,
   ArrowRightIcon,
@@ -18,7 +18,6 @@ import ClusterCard from "@/app/components/ClusterCard";
 import { BalanceCard } from "@/app/components/BalanceCard";
 import PaymentModal from "@/app/components/PaymentModal";
 import OnboardingStatusCard from "@/app/components/OnboardingStatusCard";
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "@/lib/authClient";
 import gsap from "gsap";
@@ -123,41 +122,6 @@ export default function DashboardPage() {
             "-=0.2",
           );
 
-        gsap.utils
-          .toArray<HTMLElement>(".cluster-card-item")
-          .forEach((card) => {
-            gsap.fromTo(
-              card,
-              { x: 30, opacity: 0 },
-              {
-                x: 0,
-                opacity: 1,
-                duration: 0.5,
-                ease: "power2.out",
-                scrollTrigger: {
-                  trigger: card,
-                  start: "left 90%",
-                  horizontal: false,
-                  once: true,
-                },
-              },
-            );
-          });
-
-        gsap.utils.toArray<HTMLElement>(".transaction-item").forEach((item) => {
-          gsap.fromTo(
-            item,
-            { x: -24, opacity: 0 },
-            {
-              x: 0,
-              opacity: 1,
-              duration: 0.45,
-              ease: "power2.out",
-              scrollTrigger: { trigger: item, start: "top 92%", once: true },
-            },
-          );
-        });
-
         gsap.utils.toArray<HTMLElement>(".section-heading").forEach((el) => {
           gsap.fromTo(
             el,
@@ -172,19 +136,6 @@ export default function DashboardPage() {
           );
         });
 
-        gsap.fromTo(
-          ".fab-btn",
-          { scale: 0, opacity: 0, rotate: -90 },
-          {
-            scale: 1,
-            opacity: 1,
-            rotate: 0,
-            duration: 0.6,
-            ease: "back.out(1.7)",
-            delay: 0.8,
-          },
-        );
-
         const refresh = () => ScrollTrigger.refresh();
         document.fonts?.ready.then(refresh);
         window.addEventListener("load", refresh);
@@ -195,6 +146,42 @@ export default function DashboardPage() {
     },
     { scope: rootRef },
   );
+
+  useEffect(() => {
+    if (!isSuccess && !transactionsGotten) return;
+
+    const clusterCards = gsap.utils.toArray<HTMLElement>(".cluster-card-item");
+    clusterCards.forEach((card) => {
+      gsap.fromTo(
+        card,
+        { x: 30, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.5,
+          ease: "power2.out",
+          scrollTrigger: { trigger: card, start: "left 90%", horizontal: false, once: true },
+        },
+      );
+    });
+
+    const txItems = gsap.utils.toArray<HTMLElement>(".transaction-item");
+    txItems.forEach((item) => {
+      gsap.fromTo(
+        item,
+        { x: -24, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.45,
+          ease: "power2.out",
+          scrollTrigger: { trigger: item, start: "top 92%", once: true },
+        },
+      );
+    });
+
+    ScrollTrigger.refresh();
+  }, [isSuccess, transactionsGotten]);
 
   const firstName = data?.user.name ? data.user.name.split(" ")[0] : "there";
 
@@ -338,10 +325,9 @@ export default function DashboardPage() {
         {transactionsGotten &&
           transactionData.length > 0 &&
           transactionData.map((transaction: any) => (
-            <TransactionBlock
-              transactionObject={transaction}
-              key={transaction.id}
-            />
+            <div key={transaction.id} className="transaction-item opacity-0">
+              <TransactionBlock transactionObject={transaction} />
+            </div>
           ))}
         {transactionData && transactionData.length === 0 && (
           <EmptyTransaction />
@@ -351,28 +337,6 @@ export default function DashboardPage() {
           Last 30 days
         </span>
       </div>
-
-      {/* <div className="flex flex-col gap-2">
-          {[
-            { status: "success", amount: 4000 },
-            { status: "pending", amount: 3450.56 },
-            { status: "fail", amount: 4500.56 },
-          ].map((tx, i) => (
-            <div key={i} className="transaction-item opacity-0">
-              <TransactionBlock transactionObject={tx as any} />
-            </div>
-          ))} 
-        </div> */}
-
-      {/* <div className="fixed bottom-8 right-8 z-40">
-        <Link
-          href="/clusters/new"
-          title="Create New Cluster"
-          className="fab-btn opacity-0 flex items-center justify-center w-14 h-14 bg-green hover:bg-greener text-white rounded-full shadow-xl shadow-green/30 hover:shadow-2xl hover:shadow-green/40 hover:-translate-y-1 transition-all duration-200"
-        >
-          <PlusIcon className="w-6 h-6" weight="bold" />
-        </Link>
-      </div> */}
     </div>
   );
 }

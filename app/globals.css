@@ -2,16 +2,36 @@
 
 :root {
   --green: #49c635;
-  --aqua: #54defdb2;
+  --aqua: #54defd;
   --white: #fffbfa;
   --teal: #00bd9d;
   --mist: #8bd7d2;
   --forest: #0d2b1f;
   --ink: #1a1a1a;
   --ink-mid: #4a5568;
-  --card-border: rgba(139, 215, 210, 0.35);
+  --card-border: rgba(139, 215, 210, 0.4);
   --red: #e5373a;
   --greener: #3db029;
+
+  /* Design guide shadows (Section 6) */
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.07);
+  --shadow-modal: 0 8px 32px rgba(0, 0, 0, 0.12);
+
+  /* Status chip colors (Section 7.5) */
+  --paid-bg: rgba(73, 198, 53, 0.15);
+  --paid-text: #1a6b0e;
+  --pending-bg: rgba(84, 222, 253, 0.2);
+  --pending-text: #006e8a;
+  --overdue-bg: rgba(229, 55, 58, 0.12);
+  --overdue-text: #9e1215;
+  --partial-bg: rgba(0, 189, 157, 0.15);
+  --partial-text: #005f50;
+
+  /* Border radii (Section 6) */
+  --radius-input: 8px;
+  --radius-card: 12px;
+  --radius-modal: 20px;
+  --radius-pill: 9999px;
 }
 
 .hero-bg {
@@ -45,12 +65,48 @@
   --color-card-border: var(--card-border);
   --color-red: var(--red);
   --color-greener: var(--greener);
+  --color-paid-bg: var(--paid-bg);
+  --color-paid-text: var(--paid-text);
+  --color-pending-bg: var(--pending-bg);
+  --color-pending-text: var(--pending-text);
+  --color-overdue-bg: var(--overdue-bg);
+  --color-overdue-text: var(--overdue-text);
+  --color-partial-bg: var(--partial-bg);
+  --color-partial-text: var(--partial-text);
+
+  --shadow-card: var(--shadow-card);
+  --shadow-modal: var(--shadow-modal);
+
+  --radius-input: var(--radius-input);
+  --radius-card: var(--radius-card);
+  --radius-modal: var(--radius-modal);
+  --radius-pill: var(--radius-pill);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--white);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+/* Base button styles (Section 7.1) */
+button, a, input, select, textarea {
+  font-family: inherit;
+}
+
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+/* Smooth scroll (Section 12: micro-interactions) */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 .hero-highlight {
   background: linear-gradient(
     90deg,

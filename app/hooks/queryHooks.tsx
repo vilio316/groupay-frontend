@@ -2,8 +2,20 @@ import { useQuery } from "@tanstack/react-query";
 import { getSession } from "@/lib/authClient";
 import type { PlanByUser } from "../(user-facing)/plans/page";
 
-import { clusterDetailsType } from "../(user-facing)/cluster/[id]/ClusterDetailsClient";
+import {
+  clusterDetailsType,
+  User,
+} from "../(user-facing)/cluster/[id]/ClusterDetailsClient";
 import { PlanDetails } from "../(user-facing)/cluster/[id]/ClusterDetailsClient";
+
+type UserDetails = User & {
+  clusters: {
+    id: string;
+    clusterId: string;
+    userId: string;
+    joinedAt: string;
+  }[];
+};
 
 async function fetchCluster(id: string) {
   const clusterDetailsRequest = await fetch(
@@ -52,17 +64,22 @@ async function eleba() {
 
 const getUserDetails = async () => {
   const { data } = await getSession();
-  const userRequest = await fetch(
-    `http://localhost:3000/userData?id=${data?.user.id}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
+  try {
+    const userRequest = await fetch(
+      `http://localhost:3000/userData?id=${data?.user.id}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
       },
-      credentials: "include",
-    },
-  );
-  const userResponse = await userRequest.json();
-  return userResponse;
+    );
+    const userResponse: UserDetails = await userRequest.json();
+    return userResponse;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
 };
 
 async function getUserPlans() {

@@ -36,7 +36,7 @@ export function BalanceCard({
         <p className="font-bold text-2xl ">
           &#8358;{" "}
           {balance
-            ? (balance / 100).toLocaleString() + "0"
+            ? (balance / 100).toLocaleString()
             : (1023433.89).toLocaleString()}
         </p>
       </div>

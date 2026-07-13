@@ -342,11 +342,14 @@ function RequestClusterAccountModal({
     setError("");
     try {
       const res = await fetch(
-        `http://localhost:3000/clusters/${clusterId}/requestVirtual`,
+        `http://localhost:3000/squad/virtual/cluster/${clusterId}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({
+            ...formData,
+            beneficiary_account: process.env.NEXT_PUBLIC_BENEFICIARY_ACCOUNT,
+          }),
           credentials: "include",
         },
       );

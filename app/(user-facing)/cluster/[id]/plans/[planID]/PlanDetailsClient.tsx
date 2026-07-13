@@ -91,7 +91,7 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
 
   const { name, desc, minimumContribution, id, members } = planObj;
   return (
-    <div className="md:px-4 px-2 md:my-2 my-1 mx-auto">
+    <div className="min-h-full">
       <div className="flex items-center">
         <div className="md:w-4/5 w-3/5 p-2">
           <p
@@ -101,15 +101,19 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
           >
             {planObj ? name : "PlanName"}
           </p>
-          <span className="text-right uppercase bg-aqua/40 rounded-full p-2 text-ink-mid text-[11px]">
-            Subscription
+          <span className="inline-flex items-center px-3 py-1 rounded-[9999px] text-[11px] font-semibold bg-aqua/40 text-ink-mid">
+            {planType || "Subscription"}
           </span>
         </div>
 
         <div className="md:w-1/5 w-2/5 flex justify-end p-1 gap-x-4 shrink-0">
           <button
             onClick={() => handleMembership()}
-            className={`rounded-xl p-2 uppercase w-full text-red ${userDetailsInCluster ? `border border-red hover:bg-red` : `bg-teal text-white`} hover:text-white hover:scale-105 transition-all shrink-0`}
+            className={`rounded-[9999px] px-5 py-2.5 text-sm font-semibold uppercase transition-all shrink-0 ${
+              userDetailsInCluster
+                ? "border border-red text-red hover:bg-red hover:text-white"
+                : "bg-teal text-white hover:bg-teal/90"
+            }`}
           >
             {!isPending && userDetailsInCluster && "Exit Plan"}
             {!isPending && !userDetailsInCluster && "Join"}
@@ -117,7 +121,7 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
           </button>
         </div>
       </div>
-      <div className="border border-card-border shadow-sm shadow-card-border rounded-xl md:p-4 p-2 my-2">
+      <div className="border border-card-border shadow-card rounded-xl p-6 my-4 bg-white">
         <div className="flex gap-x-4 my-2 items-end">
           <p className="uppercase text-ink-mid text-xl font-bold my-2 w-4/5">
             Details
@@ -127,7 +131,7 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
             href={`../plans/${id}/members`}
             className="flex justify-end p-1 text-end flex-col w-1/5"
           >
-            <p className="text-[10px] md:text-sm capitalize text-ink-mid">
+            <p className="text-xs capitalize text-ink-mid">
               3/6 members paid
             </p>
             <Avatars className="justify-end" members={members} />
@@ -135,30 +139,30 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
         </div>
         <div className="details">
           <div className="flex flex-col md:flex-row gap-x-4 items-center">
-            <div className="details-text md:w-4/5 w-full">
-              <p>
+            <div className="details-text md:w-4/5 w-full space-y-2">
+              <p className="text-forest font-semibold">
                 Your Contribution Amount: &#8358;{" "}
                 {Number(minimumContribution) > 0
                   ? Number(minimumContribution).toLocaleString()
                   : "500"}
               </p>
-              <p>Contribution Status: 60%</p>
+              <p className="text-ink-mid">Contribution Status: 60%</p>
             </div>
 
             <div className="md:w-1/5 flex justify-end p-2 w-full">
               <button
-                className={`text-white bg-green hover:bg-greener rounded-xl uppercase hover:scale-105 transition-all p-2 flex items-center gap-x-2 disabled:opacity-40 disabled:hover:scale-100 disabled:hover:bg-green disabled:cursor-not-allowed `}
+                className={`text-white bg-green hover:bg-greener rounded-[9999px] uppercase transition-all px-5 py-2.5 flex items-center gap-2 text-sm font-semibold disabled:opacity-40 disabled:hover:scale-100 disabled:hover:bg-green disabled:cursor-not-allowed`}
                 onClick={() => updatePaymentStatus(true)}
                 disabled={hasContributed || !userDetailsInCluster}
               >
                 {hasContributed ? (
                   <CheckCircleIcon
-                    className="text-white text-xl"
+                    className="text-white w-4 h-4"
                     weight="bold"
                   />
                 ) : (
                   <HandDepositIcon
-                    className="text-white text-xl"
+                    className="text-white w-4 h-4"
                     weight="bold"
                   />
                 )}
@@ -167,11 +171,11 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
             </div>
           </div>
 
-          <div className="description my-4">
+          <div className="description my-6">
             <p className="uppercase text-ink-mid font-bold text-lg">
               Description
             </p>
-            <p className="indent-4 text-justify">
+            <p className="text-ink mt-2 leading-relaxed">
               {desc ? desc : "Plan Desc."}
             </p>
           </div>

@@ -87,7 +87,7 @@ export default function SignInPage() {
             {error}
           </p>
           <button className="submit-btn p-3 rounded-2xl bg-green text-white font-bold hover:bg-[#3db029] hover:-translate-y-px flex  hover:shadow-sm hover:shadow-card-border/40 items-center justify-center gap-2 md:w-1/2 w-3/4 my-4">
-            {loading ? "Loading..." : "Log In"}
+            {loading ? <span className="flex items-center gap-2"><span className="w-5 h-5 rounded-full animate-spin border-2 border-white border-t-transparent" /> Signing in...</span> : "Log In"}
           </button>
           <p className="text-center">
             Don't have an account?{" "}

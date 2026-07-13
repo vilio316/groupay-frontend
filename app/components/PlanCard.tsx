@@ -17,62 +17,51 @@ export default function PlanCard({
   return (
     <Link
       href={`/cluster/${clusterId}/plans/${id}`}
-      className={`border ${className} flex shrink-0 border-card-border relative rounded-2xl`}
+      className={`border ${className && className} flex shrink-0 border-card-border relative rounded-xl bg-white overflow-hidden`}
     >
       <div>
         <img
           src="/family.jpg"
-          className="md:h-48 lg:h-60 h-50 w-full object-cover rounded-2xl"
+          className="md:h-48 lg:h-60 h-50 w-full object-cover rounded-xl"
         />
       </div>
-      <div className="absolute bottom-0 h-[90%] z-20 bg-white rounded-2xl border-2 border-card-border w-full shadow-xl shadow-card-border p-2 grid">
-        <p className="flex items-center gap-x-2 md:flex-row flex-col">
+      <div className="absolute bottom-0 h-[90%] z-20 bg-white rounded-xl border-2 border-card-border w-full shadow-card p-2 grid overflow-hidden">
+        <p className="flex items-center gap-x-1 min-w-0">
           <span
-            className={`${soraClass} flex items-center font-bold text-11px md:text-[12px] lg:text-[20px] text-green md:w-4/5 overflow-y-hidden `}
+            className={`${soraClass} font-bold text-sm md:text-base lg:text-lg text-green truncate min-w-0`}
           >
             {name ? name : "PlanName"}
           </span>
-          <span className="md:text-[8px] lg:text-[11px] text-ink-mid font-bold text-end uppercase bg-aqua/40 rounded-full p-2 text-[7px]">
+          <span className="text-[9px] lg:text-[10px] text-ink-mid font-semibold uppercase bg-aqua/40 rounded-full px-2 py-0.5 shrink-0">
             {planType ? planType : "general"}
           </span>
         </p>
-        <p className="hidden md:block indent-4 lg:px-4 px-2 clusterDesc overflow-y-hidden text-ellipsis max-h-20 text-ink-mid lg:text-[12px] md:text-[10px] text-justify ">
+        <p className="hidden md:block text-ink-mid text-xs px-2 line-clamp-3 leading-relaxed">
           {desc
             ? desc
-            : "Plan Desc: Lorem ipsum dolor sit amet consectetur adipisicing elit.Voluptatem, tenetur iusto nostrum neque mollitia temporibus sequi molestias dolorum dolores sit, ratione rerum. At, iure blanditiisneque in architecto animi recusandae"}
+            : "Plan Desc: Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem, tenetur iusto nostrum neque mollitia temporibus sequi molestias dolorum dolores sit."}
         </p>
-        <div className="flex items-center md:flex-row flex-col">
-          <div className={`${minimumContribution ? "w-1/2" : "w-5/6"} w-full`}>
+        <div className="flex items-end self-end w-full mt-auto">
+          <div className="flex-1 min-w-0">
             {members && members.length > 0 && (
               <p className="text-[10px] text-ink-mid">
-                Members: {members.length}
+                {members.length} {members.length === 1 ? "member" : "members"}
               </p>
             )}
-            <div className="flex items-end self-end">
-              <div
-                className={`avatars flex mt-1 ${minimumContribution ? `w-4/5` : `w-5/6`} items-center`}
-              >
-                <Avatars members={members} />
-              </div>
-            </div>
+            <Avatars members={members} className="mt-0.5" />
           </div>
           {minimumContribution && (
-            <div className="text-right md:w-1/3 w-full flex flex-col justify-end">
-              <p className="md:text-sm text-[8px]">
+            <div className="text-right shrink-0 ml-2">
+              <p className="text-xs font-semibold text-forest">
                 &#8358; {Number(minimumContribution).toLocaleString()}
               </p>
-              <p className="lg:text-[10px] text-[7px] text-ink-mid">
-                Avg. Contribution
-              </p>
+              <p className="text-[9px] text-ink-mid">Avg. Contribution</p>
             </div>
           )}
-
-          <div className="flex justify-end md:w-1/6 w-full">
-            <ArrowRightIcon
-              className="text-2xl hover:scale-125 transition-all p-1 text-teal  cursor-pointer"
-              weight="bold"
-            />
-          </div>
+          <ArrowRightIcon
+            className="text-xl hover:scale-125 transition-all ml-2 text-teal shrink-0"
+            weight="bold"
+          />
         </div>
       </div>
     </Link>

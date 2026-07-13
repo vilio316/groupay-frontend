@@ -8,6 +8,7 @@ import {
   ArrowDownIcon,
   ArrowsLeftRightIcon,
   ArrowSquareOutIcon,
+  ShieldCheckIcon,
 } from "@phosphor-icons/react";
 import { soraClass } from "../../fonts";
 import Link from "next/link";
@@ -19,13 +20,13 @@ import ClusterCard from "@/app/components/ClusterCard";
 import { BalanceCard, UserAccountModal } from "@/app/components/BalanceCard";
 import ClusterTransferModal from "@/app/components/ClusterTransferModal";
 import PaymentModal from "@/app/components/PaymentModal";
-import OnboardingStatusCard from "@/app/components/OnboardingStatusCard";
 import { useQuery } from "@tanstack/react-query";
 import { useSession, getSession } from "@/lib/authClient";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useMyClusters } from "@/app/hooks/queryHooks";
+import { BalanceSkeleton, CardSkeleton, ListSkeleton } from "@/app/components/Spinner";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -120,6 +121,9 @@ export default function DashboardPage() {
 
   useGSAP(
     () => {
+      const root = rootRef.current;
+      if (!root) return;
+
       const ctx = gsap.context(() => {
         const tl = gsap.timeline({
           defaults: { ease: "power3.out" },
@@ -150,7 +154,7 @@ export default function DashboardPage() {
             "-=0.2",
           );
 
-        gsap.utils.toArray<HTMLElement>(".section-heading").forEach((el) => {
+        root.querySelectorAll(".section-heading").forEach((el) => {
           gsap.fromTo(
             el,
             { y: 16, opacity: 0 },
@@ -168,7 +172,7 @@ export default function DashboardPage() {
         document.fonts?.ready.then(refresh);
         window.addEventListener("load", refresh);
         return () => window.removeEventListener("load", refresh);
-      }, rootRef);
+      }, root);
 
       return () => ctx.revert();
     },
@@ -177,9 +181,10 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!isSuccess && !transactionsGotten) return;
+    const root = rootRef.current;
+    if (!root) return;
 
-    const clusterCards = gsap.utils.toArray<HTMLElement>(".cluster-card-item");
-    clusterCards.forEach((card) => {
+    root.querySelectorAll(".cluster-card-item").forEach((card) => {
       gsap.fromTo(
         card,
         { x: 30, opacity: 0 },
@@ -198,8 +203,7 @@ export default function DashboardPage() {
       );
     });
 
-    const txItems = gsap.utils.toArray<HTMLElement>(".transaction-item");
-    txItems.forEach((item) => {
+    root.querySelectorAll(".transaction-item").forEach((item) => {
       gsap.fromTo(
         item,
         { x: -24, opacity: 0 },
@@ -266,7 +270,7 @@ export default function DashboardPage() {
               onAccountClick={() => setShowUserAccount(true)}
             />
           ) : (
-            <p>Loading balance...</p>
+            <BalanceSkeleton />
           )}
         </div>
 
@@ -315,6 +319,13 @@ export default function DashboardPage() {
             Fund Cluster
           </button>
           <Link
+            href="/kyc"
+            className={`action-btn opacity-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-px hover:shadow-md bg-green/10 text-green hover:bg-green hover:text-white border border-green/20`}
+          >
+            <ShieldCheckIcon weight="bold" className="w-4 h-4" />
+            KYC Verification
+          </Link>
+          <Link
             href={"/clusters/new"}
             className={`action-btn opacity-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-px hover:shadow-md bg-teal/80 text-white `}
           >
@@ -322,10 +333,6 @@ export default function DashboardPage() {
             Create New Cluster
           </Link>
         </div>
-      </div>
-
-      <div className="dash-onboarding opacity-0 px-6 pt-5">
-        <OnboardingStatusCard />
       </div>
 
       <div className="px-6 mt-6">
@@ -347,10 +354,9 @@ export default function DashboardPage() {
         <div className="flex gap-4 overflow-x-auto pb-3 -mx-1 px-1 scrollbar-hide">
           {isLoading &&
             Array.from({ length: 3 }).map((_, i) => (
-              <div
-                key={i}
-                className="shrink-0 w-56 h-36 rounded-2xl bg-white border border-[#e8efe8] animate-pulse"
-              />
+              <div key={i} className="shrink-0 w-56">
+                <CardSkeleton />
+              </div>
             ))}
           {isSuccess &&
             clusterResponse &&
@@ -387,7 +393,7 @@ export default function DashboardPage() {
         {transactionData && transactionData.length === 0 && (
           <EmptyTransaction />
         )}
-        {isGettingTxns && <p>Loading transactions...</p>}
+        {isGettingTxns && <ListSkeleton rows={3} />}
         <span className="section-heading opacity-0 text-xs font-semibold text-ink-mid/60 uppercase tracking-wider">
           Last 30 days
         </span>

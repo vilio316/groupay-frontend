@@ -11,6 +11,7 @@ import {
   BellIcon,
   GearIcon,
   SignOutIcon,
+  ShieldCheckIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { useNotifications } from "@/app/NotificationsProvider";
@@ -26,6 +27,7 @@ export default function Sidebar() {
   const navLinks = [
     { href: "/dashboard", label: "Home", Icon: HouseLineIcon },
     { href: "/profile", label: "Profile", Icon: UserIcon },
+    { href: "/kyc", label: "Verification", Icon: ShieldCheckIcon },
     { href: "/clusters", label: "Your Clusters", Icon: UsersThreeIcon },
     { href: "/plans", label: "Your Plans", Icon: ArticleIcon },
     {

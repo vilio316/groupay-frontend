@@ -19,26 +19,26 @@ export default function ClusterCard({
   return (
     <Link
       href={`/cluster/${valuesObj ? valuesObj.id : "/234"}`}
-      className={`border ${className} flex shrink-0 border-card-border relative rounded-2xl`}
+      className={`border ${className} flex shrink-0 border-card-border relative rounded-xl bg-white overflow-hidden`}
     >
       <div>
         <img
           src="/family.jpg"
-          className="md:h-48 lg:h-60 h-44 w-full object-cover rounded-2xl"
+          className="md:h-48 lg:h-60 h-44 w-full object-cover rounded-xl"
         />
       </div>
-      <div className="absolute bottom-0 h-3/4 z-20 bg-white rounded-2xl border-2 border-card-border w-full shadow-xl shadow-card-border p-2 grid">
-        <p className="flex items-center gap-x-1">
+      <div className="absolute bottom-0 h-3/4 z-20 bg-white rounded-xl border-2 border-card-border w-full shadow-card p-2 grid overflow-hidden">
+        <p className="flex items-center gap-x-1 min-w-0">
           <span
-            className={`${soraClass} flex items-center font-bold text-sm md:text-[16px] lg:text-[20px] text-green w-4/5`}
+            className={`${soraClass} font-bold text-sm md:text-base lg:text-lg text-green truncate min-w-0`}
           >
             {valuesObj ? valuesObj.name : "ClusterName"}
           </span>
         </p>
-        <p className="text-[10px]">
+        <p className="text-[10px] text-ink-mid">
           Created on: {valuesObj ? mkDt(valuesObj.createdAt) : "22/04/23"}
         </p>
-        <p className="indent-4 px-4 clusterDesc overflow-y-hidden text-ellipsis max-h-20 text-ink-mid text-[10px] md:text-sm text-justify">
+        <p className="text-ink-mid text-xs px-2 line-clamp-3 leading-relaxed">
           {valuesObj ? valuesObj.desc : "Lorem ipsum dolor amet ...."}
         </p>
         <div className="flex items-end self-end w-full">

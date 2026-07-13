@@ -64,7 +64,7 @@ export default function DashboardClient({
   }, [unreadCount]);
 
   return (
-    <Suspense fallback="Loading...">
+    <Suspense fallback={<div className="flex h-screen items-center justify-center"><span className="w-8 h-8 rounded-full animate-spin border-3 border-green border-t-transparent" /></div>}>
       <div className="flex h-screen overflow-hidden bg-white ">
         <aside
           ref={sidebarRef}
@@ -101,7 +101,7 @@ export default function DashboardClient({
             ref={contentRef}
             className="flex-1 ml-5 overflow-y-auto p-2 md:p-6 bg-white"
           >
-            <Suspense fallback="loading...">{children}</Suspense>
+            <Suspense fallback={<div className="flex items-center justify-center py-20"><span className="w-6 h-6 rounded-full animate-spin border-2 border-green border-t-transparent" /></div>}>{children}</Suspense>
           </div>
         </div>
 

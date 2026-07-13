@@ -186,7 +186,16 @@ export default function SignUpPage() {
           </div>
 
           <div>
-            <div className="checkbox-field flex items-start justify-center gap-2.5 mb-6">
+            <p className="text-center text-sm text-[#4a5568] -mt-2 mb-4">
+            <Link
+              href="/auth/forgot-password"
+              className="text-[#00bd9d] hover:text-[#49c635] hover:underline font-semibold"
+            >
+              Forgot password?
+            </Link>
+          </p>
+
+          <div className="checkbox-field flex items-start justify-center gap-2.5 mb-6">
               <input type="checkbox" id="terms" className="h-5 w-5" />
               <label htmlFor="terms">
                 I have read and agree to GrouPay's Terms of Use and Privacy

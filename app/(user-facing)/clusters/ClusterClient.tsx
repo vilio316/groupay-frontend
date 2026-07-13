@@ -22,29 +22,29 @@ export default function ClusterClient({
         </p>{" "}
         <Link
           href={"/clusters/new"}
-          className="text-white md:text-lg hover:bg-greener bg-green hover:scale-105 rounded-full p-2 md:p-1 items-center justify-center md:w-1/5 w-auto text-center flex gap-x-4 shrink-0 text-sm"
+          className="text-white md:text-lg hover:bg-greener bg-green hover:scale-105 rounded-[9999px] p-2 md:p-1 items-center justify-center md:w-1/5 w-auto text-center flex gap-x-4 shrink-0 text-sm font-semibold"
         >
-          <PlusIcon />
+          <PlusIcon weight="bold" />
           <span>New Cluster</span>
         </Link>
       </div>
       {!hasClusters ? (
-        <div className="clusterBody mx-6 p-4 border border-card-border grid justify-center text-center rounded-lg">
+        <div className="clusterBody mx-6 p-6 border border-card-border grid justify-center text-center rounded-xl shadow-card bg-white">
           <div className="grid justify-center p-2">
             <UsersThreeIcon
               className="h-18 w-18 fill-green bg-green/20 p-2 rounded-xl"
               weight="duotone"
             />
           </div>
-          <p className="text-center text-2xl font-bold my-2">No Clusters Yet</p>
-          <p>
+          <p className="text-center text-2xl font-bold text-forest my-2">No Clusters Yet</p>
+          <p className="text-ink-mid">
             You haven't joined or created any clusters yet. Create your first
             cluster now and add other users too!
           </p>
 
           <Link
             href="/clusters/new"
-            className="flex justify-self-center items-center p-2 gap-x-2 bg-green rounded-xl w-auto my-4 text-white hover:font-bold hover:bg-greener hover:translate-y-0.5 transition-all"
+            className="flex justify-self-center items-center gap-2 bg-green rounded-[9999px] w-auto my-4 px-6 py-3 text-white font-bold hover:bg-greener hover:translate-y-0.5 transition-all"
           >
             <PlusIcon weight="bold" />
             Create Cluster

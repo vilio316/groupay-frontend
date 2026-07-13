@@ -19,7 +19,7 @@ export default async function MembersPage({
   const { members } = clusterResponse;
 
   return (
-    <Suspense fallback="Loading...">
+    <Suspense fallback={<div className="p-6 space-y-3"><ListSkeleton rows={5} /></div>}>
       <MembersClient members={members.reverse()} />
     </Suspense>
   );

@@ -4,20 +4,23 @@ import { Metadata } from "next";
 type Props = {
   params: Promise<{
     id: string;
+    planID: string;
   }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const id = (await params).id;
-  const request = await fetch(`http://localhost:3000/clusters/${id}`);
+  const { id, planID } = await params;
+  const request = await fetch(
+    `http://localhost:3000/clusters/${id}/plans/${planID}`,
+  );
   const response = await request.json();
 
   return {
-    title: `${response.name} : Cluster Page`,
+    title: `${response.name} : Plan Page`,
   };
 }
 
-export default function ClusterLayout({
+export default function PlanLayout({
   children,
 }: {
   children: React.ReactElement;

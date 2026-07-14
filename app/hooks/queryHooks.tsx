@@ -1,12 +1,23 @@
 import { useQuery } from "@tanstack/react-query";
 import { getSession } from "@/lib/authClient";
 import type { PlanByUser } from "../(user-facing)/plans/page";
-
 import {
   clusterDetailsType,
   User,
 } from "../(user-facing)/cluster/[id]/ClusterDetailsClient";
 import { PlanDetails } from "../(user-facing)/cluster/[id]/ClusterDetailsClient";
+
+interface Transaction {
+  id: string;
+  clusterId: string | null;
+  planId: string | null;
+  transactionRef: string;
+  transactionHeading: string;
+  amount: number;
+  channel: string;
+  status: string;
+  createdAt: string;
+}
 
 type UserDetails = User & {
   clusters: {
@@ -81,6 +92,20 @@ const getUserDetails = async () => {
     return null;
   }
 };
+
+async function getTransactions() {
+  const transactionsRequest = await fetch(
+    "http://localhost:3000/transactions",
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    },
+  );
+  const transactionsResponse: Transaction[] = await transactionsRequest.json();
+  return transactionsResponse;
+}
 
 async function getUserPlans() {
   const { data } = await getSession();
@@ -178,5 +203,57 @@ export const useMyUserData = () => {
     userDetails,
     isLoading,
     isSuccess,
+  };
+};
+
+export const useMyAccountDetails = () => {
+  const {
+    isFetching,
+    data: accountDetails,
+    isSuccess,
+    isLoading,
+  } = useQuery({
+    queryKey: ["account_details"],
+    queryFn: async () => {
+      try {
+        const { data } = await getSession();
+        const account_details_request = await fetch(
+          `http://localhost:3000/userData/account/${data?.user.id}`,
+          {
+            credentials: "include",
+          },
+        );
+        const account_details_response = await account_details_request.json();
+        return account_details_response;
+      } catch (error) {
+        throw new Error("An error occured while fetching your query details");
+      }
+    },
+    staleTime: 2 * 60 * 60 * 1000,
+  });
+
+  return {
+    accountDetails,
+    isSuccess,
+    isFetching,
+    isLoading,
+  };
+};
+
+export const useTransactions = () => {
+  const {
+    data: transactionData,
+    isLoading: isGettingTxns,
+    isSuccess: transactionsGotten,
+  } = useQuery({
+    queryKey: ["transactions"],
+    queryFn: getTransactions,
+    staleTime: 1 * 60 * 60 * 1000,
+  });
+
+  return {
+    transactionData,
+    isGettingTxns,
+    transactionsGotten,
   };
 };

@@ -25,8 +25,16 @@ import { useSession, getSession } from "@/lib/authClient";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useMyClusters } from "@/app/hooks/queryHooks";
-import { BalanceSkeleton, CardSkeleton, ListSkeleton } from "@/app/components/Spinner";
+import {
+  useMyAccountDetails,
+  useMyClusters,
+  useTransactions,
+} from "@/app/hooks/queryHooks";
+import {
+  BalanceSkeleton,
+  CardSkeleton,
+  ListSkeleton,
+} from "@/app/components/Spinner";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -47,18 +55,6 @@ interface myClustersResponse {
   userId: string;
 }
 
-interface Transaction {
-  id: string;
-  clusterId: string | null;
-  planId: string | null;
-  transactionRef: string;
-  transactionHeading: string;
-  amount: number;
-  channel: string;
-  status: string;
-  createdAt: string;
-}
-
 export default function DashboardPage() {
   const rootRef = useRef<HTMLDivElement>(null);
   const [showModal, updateModalState] = useState(false);
@@ -69,55 +65,16 @@ export default function DashboardPage() {
   const [showClusterTransfer, setShowClusterTransfer] = useState(false);
   const { data } = useSession();
 
-  async function getTransactions() {
-    const transactionsRequest = await fetch(
-      "http://localhost:3000/transactions",
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      },
-    );
-    const transactionsResponse: Transaction[] =
-      await transactionsRequest.json();
-    return transactionsResponse;
-  }
   const { clusterResponse, isLoading, isSuccess } = useMyClusters();
 
-  const {
-    data: transactionData,
-    isLoading: isGettingTxns,
-    isSuccess: transactionsGotten,
-  } = useQuery({
-    queryKey: ["transactions"],
-    queryFn: getTransactions,
-    staleTime: 1 * 60 * 60 * 1000,
-  });
+  const { transactionData, transactionsGotten, isGettingTxns } =
+    useTransactions();
 
   const {
-    data: accountDetails,
+    isFetching: loadingBalance,
     isSuccess: balanceRetrieved,
-    isLoading: loadingBalance,
-  } = useQuery({
-    queryKey: ["account_details"],
-    queryFn: async () => {
-      try {
-        const { data } = await getSession();
-        const accountRequest = await fetch(
-          `http://localhost:3000/userData/account/${data?.user.id}`,
-          {
-            credentials: "include",
-          },
-        );
-        const accountResponse = await accountRequest.json();
-        return accountResponse;
-      } catch (error) {
-        throw new Error("An error occured while fetching your details");
-      }
-    },
-    staleTime: 1 * 60 * 60 * 1000,
-  });
+    accountDetails,
+  } = useMyAccountDetails();
 
   useGSAP(
     () => {
@@ -232,13 +189,16 @@ export default function DashboardPage() {
         isShown={showClusterTransfer}
         onClose={() => setShowClusterTransfer(false)}
       />
-      <PaymentModal
-        isShown={showModal}
-        onClick={() => updateModalState(!showModal)}
-        prompter={prompter}
-      />
 
       <div className="bg-white border-b border-[#e8efe8] px-6 py-5">
+        {balanceRetrieved && (
+          <PaymentModal
+            isShown={showModal}
+            onClick={() => updateModalState(!showModal)}
+            prompter={prompter}
+            accountNumber={accountDetails.accountNumber}
+          />
+        )}
         <div className="dash-greeting opacity-0 flex items-center justify-between mb-5">
           <div>
             <p className="text-sm text-ink-mid font-medium mb-0.5">
@@ -384,6 +344,7 @@ export default function DashboardPage() {
           Recent Transactions
         </p>
         {transactionsGotten &&
+          transactionData &&
           transactionData.length > 0 &&
           transactionData.map((transaction: any) => (
             <div key={transaction.id} className="transaction-item opacity-0">

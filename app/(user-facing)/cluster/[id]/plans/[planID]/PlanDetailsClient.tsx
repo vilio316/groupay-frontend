@@ -190,6 +190,7 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
         isShown={isPaying}
         onClick={() => updatePaymentStatus(false)}
         prompter="plan"
+        accountNumber={"000000000"}
       />
     </div>
   );

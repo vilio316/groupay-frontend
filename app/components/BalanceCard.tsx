@@ -17,6 +17,7 @@ import { usePathname } from "next/navigation";
 import { useState, useCallback, useEffect } from "react";
 import { soraClass } from "../fonts";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMyAccountDetails } from "../hooks/queryHooks";
 
 export function BalanceCard({
   payFunct,
@@ -117,31 +118,7 @@ export function UserAccountModal({
   const [loading, setLoading] = useState(false);
   const [showRequestForm, setShowRequestForm] = useState(false);
 
-  const {
-    isLoading,
-    isFetching,
-    data: accountDetails,
-    isSuccess,
-  } = useQuery({
-    queryKey: ["account_details"],
-    queryFn: async () => {
-      try {
-        setShowRequestForm(false);
-        const { data } = await getSession();
-        const account_details_request = await fetch(
-          `http://localhost:3000/userData/account/${data?.user.id}`,
-          {
-            credentials: "include",
-          },
-        );
-        const account_details_response = await account_details_request.json();
-        return account_details_response;
-      } catch (error) {
-        throw new Error("An error occured while fetching your query details");
-      }
-    },
-    staleTime: 2 * 60 * 60 * 1000,
-  });
+  const { isFetching, isSuccess, accountDetails } = useMyAccountDetails();
 
   if (!isShown) return null;
 

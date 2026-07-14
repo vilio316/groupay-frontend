@@ -70,7 +70,7 @@ export function TransactionBlock({
       >
         <p className="text-right text-[10px] md:text-xl ">
           +&#8358;{" "}
-          {channel === "SQUAD"
+          {channel === "SQUAD" || channel === "groupay-account"
             ? (Number(amount) / 100).toFixed(2)
             : amount.toFixed(2)}
         </p>

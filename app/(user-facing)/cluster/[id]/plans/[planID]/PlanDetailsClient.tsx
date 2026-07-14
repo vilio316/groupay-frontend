@@ -89,7 +89,7 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
   );
   const userDetailsInCluster = userDetails.length > 0;
 
-  const { name, desc, minimumContribution, id, members } = planObj;
+  const { name, desc, minimumContribution, id, members, planType } = planObj;
   return (
     <div className="min-h-full">
       <div className="flex items-center">
@@ -131,9 +131,7 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
             href={`../plans/${id}/members`}
             className="flex justify-end p-1 text-end flex-col w-1/5"
           >
-            <p className="text-xs capitalize text-ink-mid">
-              3/6 members paid
-            </p>
+            <p className="text-xs capitalize text-ink-mid">3/6 members paid</p>
             <Avatars className="justify-end" members={members} />
           </Link>
         </div>

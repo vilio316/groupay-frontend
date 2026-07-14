@@ -1,6 +1,7 @@
 import { clusterDetailsType } from "../ClusterDetailsClient";
 import { Suspense } from "react";
 import MembersClient from "./MembersClient";
+import { ListSkeleton } from "@/app/components/Spinner";
 
 export default async function MembersPage({
   params,
@@ -19,7 +20,13 @@ export default async function MembersPage({
   const { members } = clusterResponse;
 
   return (
-    <Suspense fallback={<div className="p-6 space-y-3"><ListSkeleton rows={5} /></div>}>
+    <Suspense
+      fallback={
+        <div className="p-6 space-y-3">
+          <ListSkeleton rows={5} />
+        </div>
+      }
+    >
       <MembersClient members={members.reverse()} />
     </Suspense>
   );

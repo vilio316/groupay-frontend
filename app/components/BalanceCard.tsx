@@ -16,6 +16,7 @@ import {
 import { usePathname } from "next/navigation";
 import { useState, useCallback, useEffect } from "react";
 import { soraClass } from "../fonts";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function BalanceCard({
   payFunct,
@@ -116,56 +117,31 @@ export function UserAccountModal({
   const [loading, setLoading] = useState(false);
   const [showRequestForm, setShowRequestForm] = useState(false);
 
-  useEffect(() => {
-    if (isShown && data?.user?.id) {
-      setLoading(true);
-      setShowRequestForm(false);
-      fetch(`http://localhost:3000/userData/account/${data.user.id}`, {
-        credentials: "include",
-      })
-        .then((res) => res.json())
-        .then((acc) => {
-          if (
-            acc &&
-            acc.accountNumber &&
-            acc.accountNumber !== DEFAULT_ACCOUNT_NUMBER
-          ) {
-            setAccountData(acc);
-          } else {
-            setAccountData(null);
-          }
-        })
-        .catch(() => setAccountData(null))
-        .finally(() => setLoading(false));
-    } else {
-      setAccountData(null);
-      setShowRequestForm(false);
-    }
-  }, [isShown, data]);
-
-  const handleRequestSuccess = () => {
-    setShowRequestForm(false);
-    if (data?.user?.id) {
-      setLoading(true);
-      fetch(`http://localhost:3000/userData/account/${data.user.id}`, {
-        credentials: "include",
-      })
-        .then((res) => res.json())
-        .then((acc) => {
-          if (
-            acc &&
-            acc.accountNumber &&
-            acc.accountNumber !== DEFAULT_ACCOUNT_NUMBER
-          ) {
-            setAccountData(acc);
-          } else {
-            setAccountData(null);
-          }
-        })
-        .catch(() => setAccountData(null))
-        .finally(() => setLoading(false));
-    }
-  };
+  const {
+    isLoading,
+    isFetching,
+    data: accountDetails,
+    isSuccess,
+  } = useQuery({
+    queryKey: ["account_details"],
+    queryFn: async () => {
+      try {
+        setShowRequestForm(false);
+        const { data } = await getSession();
+        const account_details_request = await fetch(
+          `http://localhost:3000/userData/account/${data?.user.id}`,
+          {
+            credentials: "include",
+          },
+        );
+        const account_details_response = await account_details_request.json();
+        return account_details_response;
+      } catch (error) {
+        throw new Error("An error occured while fetching your query details");
+      }
+    },
+    staleTime: 2 * 60 * 60 * 1000,
+  });
 
   if (!isShown) return null;
 
@@ -174,7 +150,6 @@ export function UserAccountModal({
       <RequestAccountFormModal
         onBack={() => setShowRequestForm(false)}
         onClose={onClose}
-        onSuccess={handleRequestSuccess}
       />
     );
   }
@@ -191,12 +166,12 @@ export function UserAccountModal({
           <XIcon className="w-6 h-6" weight="bold" />
         </button>
 
-        {loading ? (
+        {isFetching ? (
           <div className="text-center py-10">
             <div className="animate-spin w-8 h-8 border-2 border-teal border-t-transparent rounded-full mx-auto" />
             <p className="text-ink-mid mt-4">Loading account info...</p>
           </div>
-        ) : accountData ? (
+        ) : accountDetails && accountDetails.accountNumber !== "1234567890" ? (
           <div className="text-center">
             <div className="w-16 h-16 rounded-full bg-teal/10 flex items-center justify-center mx-auto mb-4">
               <BankIcon className="w-8 h-8 fill-teal" weight="fill" />
@@ -205,7 +180,7 @@ export function UserAccountModal({
               Your Account
             </h3>
             <p className="text-sm text-ink-mid mb-6">
-              Your GrouPay account number is below.
+              Your GrouPay account number is shown below.
             </p>
 
             <div className="border border-card-border rounded-xl p-4 mb-4 text-left space-y-3">
@@ -222,9 +197,9 @@ export function UserAccountModal({
                 </p>
                 <div className="flex items-center gap-2">
                   <p className="text-forest font-bold text-lg tracking-widest">
-                    {accountData.accountNumber}
+                    {accountDetails.accountNumber}
                   </p>
-                  <CopyButton text={accountData.accountNumber} />
+                  <CopyButton text={accountDetails.accountNumber} />
                 </div>
               </div>
             </div>
@@ -250,7 +225,9 @@ export function UserAccountModal({
             </p>
 
             <button
-              onClick={() => setShowRequestForm(true)}
+              onClick={() => {
+                setShowRequestForm(true);
+              }}
               className="w-full py-3 rounded-full bg-teal text-white font-bold hover:bg-teal/90 transition-all mb-3"
             >
               Request Account
@@ -293,15 +270,13 @@ function CopyButton({ text }: { text: string }) {
 function RequestAccountFormModal({
   onBack,
   onClose,
-  onSuccess,
 }: {
   onBack: () => void;
   onClose: () => void;
-  onSuccess: () => void;
 }) {
   const { data } = useSession();
-  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const queryClient = useQueryClient();
 
   const formatDOB = (date: string) => {
     const stringChunks = date.split("-");
@@ -338,37 +313,40 @@ function RequestAccountFormModal({
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = async () => {
-    if (!isComplete) return;
-    setSubmitting(true);
-    setError("");
-    try {
-      const { data } = await getSession();
-      const res = await fetch(
-        `http://localhost:3000/squad/virtual/${data?.user.id}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ...formData,
-            dob: formatDOB(formData.dob),
-            customer_identifier: prefillEmail,
-            beneficiary_account: process.env.NEXT_PUBLIC_BENEFICIARY_ACCOUNT,
-          }),
-          credentials: "include",
-        },
-      );
-      if (!res.ok) {
-        const errBody = await res.json().catch(() => null);
-        throw new Error(errBody?.message || `Request failed (${res.status})`);
+  const {
+    isPending,
+    mutateAsync: createAccount,
+    isSuccess,
+  } = useMutation({
+    mutationFn: async () => {
+      if (!isComplete) return;
+      try {
+        const { data } = await getSession();
+        const res = await fetch(
+          `http://localhost:3000/squad/virtual/${data?.user.id}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              ...formData,
+              dob: formatDOB(formData.dob),
+              customer_identifier: prefillEmail,
+              beneficiary_account: process.env.NEXT_PUBLIC_BENEFICIARY_ACCOUNT,
+            }),
+            credentials: "include",
+          },
+        );
+        const resJSON = await res.json();
+        return resJSON;
+      } catch (error) {
+        throw new Error("An error occurred!");
       }
-      onSuccess();
-    } catch (e: any) {
-      setError(e.message || "Something went wrong");
-    } finally {
-      setSubmitting(false);
-    }
-  };
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["account_details"] });
+      onBack();
+    },
+  });
 
   return (
     <div className="fixed inset-0 z-70 flex items-center justify-center bg-forest/50 p-3">
@@ -467,11 +445,11 @@ function RequestAccountFormModal({
           )}
 
           <button
-            onClick={handleSubmit}
-            disabled={!isComplete || submitting}
+            onClick={() => createAccount()}
+            disabled={!isComplete || isPending}
             className="w-full py-3 rounded-full bg-teal text-white font-bold hover:bg-teal/90 transition-all disabled:opacity-40 disabled:cursor-not-allowed mt-2"
           >
-            {submitting ? (
+            {isPending ? (
               <span className="flex items-center justify-center gap-2">
                 <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
                 Submitting...

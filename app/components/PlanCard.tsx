@@ -45,7 +45,7 @@ export default function PlanCard({
           <div className="flex-1 min-w-0">
             {members && members.length > 0 && (
               <p className="text-[10px] text-ink-mid">
-                {members.length} {members.length === 1 ? "member" : "members"}
+                {members.length} {members.length === 1 ? "Member" : "Members"}
               </p>
             )}
             <Avatars members={members} className="mt-0.5" />

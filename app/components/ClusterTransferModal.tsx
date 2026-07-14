@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { XIcon, ArrowRightIcon, BankIcon, CheckCircleIcon } from "@phosphor-icons/react";
+import {
+  XIcon,
+  ArrowRightIcon,
+  BankIcon,
+  CheckCircleIcon,
+} from "@phosphor-icons/react";
 import { soraClass } from "../fonts";
 import { useMyClusters } from "../hooks/queryHooks";
 import { useSession } from "@/lib/authClient";
@@ -27,16 +32,19 @@ export default function ClusterTransferModal({
   const { mutateAsync: transfer, isPending } = useMutation({
     mutationFn: async () => {
       if (!selectedClusterId || !data?.user) return;
-      const res = await fetch(`http://localhost:3000/clusters/${selectedClusterId}/transactions`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          amount: amount * 100,
-          senderId: data.user.id,
-          transactionHeading: `Transfer from ${data.user.name}`,
-        }),
-      });
+      const res = await fetch(
+        `http://localhost:3000/clusters/${selectedClusterId}/transactions`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            amount: amount * 100,
+            senderId: data.user.id,
+            transactionHeading: `Transfer from ${data.user.name}`,
+          }),
+        },
+      );
       return res.json();
     },
     onSuccess: () => setStep("done"),
@@ -53,7 +61,7 @@ export default function ClusterTransferModal({
 
   return (
     <div className="fixed inset-0 z-70 flex items-center justify-center bg-forest/50 p-3">
-      <div className="bg-white rounded-[20px] max-w-[520px] w-full p-6 shadow-modal relative">
+      <div className="bg-white rounded-[20px] max-w-130 w-full p-6 shadow-modal relative">
         <button
           onClick={handleReset}
           className="absolute top-4 right-4 text-ink hover:text-red transition-colors"
@@ -71,7 +79,10 @@ export default function ClusterTransferModal({
             </h3>
             <p className="text-sm text-ink-mid mb-6">
               &#8358; {amount.toLocaleString()} has been sent to{" "}
-              <span className="font-semibold text-forest">{selectedCluster?.name}</span>.
+              <span className="font-semibold text-forest">
+                {selectedCluster?.name}
+              </span>
+              .
             </p>
             <button
               onClick={handleReset}
@@ -92,7 +103,9 @@ export default function ClusterTransferModal({
             <div className="border border-card-border rounded-xl p-4 mb-4 text-left space-y-3">
               <div className="flex justify-between">
                 <span className="text-sm text-ink-mid">Cluster</span>
-                <span className="text-sm font-semibold text-forest">{selectedCluster.name}</span>
+                <span className="text-sm font-semibold text-forest">
+                  {selectedCluster.name}
+                </span>
               </div>
               <div className="border-t border-card-border/50" />
               <div className="flex justify-between">

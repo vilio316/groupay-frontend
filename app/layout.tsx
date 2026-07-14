@@ -21,6 +21,7 @@ export default function RootLayout({
         <QueryProvider>
           <NotificationsProvider>{children}</NotificationsProvider>
         </QueryProvider>
+        <div id="modal-portal" />
       </body>
     </html>
   );

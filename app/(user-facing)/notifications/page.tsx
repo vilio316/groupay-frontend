@@ -69,14 +69,12 @@ export function NotificationComponent({
           : "bg-white border-green/30 shadow-card hover:shadow-md"
       }`}
       onClick={() => {
-        if (!isRead) sendReadToDB(id);
+        sendReadToDB(id);
       }}
     >
       <div
         className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
-          isRead
-            ? "bg-mist/20 text-mist"
-            : "bg-green/10 text-green"
+          isRead ? "bg-mist/20 text-mist" : "bg-green/10 text-green"
         }`}
       >
         <Icon className="w-5 h-5" weight={isRead ? "regular" : "fill"} />
@@ -108,13 +106,8 @@ export default function NotificationsPage() {
   return (
     <div className="min-h-full">
       <div className="flex items-center gap-3 mb-6">
-        <BellSimpleRingingIcon
-          className="w-7 h-7 text-green"
-          weight="fill"
-        />
-        <p
-          className={`font-bold ${soraClass} text-green text-3xl`}
-        >
+        <BellSimpleRingingIcon className="w-7 h-7 text-green" weight="fill" />
+        <p className={`font-bold ${soraClass} text-green text-3xl`}>
           Notifications
         </p>
       </div>
@@ -154,9 +147,7 @@ export default function NotificationsPage() {
               weight="duotone"
             />
           </div>
-          <p className="font-bold text-2xl text-forest mb-2">
-            All Caught Up
-          </p>
+          <p className="font-bold text-2xl text-forest mb-2">All Caught Up</p>
           <p className="text-ink-mid max-w-xs">
             You have no notifications right now. We'll let you know when
             something new comes in.

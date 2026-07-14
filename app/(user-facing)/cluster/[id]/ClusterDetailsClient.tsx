@@ -14,7 +14,11 @@ import Link from "next/link";
 import { useState, useCallback } from "react";
 import { XIcon, CopyIcon, CheckCircleIcon } from "@phosphor-icons/react";
 import { useSession } from "@/lib/authClient";
-import { useQueryClient } from "@tanstack/react-query";
+import {
+  useQueryClient,
+  useMutation,
+  QueryClient,
+} from "@tanstack/react-query";
 
 export interface clusterDetailsType {
   id: string;
@@ -69,27 +73,25 @@ export default function ClusterDetailsClient({
   const [promptButton, updatePrompter] = useState<
     "add" | "withdraw" | "transfer"
   >("add");
+  const [liveAccountNumber, setAccountNumber] = useState(accountNumber);
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [showCreateAccountForm, setShowCreateAccountForm] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [liveAccountNumber, setLiveAccountNumber] = useState(accountNumber);
-
-  const queryClient = useQueryClient();
 
   const handleCopy = useCallback(async () => {
-    const an = liveAccountNumber;
+    const an = accountNumber;
     if (an) {
       await navigator.clipboard.writeText(an);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
-  }, [liveAccountNumber]);
+  }, [accountNumber]);
 
-  const handleAccountCreated = (newAccountNumber: string) => {
-    setLiveAccountNumber(newAccountNumber);
-    setShowCreateAccountForm(false);
-    queryClient.invalidateQueries({ queryKey: ["cluster", id] });
-  };
+  // const handleAccountCreated = (newAccountNumber: string) => {
+  //   setaccountNumber(newAccountNumber);
+  //   setShowCreateAccountForm(false);
+  //   queryClient.invalidateQueries({ queryKey: ["cluster", id] });
+  // };
 
   return (
     <div className="p-4 mx-auto">
@@ -119,10 +121,10 @@ export default function ClusterDetailsClient({
         />
         <div className="items-center justify-end flex p-2 gap-x-4 ">
           <button
-            title={liveAccountNumber ? "View account" : "Add account"}
+            title={accountNumber ? "View account" : "Add account"}
             className="flex flex-col items-center gap-1 group"
             onClick={() => {
-              if (liveAccountNumber) {
+              if (accountNumber !== "1234567890") {
                 setShowAccountModal(true);
               } else {
                 setShowCreateAccountForm(true);
@@ -130,15 +132,15 @@ export default function ClusterDetailsClient({
             }}
           >
             <BankIcon
-              weight={liveAccountNumber ? "fill" : "duotone"}
+              weight={accountNumber ? "fill" : "duotone"}
               className={`w-12 h-12 p-2 rounded-xl transition-all ${
-                liveAccountNumber
+                accountNumber
                   ? "fill-green bg-green/10"
                   : "fill-mist bg-mist/20 group-hover:fill-green group-hover:bg-green/10"
               }`}
             />
             <span className="text-[10px] text-ink-mid whitespace-nowrap">
-              {liveAccountNumber ? "Account" : "Add Account"}
+              {accountNumber ? "Account" : "Add Account"}
             </span>
           </button>
           <ShareNetworkIcon className="w-12 h-12 fill-green" weight="duotone" />
@@ -252,7 +254,11 @@ export default function ClusterDetailsClient({
           clusterName={name}
           onBack={() => setShowCreateAccountForm(false)}
           onClose={() => setShowCreateAccountForm(false)}
-          onSuccess={handleAccountCreated}
+          onComplete={(number: string) => {
+            setShowCreateAccountForm(false);
+            setShowAccountModal(true);
+            setAccountNumber(number);
+          }}
         />
       )}
 
@@ -305,22 +311,21 @@ function RequestClusterAccountModal({
   clusterName,
   onBack,
   onClose,
-  onSuccess,
+  onComplete,
 }: {
   clusterId: string;
   clusterName: string;
   onBack: () => void;
   onClose: () => void;
-  onSuccess: (accountNumber: string) => void;
+  onComplete: (number: string) => void;
 }) {
   const { data } = useSession();
-  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
   const prefillPhone = data?.user?.phone || "";
 
   const [formData, setFormData] = useState({
-    customer_identifier: "SQUAD_101",
+    customer_identifier: clusterName,
     business_name: clusterName,
     mobile_num: prefillPhone,
     bvn: "",
@@ -336,35 +341,44 @@ function RequestClusterAccountModal({
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = async () => {
-    if (!isComplete) return;
-    setSubmitting(true);
-    setError("");
-    try {
-      const res = await fetch(
-        `http://localhost:3000/squad/virtual/cluster/${clusterId}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ...formData,
-            beneficiary_account: process.env.NEXT_PUBLIC_BENEFICIARY_ACCOUNT,
-          }),
-          credentials: "include",
-        },
-      );
-      if (!res.ok) {
-        const errBody = await res.json().catch(() => null);
-        throw new Error(errBody?.message || `Request failed (${res.status})`);
+  const qc = new QueryClient();
+
+  const {
+    isPending,
+    mutateAsync: createClusterAccount,
+    isSuccess,
+  } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:3000/squad/virtual/cluster/${clusterId}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              ...formData,
+              beneficiary_account: process.env.NEXT_PUBLIC_BENEFICIARY_ACCOUNT,
+            }),
+            credentials: "include",
+          },
+        );
+        if (!res.ok) {
+          const errBody = await res.json().catch(() => null);
+          throw new Error(errBody?.message || `Request failed (${res.status})`);
+        }
+        const result = await res.json();
+        return result;
+      } catch (error) {
+        throw new Error("An error occurred!");
       }
-      const result = await res.json();
-      onSuccess(result.accountNumber || "");
-    } catch (e: any) {
-      setError(e.message || "Something went wrong");
-    } finally {
-      setSubmitting(false);
-    }
-  };
+    },
+    onSuccess: async (data) => {
+      await qc.invalidateQueries({
+        queryKey: ["cluster", clusterId],
+      });
+      onComplete(data.data.virtual_account_number);
+    },
+  });
 
   return (
     <div className="fixed inset-0 z-70 flex items-center justify-center bg-forest/50 p-3">
@@ -426,11 +440,11 @@ function RequestClusterAccountModal({
           )}
 
           <button
-            onClick={handleSubmit}
-            disabled={!isComplete || submitting}
+            onClick={() => createClusterAccount()}
+            disabled={!isComplete || isPending}
             className="w-full py-3 rounded-full bg-green text-white font-bold hover:bg-greener transition-all disabled:opacity-40 disabled:cursor-not-allowed mt-2"
           >
-            {submitting ? (
+            {isPending ? (
               <span className="flex items-center justify-center gap-2">
                 <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
                 Submitting...

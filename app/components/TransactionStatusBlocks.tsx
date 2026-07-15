@@ -4,6 +4,8 @@ import {
   HourglassHighIcon,
   XIcon,
   DownloadSimpleIcon,
+  ArrowDownLeftIcon,
+  ArrowUpRightIcon,
 } from "@phosphor-icons/react";
 import {
   CheckCircleIcon,
@@ -13,6 +15,7 @@ import {
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { makeDate } from "../(user-facing)/notifications/page";
+import { useSession } from "@/lib/authClient";
 
 function getStatusClass(status: string) {
   if (status.toLowerCase().includes("success")) return "text-green";
@@ -43,8 +46,26 @@ function statusIcon(status: string, className?: string) {
   return null;
 }
 
+function directionConfig(direction?: string) {
+  if (direction === "inbound" || direction === "credit") {
+    return {
+      icon: ArrowDownLeftIcon,
+      iconClass: "text-green",
+      sign: "+",
+      label: "CREDIT",
+    };
+  }
+  return {
+    icon: ArrowUpRightIcon,
+    iconClass: "text-ink-mid",
+    sign: "-",
+    label: "DEBIT",
+  };
+}
+
 export function TransactionBlock({
   transactionObject,
+  contextClusterId,
 }: {
   transactionObject:
     | {
@@ -56,12 +77,17 @@ export function TransactionBlock({
         channel?: string;
         transactionRef?: string;
         type?: string;
+        direction?: string;
+        senderId?: string | null;
+        recipientId?: string | null;
         clusterId?: string | null;
         planId?: string | null;
       }
     | any;
+  contextClusterId?: string;
 }) {
   const [modalOpen, setModalOpen] = useState(false);
+  const { data: sessionData } = useSession();
   const {
     status,
     amount,
@@ -70,7 +96,22 @@ export function TransactionBlock({
     transactionHeading,
     id,
     transactionRef,
+    direction: propDirection,
+    senderId,
+    recipientId,
+    clusterId: txnClusterId,
   } = transactionObject;
+
+  const userId = sessionData?.user?.id;
+  const computedDirection =
+    (contextClusterId && txnClusterId === contextClusterId && "inbound") ||
+    propDirection ||
+    (userId && senderId === userId && "outbound") ||
+    (userId && recipientId === userId && "inbound") ||
+    undefined;
+
+  const dir = directionConfig(computedDirection);
+  const DirIcon = dir.icon;
 
   return (
     <>
@@ -78,8 +119,10 @@ export function TransactionBlock({
         onClick={() => setModalOpen(true)}
         className={`w-full grid grid-cols-12 gap-x-4 p-1 my-2 items-center border-card-border border bg-linear-to-r ${setBg(status)} to-zinc-200/20 rounded-xl hover:scale-x-102 hover:shadow-2xl hover:shadow-card-border transition-all cursor-pointer text-left`}
       >
-        <div className="col-span-1">
-          {statusIcon(status, "text-3xl text-green p-1 h-10 w-10")}
+        <div className="col-span-1 flex items-center justify-center">
+          <div className={`w-9 h-9 rounded-full flex items-center justify-center ${computedDirection === "inbound" ? "bg-green/10" : "bg-ink-mid/10"}`}>
+            <DirIcon className={`text-sm ${dir.iconClass}`} weight="bold" />
+          </div>
         </div>
         <div className="col-span-7 px-3 min-w-0">
           <p className="text-sm md:text-xl h-8 w-full truncate">
@@ -87,19 +130,21 @@ export function TransactionBlock({
           </p>
           <p className="text-ink-mid/70 text-[10px] md:text-sm">
             <span>{makeDate(createdAt)}</span>
+            <span className="mx-1">·</span>
+            <span className={dir.iconClass}>{dir.label}</span>
             {channel && (
               <>
-                {" "}
-                | <span>Handled through {channel}</span>
+                <span className="mx-1">·</span>
+                <span>{channel}</span>
               </>
             )}
           </p>
         </div>
         <div
-          className={`${getStatusClass(status)} font-bold col-span-4 md:p-3 p-1`}
+          className={`${computedDirection === "inbound" ? "text-green" : getStatusClass(status)} font-bold col-span-4 md:p-3 p-1`}
         >
           <p className="text-right text-[10px] md:text-xl">
-            +&#8358; {formatAmount(amount, channel)}
+            {dir.sign}&#8358; {formatAmount(amount, channel)}
           </p>
         </div>
       </button>
@@ -156,8 +201,9 @@ export function TransactionBlock({
                     &#8358; {formatAmount(amount, channel)}
                   </span>
                 </div>
-                <Row label="Channel" value={channel || "—"} />
-                <Row label="Date" value={makeDate(createdAt)} />
+              <Row label="Channel" value={channel || "—"} />
+              {computedDirection && <Row label="Direction" value={computedDirection === "inbound" ? "CREDIT (received)" : "DEBIT (sent)"} />}
+              <Row label="Date" value={makeDate(createdAt)} />
                 {id && <Row label="Transaction ID" value={id} mono />}
                 {transactionRef && (
                   <Row label="Reference" value={transactionRef} mono />

@@ -11,7 +11,8 @@ import {
   ShareNetworkIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
+import { TransactionBlock, EmptyTransaction } from "@/app/components/TransactionStatusBlocks";
 import { XIcon, CopyIcon, CheckCircleIcon } from "@phosphor-icons/react";
 import { useSession } from "@/lib/authClient";
 import {
@@ -67,7 +68,7 @@ export default function ClusterDetailsClient({
 }: {
   detailsObject: clusterDetailsType;
 }) {
-  const { name, id, desc, accountNumber, plans, members, accountBalance } =
+  const { name, id, desc, accountNumber, plans, members, accountBalance, transactions } =
     detailsObject;
   const [isModalShown, showModal] = useState(false);
   const [promptButton, updatePrompter] = useState<
@@ -77,6 +78,19 @@ export default function ClusterDetailsClient({
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [showCreateAccountForm, setShowCreateAccountForm] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [txPage, setTxPage] = useState(0);
+  const TXS_PER_PAGE = 10;
+
+  const paginatedTxs = useMemo(() => {
+    if (!transactions) return [];
+    const sorted = [...transactions].sort(
+      (a: any, b: any) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+    return sorted.slice(txPage * TXS_PER_PAGE, (txPage + 1) * TXS_PER_PAGE);
+  }, [transactions, txPage]);
+
+  const totalPages = transactions ? Math.ceil(transactions.length / TXS_PER_PAGE) : 0;
 
   const handleCopy = useCallback(async () => {
     const an = accountNumber;
@@ -172,9 +186,55 @@ export default function ClusterDetailsClient({
         </div>
       </div>
 
-      <div className="my-3 p-3 rounded-2xl grid items-center border border-card-border shadow-md shadow-card-border">
-        <p className="uppercase text-ink-mid font-semibold my-2">activities</p>
-        <div className="grid"></div>
+      <div className="my-3 p-3 rounded-2xl border border-card-border shadow-md shadow-card-border">
+        <p className="uppercase text-ink-mid font-semibold my-2">
+          activities
+          {transactions && transactions.length > 0 && (
+            <span className="text-xs font-normal text-ink-mid/70 lowercase ml-2">
+              ({transactions.length})
+            </span>
+          )}
+        </p>
+        <div className="grid">
+          {transactions && transactions.length > 0 ? (
+            paginatedTxs.map((txn: any) => (
+              <TransactionBlock key={txn.id} transactionObject={txn} contextClusterId={id} />
+            ))
+          ) : (
+            <EmptyTransaction />
+          )}
+        </div>
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 mt-3 pt-3 border-t border-card-border">
+            <button
+              onClick={() => setTxPage((p) => Math.max(0, p - 1))}
+              disabled={txPage === 0}
+              className="px-3 py-1.5 text-xs font-semibold rounded-full border border-card-border text-ink-mid hover:bg-gray-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              Prev
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => setTxPage(i)}
+                className={`w-7 h-7 text-xs font-semibold rounded-full transition-all ${
+                  i === txPage
+                    ? "bg-green text-white"
+                    : "border border-card-border text-ink-mid hover:bg-gray-50"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => setTxPage((p) => Math.min(totalPages - 1, p + 1))}
+              disabled={txPage === totalPages - 1}
+              className="px-3 py-1.5 text-xs font-semibold rounded-full border border-card-border text-ink-mid hover:bg-gray-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Account Modal */}

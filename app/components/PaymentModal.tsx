@@ -12,7 +12,7 @@ import {
 import { soraClass } from "../fonts";
 import { useState } from "react";
 import { useParams, usePathname } from "next/navigation";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/authClient";
 import type { User } from "../(user-facing)/cluster/[id]/ClusterDetailsClient";
@@ -40,6 +40,8 @@ export default function PaymentModal({
   const [payError, setPayError] = useState("");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [groupayTransferStep, setGroupayTransferStep] = useState(0);
+  const [isTransferring, setIsTransferring] = useState(false);
+  const [transferError, setTransferError] = useState("");
 
   const handleClick = () => {
     onClick();
@@ -113,6 +115,43 @@ export default function PaymentModal({
     },
   });
 
+  const queryClient = useQueryClient();
+
+  const handleUserTransfer = async () => {
+    if (!selectedUser) return;
+    setIsTransferring(true);
+    setTransferError("");
+    try {
+      const { data: sessionData } = await getSession();
+      if (!sessionData?.user) throw new Error("Not authenticated");
+      const res = await fetch(
+        `http://localhost:3000/userData/transfer`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            senderId: sessionData.user.id,
+            recipientId: selectedUser.id,
+            amount: trxAmount * 100,
+          }),
+        },
+      );
+      if (!res.ok) {
+        const err = await res.json().catch(() => null);
+        throw new Error(err?.message || "Transfer failed");
+      }
+      queryClient.invalidateQueries({ queryKey: ["account_details"] });
+      queryClient.invalidateQueries({ queryKey: ["userDetails"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      updatePaymentStage(2);
+    } catch (e: any) {
+      setTransferError(e.message || "Something went wrong");
+    } finally {
+      setIsTransferring(false);
+    }
+  };
+
   const handleGroupayPayment = async () => {
     setIsPayingFromAccount(true);
     setPayError("");
@@ -134,6 +173,9 @@ export default function PaymentModal({
         const err = await res.json().catch(() => null);
         throw new Error(err?.message || "Payment failed");
       }
+      queryClient.invalidateQueries({ queryKey: ["cluster", params.id] });
+      queryClient.invalidateQueries({ queryKey: ["account_details"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
       updatePaymentStage(2);
     } catch (e: any) {
       setPayError(e.message || "Something went wrong");
@@ -295,7 +337,7 @@ export default function PaymentModal({
                 </div>
 
                 <button
-                  className="w-full flex justify-center uppercase bg-green text-white rounded-[9999px] py-3 px-6 font-semibold hover:bg-greener transition-all disabled:opacity-50"
+                  className="w-full flex justify-center uppercase bg-green text-white rounded-[9999px] md:py-3 md:px-6 py-1 px-2 font-semibold hover:bg-greener transition-all disabled:opacity-50"
                   onClick={() => initiatePayment()}
                   disabled={isPending}
                 >
@@ -323,7 +365,7 @@ export default function PaymentModal({
                     <span className="text-forest font-semibold">GTBank</span>
                   </div>
                 </div>
-                <button className="bg-green text-center text-white font-semibold rounded-[9999px] py-3 px-6 uppercase hover:bg-greener transition-all mx-auto w-3/4">
+                <button className="bg-green text-center text-white font-semibold rounded-[9999px] md:py-3 md:px-6 py-1 px-2 uppercase hover:bg-greener transition-all mx-auto w-3/4">
                   I have sent the money
                 </button>
               </div>
@@ -377,7 +419,7 @@ export default function PaymentModal({
                 )}
 
                 <button
-                  className="w-full flex justify-center uppercase bg-green text-white rounded-[9999px] py-3 px-6 font-semibold hover:bg-greener transition-all disabled:opacity-50"
+                  className="w-full flex justify-center uppercase bg-green text-white rounded-[9999px] md:py-3 md:px-6 py-1 px-2 font-semibold hover:bg-greener transition-all disabled:opacity-50"
                   onClick={handleGroupayPayment}
                   disabled={isPayingFromAccount}
                 >
@@ -436,7 +478,7 @@ export default function PaymentModal({
                 N.B: The details of this request will be made available to the
                 members of your cluster.
               </p>
-              <button className="self-center w-1/2 uppercase text-white font-semibold rounded-[9999px] py-3 px-6 hover:bg-greener bg-green transition-all">
+              <button className="self-center w-1/2 uppercase text-white font-semibold rounded-[9999px] md:py-3 md:px-6 py-1 px-2 hover:bg-greener bg-green transition-all">
                 Proceed
               </button>
             </div>
@@ -449,13 +491,14 @@ export default function PaymentModal({
               </p>
               <div>
                 <label className="block text-sm text-ink-mid font-medium mb-1">
-                  Withdrawal Amount
+                  Withdrawal Amount (in Naira)
                 </label>
                 <input
                   type="number"
                   min={100}
                   max={50000}
                   step={100}
+                  defaultValue={200}
                   required
                   className="h-12 rounded-xl border border-card-border px-4 text-sm w-full outline-none focus:border-green transition-colors"
                 />
@@ -471,7 +514,7 @@ export default function PaymentModal({
                   className="h-12 rounded-xl border border-card-border px-4 text-sm w-full outline-none focus:border-green transition-colors"
                 />
               </div>
-              <button className="uppercase text-white font-semibold hover:bg-greener bg-green block rounded-[9999px] py-3 px-6 self-center w-1/2 transition-all">
+              <button className="uppercase text-white font-semibold hover:bg-greener bg-green block rounded-[9999px] md:py-3 md:px-6 py-1 px-2 self-center w-1/2 transition-all">
                 Confirm
               </button>
             </div>
@@ -529,7 +572,7 @@ export default function PaymentModal({
               </div>
 
               <button
-                className="w-full text-white py-3 px-6 bg-green font-semibold uppercase rounded-[9999px] hover:bg-greener transition-all"
+                className="w-full text-white md:py-3 md:px-6 py-1 px-2 bg-green font-semibold uppercase rounded-[9999px] hover:bg-greener transition-all"
                 onClick={() => {
                   if (contributionSource == "external") {
                     updatePaymentStage(1);
@@ -604,7 +647,7 @@ export default function PaymentModal({
                 </label>
               </div>
               <button
-                className="w-full flex justify-center uppercase bg-green text-white rounded-[9999px] py-3 px-6 font-semibold hover:bg-greener transition-all mt-4"
+                className="w-full flex justify-center uppercase bg-green text-white rounded-[9999px] md:py-3 md:px-6 py-1 px-2 font-semibold hover:bg-greener transition-all mt-4"
                 onClick={() => updatePaymentStage(1)}
               >
                 Confirm
@@ -711,7 +754,7 @@ export default function PaymentModal({
                         required
                       />
                       <button
-                        className="w-full uppercase text-white font-semibold bg-green rounded-[9999px] py-3 px-6 hover:bg-greener transition-all disabled:opacity-50"
+                        className="w-full uppercase text-white font-semibold bg-green rounded-[9999px] md:py-3 md:px-6 py-1 px-2 hover:bg-greener transition-all disabled:opacity-50"
                         type="submit"
                         disabled={isLoading}
                       >
@@ -793,7 +836,7 @@ export default function PaymentModal({
                     {/* Continue button when user selected */}
                     {selectedUser && (
                       <button
-                        className="w-full flex justify-center uppercase bg-green text-white rounded-[9999px] py-3 px-6 font-semibold hover:bg-greener transition-all"
+                        className="w-full flex justify-center uppercase bg-green text-white rounded-[9999px] md:py-3 md:px-6 py-1 px-2 font-semibold hover:bg-greener transition-all"
                         onClick={() => setGroupayTransferStep(1)}
                       >
                         Continue to Payment
@@ -831,6 +874,7 @@ export default function PaymentModal({
                         onClick={() => {
                           setSelectedUser(null);
                           setGroupayTransferStep(0);
+                          updateMailQuery("");
                         }}
                       >
                         Change
@@ -870,11 +914,27 @@ export default function PaymentModal({
                       />
                     </div>
 
+                    {transferError && (
+                      <p className="text-sm text-red bg-red/5 rounded-xl px-3 py-2">
+                        {transferError}
+                      </p>
+                    )}
                     <button
-                      className="w-full flex justify-center uppercase bg-green text-white rounded-[9999px] py-3 px-6 font-semibold hover:bg-greener transition-all mt-2"
-                      onClick={() => updatePaymentStage(2)}
+                      className="w-full flex justify-center uppercase bg-green text-white rounded-[9999px] md:py-3 md:px-6 py-1 px-2 font-semibold hover:bg-greener transition-all mt-2 disabled:opacity-50"
+                      onClick={handleUserTransfer}
+                      disabled={isTransferring}
                     >
-                      Send &#8358;{trxAmount.toLocaleString()}
+                      {isTransferring ? (
+                        <span className="flex items-center gap-2">
+                          <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                          </svg>
+                          Processing...
+                        </span>
+                      ) : (
+                        <>Send &#8358;{trxAmount.toLocaleString()}</>
+                      )}
                     </button>
                   </div>
                 )}

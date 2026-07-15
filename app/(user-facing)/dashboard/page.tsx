@@ -35,6 +35,7 @@ import {
   CardSkeleton,
   ListSkeleton,
 } from "@/app/components/Spinner";
+import { redirect } from "next/navigation";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -68,7 +69,7 @@ export default function DashboardPage() {
   const { clusterResponse, isLoading, isSuccess } = useMyClusters();
 
   const { transactionData, transactionsGotten, isGettingTxns } =
-    useTransactions();
+    useTransactions(data?.user?.id);
 
   const {
     isFetching: loadingBalance,

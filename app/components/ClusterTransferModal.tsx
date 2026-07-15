@@ -10,7 +10,7 @@ import {
 import { soraClass } from "../fonts";
 import { useMyClusters } from "../hooks/queryHooks";
 import { useSession } from "@/lib/authClient";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function ClusterTransferModal({
   isShown,
@@ -29,25 +29,36 @@ export default function ClusterTransferModal({
     ? clusterResponse?.find((c) => c.id === selectedClusterId)
     : null;
 
+  const queryClient = useQueryClient();
+
   const { mutateAsync: transfer, isPending } = useMutation({
     mutationFn: async () => {
       if (!selectedClusterId || !data?.user) return;
       const res = await fetch(
-        `http://localhost:3000/clusters/${selectedClusterId}/transactions`,
+        `http://localhost:3000/clusters/${selectedClusterId}/pay-from-account`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
           body: JSON.stringify({
+            userId: data.user.id,
             amount: amount * 100,
-            senderId: data.user.id,
-            transactionHeading: `Transfer from ${data.user.name}`,
           }),
         },
       );
+      if (!res.ok) {
+        const err = await res.json().catch(() => null);
+        throw new Error(err?.message || "Transfer failed");
+      }
       return res.json();
     },
-    onSuccess: () => setStep("done"),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cluster", selectedClusterId] });
+      queryClient.invalidateQueries({ queryKey: ["userClusters"] });
+      queryClient.invalidateQueries({ queryKey: ["account_details"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      setStep("done");
+    },
   });
 
   const handleReset = () => {

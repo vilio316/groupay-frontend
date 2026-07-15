@@ -11,6 +11,10 @@ interface Transaction {
   id: string;
   clusterId: string | null;
   planId: string | null;
+  senderId: string | null;
+  recipientId: string | null;
+  type: string;
+  direction?: string;
   transactionRef: string;
   transactionHeading: string;
   amount: number;
@@ -93,9 +97,10 @@ const getUserDetails = async () => {
   }
 };
 
-async function getTransactions() {
+async function getTransactions(userId?: string) {
+  const query = userId ? `?userId=${encodeURIComponent(userId)}` : "";
   const transactionsRequest = await fetch(
-    "http://localhost:3000/transactions",
+    `http://localhost:3000/transactions${query}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -240,15 +245,16 @@ export const useMyAccountDetails = () => {
   };
 };
 
-export const useTransactions = () => {
+export const useTransactions = (userId?: string) => {
   const {
     data: transactionData,
     isLoading: isGettingTxns,
     isSuccess: transactionsGotten,
   } = useQuery({
-    queryKey: ["transactions"],
-    queryFn: getTransactions,
+    queryKey: ["transactions", userId],
+    queryFn: () => getTransactions(userId),
     staleTime: 1 * 60 * 60 * 1000,
+    enabled: !!userId,
   });
 
   return {

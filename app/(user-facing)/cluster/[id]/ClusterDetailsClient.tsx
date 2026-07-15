@@ -12,7 +12,10 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { useState, useCallback, useMemo } from "react";
-import { TransactionBlock, EmptyTransaction } from "@/app/components/TransactionStatusBlocks";
+import {
+  TransactionBlock,
+  EmptyTransaction,
+} from "@/app/components/TransactionStatusBlocks";
 import { XIcon, CopyIcon, CheckCircleIcon } from "@phosphor-icons/react";
 import { useSession } from "@/lib/authClient";
 import {
@@ -68,8 +71,16 @@ export default function ClusterDetailsClient({
 }: {
   detailsObject: clusterDetailsType;
 }) {
-  const { name, id, desc, accountNumber, plans, members, accountBalance, transactions } =
-    detailsObject;
+  const {
+    name,
+    id,
+    desc,
+    accountNumber,
+    plans,
+    members,
+    accountBalance,
+    transactions,
+  } = detailsObject;
   const [isModalShown, showModal] = useState(false);
   const [promptButton, updatePrompter] = useState<
     "add" | "withdraw" | "transfer"
@@ -90,7 +101,9 @@ export default function ClusterDetailsClient({
     return sorted.slice(txPage * TXS_PER_PAGE, (txPage + 1) * TXS_PER_PAGE);
   }, [transactions, txPage]);
 
-  const totalPages = transactions ? Math.ceil(transactions.length / TXS_PER_PAGE) : 0;
+  const totalPages = transactions
+    ? Math.ceil(transactions.length / TXS_PER_PAGE)
+    : 0;
 
   const handleCopy = useCallback(async () => {
     const an = accountNumber;
@@ -198,7 +211,11 @@ export default function ClusterDetailsClient({
         <div className="grid">
           {transactions && transactions.length > 0 ? (
             paginatedTxs.map((txn: any) => (
-              <TransactionBlock key={txn.id} transactionObject={txn} contextClusterId={id} />
+              <TransactionBlock
+                key={txn.id}
+                transactionObject={txn}
+                contextClusterId={id}
+              />
             ))
           ) : (
             <EmptyTransaction />
@@ -411,7 +428,7 @@ function RequestClusterAccountModal({
     mutationFn: async () => {
       try {
         const res = await fetch(
-          `http://localhost:3000/squad/virtual/cluster/${clusterId}`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/squad/virtual/cluster/${clusterId}`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

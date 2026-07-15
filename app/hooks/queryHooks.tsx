@@ -60,15 +60,18 @@ async function fetchPlan(clusterId: string, planId: string) {
 
 async function eleba() {
   const { data } = await getSession();
-  const postReq = await fetch("http://localhost:3000/clusters/myClusters", {
-    method: "POST",
-    body: JSON.stringify({
-      userId: data?.user.id,
-    }),
-    headers: {
-      "Content-Type": "application/json",
+  const postReq = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/myClusters`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        userId: data?.user.id,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
-  });
+  );
   const postRes = await postReq.json();
   const fetchedClustIds = postRes.map((clust: any) => clust.clusterId);
   const promise: clusterDetailsType[] = await Promise.all(

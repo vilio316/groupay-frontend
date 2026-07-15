@@ -300,7 +300,7 @@ function RequestAccountFormModal({
       try {
         const { data } = await getSession();
         const res = await fetch(
-          `http://localhost:3000/squad/virtual/${data?.user.id}`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/squad/virtual/${data?.user.id}`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

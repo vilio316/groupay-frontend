@@ -11,7 +11,7 @@ export default async function MembersPage({
 }) {
   const { id, planID } = await params;
   const planRequest = await fetch(
-    `http://localhost:3000/clusters/${id}/plans/${planID}`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/${id}/plans/${planID}`,
     {
       credentials: "include",
     },

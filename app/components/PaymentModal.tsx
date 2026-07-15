@@ -59,7 +59,7 @@ export default function PaymentModal({
     queryKey: ["usersByEmail", mailQuery],
     queryFn: async () => {
       const req = await fetch(
-        `http://localhost:3000/userData/query/${mailQuery}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/userData/query/${mailQuery}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -78,7 +78,7 @@ export default function PaymentModal({
       const { data } = await getSession();
       try {
         const payReq = await fetch(
-          `http://localhost:3000/squad/transaction/initiate`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/squad/transaction/initiate`,
           {
             method: "POST",
             headers: {
@@ -125,7 +125,7 @@ export default function PaymentModal({
       const { data: sessionData } = await getSession();
       if (!sessionData?.user) throw new Error("Not authenticated");
       const res = await fetch(
-        `http://localhost:3000/userData/transfer`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/userData/transfer`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -158,7 +158,7 @@ export default function PaymentModal({
     try {
       const { data } = await getSession();
       const res = await fetch(
-        `http://localhost:3000/clusters/${params.id}/pay-from-account`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/${params.id}/pay-from-account`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -926,9 +926,24 @@ export default function PaymentModal({
                     >
                       {isTransferring ? (
                         <span className="flex items-center gap-2">
-                          <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                          <svg
+                            className="animate-spin h-4 w-4"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            />
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                            />
                           </svg>
                           Processing...
                         </span>

@@ -21,7 +21,7 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
     if (!isMember) {
       const { data } = await getSession();
       const addReq = await fetch(
-        `http://localhost:3000/clusters/${params.id}/plans/${params.planID}/members`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/${params.id}/plans/${params.planID}/members`,
         {
           credentials: "include",
           headers: {
@@ -35,7 +35,7 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
       );
     } else {
       await fetch(
-        `http://localhost:3000/clusters/${params.id}/plans/${params.planID}/members/${userId}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/${params.id}/plans/${params.planID}/members/${userId}`,
         {
           credentials: "include",
           method: "DELETE",
@@ -52,7 +52,7 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
     const userId = data?.user.id;
 
     if (id !== userId) {
-      await fetch(`http://localhost:3000/notifications`, {
+      await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/notifications`, {
         method: "POST",
         credentials: "include",
         body: JSON.stringify({

@@ -14,9 +14,12 @@ export interface ClusterResponse {
 export default async function CreatePlan() {
   "use cache";
   cacheLife("hours");
-  const fetchClustersRequest = await fetch("http://localhost:3000/clusters", {
-    credentials: "include",
-  });
+  const fetchClustersRequest = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters`,
+    {
+      credentials: "include",
+    },
+  );
   const clustersResponse: ClusterResponse[] = await fetchClustersRequest.json();
   return <PlanCreationClient clusters={clustersResponse} />;
 }

@@ -14,7 +14,7 @@ export default function NewClusterPage() {
   const [clusterDesc, updateClusterDesc] = useState("");
 
   async function createCluster() {
-    await fetch("http://localhost:3000/clusters", {
+    await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/clusters`, {
       method: "POST",
       body: JSON.stringify({
         name: clusterName,

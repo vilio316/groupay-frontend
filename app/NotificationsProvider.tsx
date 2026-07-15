@@ -49,7 +49,7 @@ export default function NotificationsProvider({
     queryFn: async () => {
       const { data } = await getSession();
       const notificationsRequest = await fetch(
-        `http://localhost:3000/notifications/${data?.user.id}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/notifications/${data?.user.id}`,
         {
           credentials: "include",
           headers: {
@@ -70,13 +70,16 @@ export default function NotificationsProvider({
 
   const { mutateAsync: sendReadToDB } = useMutation({
     mutationFn: async (id: string) => {
-      await fetch(`http://localhost:3000/notifications/item/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
+      await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/notifications/item/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
         },
-        credentials: "include",
-      });
+      );
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({

@@ -19,20 +19,23 @@ export default function PlanCreationClient({ clusters }: { clusters: any[] }) {
   const { data } = useSession();
 
   async function createPlan() {
-    await fetch(`http://localhost:3000/clusters/${clusterId}/plans`, {
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
+    await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/${clusterId}/plans`,
+      {
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          desc: planDesc,
+          memberIds: [data?.user.id],
+          name: planName,
+          planType: type,
+          minimumContribution: minimumContribution,
+        }),
+        method: "POST",
       },
-      body: JSON.stringify({
-        desc: planDesc,
-        memberIds: [data?.user.id],
-        name: planName,
-        planType: type,
-        minimumContribution: minimumContribution,
-      }),
-      method: "POST",
-    });
+    );
   }
   const qc = new QueryClient();
   const { isPending, mutateAsync: create } = useMutation({

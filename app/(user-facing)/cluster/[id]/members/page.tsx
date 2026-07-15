@@ -11,11 +11,14 @@ export default async function MembersPage({
   }>;
 }) {
   const { id } = await params;
-  const clusterRequest = await fetch(`http://localhost:3000/clusters/${id}`, {
-    headers: {
-      "Content-Type": "application/json",
+  const clusterRequest = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/${id}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
-  });
+  );
   const clusterResponse: clusterDetailsType = await clusterRequest.json();
   const { members } = clusterResponse;
 

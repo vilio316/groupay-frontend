@@ -35,7 +35,7 @@ export default function ClusterTransferModal({
     mutationFn: async () => {
       if (!selectedClusterId || !data?.user) return;
       const res = await fetch(
-        `http://localhost:3000/clusters/${selectedClusterId}/pay-from-account`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/${selectedClusterId}/pay-from-account`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -53,7 +53,9 @@ export default function ClusterTransferModal({
       return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cluster", selectedClusterId] });
+      queryClient.invalidateQueries({
+        queryKey: ["cluster", selectedClusterId],
+      });
       queryClient.invalidateQueries({ queryKey: ["userClusters"] });
       queryClient.invalidateQueries({ queryKey: ["account_details"] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });

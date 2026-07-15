@@ -11,7 +11,7 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id, planID } = await params;
   const request = await fetch(
-    `http://localhost:3000/clusters/${id}/plans/${planID}`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/${id}/plans/${planID}`,
   );
   const response = await request.json();
 

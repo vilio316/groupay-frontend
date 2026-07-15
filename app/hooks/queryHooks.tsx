@@ -159,6 +159,8 @@ export const usePlanDetails = (clusterId: string, planId: string) => {
     queryKey: ["plan", planId],
     queryFn: async () => await fetchPlan(clusterId, planId),
     staleTime: 1 * 60 * 60 * 1000,
+    refetchInterval: 30000,
+    refetchOnWindowFocus: true,
   });
 
   return { planResponse, isSuccess, isLoading };

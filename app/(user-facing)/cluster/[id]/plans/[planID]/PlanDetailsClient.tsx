@@ -103,7 +103,9 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
   const memberTotalMap: Record<string, number> = {};
   for (const t of planTransactions) {
     const sid = (t as any).senderId;
-    memberTotalMap[sid] = (memberTotalMap[sid] || 0) + ((t as any).amount || 0);
+    memberTotalMap[sid] =
+      (memberTotalMap[sid] || 0) +
+      (t.channel.includes("virt") ? t.amount * 100 : (t as any).amount || 0);
   }
 
   const currentUserTotalKobo = memberTotalMap[userId || ""] || 0;

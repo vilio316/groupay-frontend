@@ -47,6 +47,8 @@ export default function PaymentModal({
   const [planAmount, setPlanAmount] = useState(500);
   const [isPayingPlan, setIsPayingPlan] = useState(false);
   const [planPayError, setPlanPayError] = useState("");
+  const [isRegisteringPending, setIsRegisteringPending] = useState(false);
+  const [pendingRegError, setPendingRegError] = useState("");
 
   const handleClick = () => {
     onClick();
@@ -195,6 +197,40 @@ export default function PaymentModal({
       setTransferError(e.message || "Something went wrong");
     } finally {
       setIsTransferring(false);
+    }
+  };
+
+  const handleRegisterPendingTransaction = async () => {
+    setIsRegisteringPending(true);
+    setPendingRegError("");
+    try {
+      const { data } = await getSession();
+      if (!data?.user) throw new Error("Not authenticated");
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/${params.id}/pending-transaction`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            userId: data.user.id,
+            amount: planAmount * 100,
+            planId: planId || params.planID || undefined,
+          }),
+        },
+      );
+      if (!res.ok) {
+        const err = await res.json().catch(() => null);
+        throw new Error(err?.message || "Failed to register payment");
+      }
+      queryClient.invalidateQueries({ queryKey: ["plan", params.planID] });
+      queryClient.invalidateQueries({ queryKey: ["cluster", params.id] });
+      queryClient.invalidateQueries({ queryKey: ["userPlans"] });
+      updatePaymentStage(2);
+    } catch (e: any) {
+      setPendingRegError(e.message || "Something went wrong");
+    } finally {
+      setIsRegisteringPending(false);
     }
   };
 
@@ -411,7 +447,14 @@ export default function PaymentModal({
                     <span className="text-forest font-semibold">GTBank</span>
                   </div>
                 </div>
-                <button className="bg-green text-center text-white font-semibold rounded-[9999px] md:py-3 md:px-6 py-1 px-2 uppercase hover:bg-greener transition-all mx-auto w-3/4">
+                <button
+                  className="bg-green text-center text-white font-semibold rounded-[9999px] md:py-3 md:px-6 py-1 px-2 uppercase hover:bg-greener transition-all mx-auto w-3/4"
+                  onClick={() => {
+                    alert("We'll look out for your payment!");
+                    updatePaymentStage(0);
+                    onClick();
+                  }}
+                >
                   I have sent the money
                 </button>
               </div>
@@ -499,7 +542,15 @@ export default function PaymentModal({
                 GrouPay account.
               </p>
               <button
-                onClick={handleClick}
+                onClick={() => {
+                  queryClient.invalidateQueries({
+                    queryKey: ["plan", params.planID],
+                  });
+                  queryClient.invalidateQueries({
+                    queryKey: ["cluster", params.id],
+                  });
+                  handleClick();
+                }}
                 className="uppercase bg-green text-white font-semibold rounded-[9999px] py-3 px-8 hover:bg-greener transition-all"
               >
                 Done
@@ -711,11 +762,42 @@ export default function PaymentModal({
                     {`squad/{cluster name}`}
                   </p>
                 </div>
+                {pendingRegError && (
+                  <p className="text-sm text-red bg-red/5 rounded-xl px-3 py-2 w-full text-center">
+                    {pendingRegError}
+                  </p>
+                )}
                 <button
-                  className="bg-green text-white font-semibold rounded-[9999px] py-3 px-8 uppercase hover:bg-greener transition-all w-3/4"
-                  onClick={() => updatePaymentStage(2)}
+                  className="bg-green text-white font-semibold rounded-[9999px] py-3 px-8 uppercase hover:bg-greener transition-all w-3/4 disabled:opacity-50"
+                  onClick={handleRegisterPendingTransaction}
+                  disabled={isRegisteringPending}
                 >
-                  I have sent the money
+                  {isRegisteringPending ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg
+                        className="animate-spin h-4 w-4"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                        />
+                      </svg>
+                      Registering...
+                    </span>
+                  ) : (
+                    "I have sent the money"
+                  )}
                 </button>
               </div>
             )}

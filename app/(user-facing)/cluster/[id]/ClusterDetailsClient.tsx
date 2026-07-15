@@ -11,7 +11,7 @@ import {
   ShareNetworkIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import {
   TransactionBlock,
   EmptyTransaction,
@@ -114,12 +114,6 @@ export default function ClusterDetailsClient({
     }
   }, [accountNumber]);
 
-  // const handleAccountCreated = (newAccountNumber: string) => {
-  //   setaccountNumber(newAccountNumber);
-  //   setShowCreateAccountForm(false);
-  //   queryClient.invalidateQueries({ queryKey: ["cluster", id] });
-  // };
-
   return (
     <div className="p-4 mx-auto">
       <div className="flex gap-x-4 items-center">
@@ -151,7 +145,7 @@ export default function ClusterDetailsClient({
             title={accountNumber ? "View account" : "Add account"}
             className="flex flex-col items-center gap-1 group"
             onClick={() => {
-              if (accountNumber !== "1234567890") {
+              if (accountNumber !== "1234567890" && accountNumber.length > 0) {
                 setShowAccountModal(true);
               } else {
                 setShowCreateAccountForm(true);

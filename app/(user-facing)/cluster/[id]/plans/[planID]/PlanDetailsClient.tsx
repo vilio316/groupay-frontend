@@ -2,7 +2,11 @@
 import Avatars from "@/app/components/AvatarsCircles";
 import PaymentModal from "@/app/components/PaymentModal";
 import { soraClass } from "@/app/fonts";
-import { CheckCircleIcon, HandDepositIcon } from "@phosphor-icons/react";
+import {
+  CheckCircleIcon,
+  HandDepositIcon,
+  XCircleIcon,
+} from "@phosphor-icons/react";
 import Link from "next/link";
 import { useState } from "react";
 import { getSession, useSession } from "@/lib/authClient";
@@ -10,12 +14,17 @@ import { PlanDetails } from "../../ClusterDetailsClient";
 import { useParams } from "next/navigation";
 import { redirect } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useClusterDetails } from "@/app/hooks/queryHooks";
 
 export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
   const [isPaying, updatePaymentStatus] = useState(false);
   const { data } = useSession();
   const userId = data?.user.id;
   const params = useParams();
+  const { clusterDetailsResponse, isLoading, isSuccess } = useClusterDetails(
+    String(params.id),
+  );
+  const { name, desc, minimumContribution, id, members, planType } = planObj;
 
   async function handlePlanMembership(isMember: boolean) {
     if (!isMember) {
@@ -82,14 +91,37 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
     },
   });
 
-  const [hasContributed] = useState(false);
-
   const userDetails = planObj.members.filter(
     (member) => member.user.id === userId,
   );
   const userDetailsInCluster = userDetails.length > 0;
 
-  const { name, desc, minimumContribution, id, members, planType } = planObj;
+  const planTransactions = planObj.transactions || [];
+  const minContribNaira = Number(minimumContribution) || 500;
+  const minContribKobo = minContribNaira * 100;
+
+  const memberTotalMap: Record<string, number> = {};
+  for (const t of planTransactions) {
+    const sid = (t as any).senderId;
+    memberTotalMap[sid] = (memberTotalMap[sid] || 0) + ((t as any).amount || 0);
+  }
+
+  const currentUserTotalKobo = memberTotalMap[userId || ""] || 0;
+  const hasContributed = currentUserTotalKobo >= minContribKobo;
+  const userPercentPaid =
+    minContribKobo > 0
+      ? Math.min(100, Math.round((currentUserTotalKobo / minContribKobo) * 100))
+      : 0;
+
+  const paidMembers = planObj.members.filter(
+    (m) => (memberTotalMap[m.userId] || 0) >= minContribKobo,
+  );
+  const unpaidMembers = planObj.members.filter(
+    (m) => !((memberTotalMap[m.userId] || 0) >= minContribKobo),
+  );
+  const paidCount = paidMembers.length;
+  const totalCount = planObj.members.length;
+
   return (
     <div className="min-h-full">
       <div className="flex items-center">
@@ -131,7 +163,9 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
             href={`../plans/${id}/members`}
             className="flex justify-end p-1 text-end flex-col w-1/5"
           >
-            <p className="text-xs capitalize text-ink-mid">3/6 members paid</p>
+            <p className="text-xs capitalize text-ink-mid">
+              {paidCount}/{totalCount} members paid
+            </p>
             <Avatars className="justify-end" members={members} />
           </Link>
         </div>
@@ -144,7 +178,9 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
                   ? Number(minimumContribution).toLocaleString()
                   : "500"}
               </p>
-              <p className="text-ink-mid">Contribution Status: 60%</p>
+              <p className="text-ink-mid">
+                Contribution Status: {userPercentPaid}%
+              </p>
             </div>
 
             <div className="md:w-1/5 flex justify-end p-2 w-full">
@@ -182,7 +218,59 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
             <p className="text-ink-mid font-bold uppercase text-lg">
               Recent Transactions
             </p>
-            <div className="transactions"></div>
+            <div className="transactions">
+              {planObj.members.length > 0 && (
+                <div className="space-y-3 my-2">
+                  <p className="text-sm text-forest font-semibold">
+                    Payment Status
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {planObj.members.map((member) => {
+                      const memberTotalKobo =
+                        memberTotalMap[member.userId] || 0;
+                      const memberPaidNaira = memberTotalKobo / 100;
+                      const metMinimum = memberTotalKobo >= minContribKobo;
+                      return (
+                        <div
+                          key={member.id}
+                          className={`flex items-center gap-x-3 p-2 rounded-lg text-sm ${
+                            metMinimum ? "bg-green/5" : "bg-red/5"
+                          }`}
+                        >
+                          <div className="w-8 h-8 rounded-full bg-green/10 flex items-center justify-center text-green font-bold text-xs uppercase shrink-0">
+                            {member.user?.name?.charAt(0) || "?"}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-forest font-medium text-xs">
+                              {member.user?.name || "Unknown"}
+                            </p>
+                            <p className="text-[10px] text-ink-mid/70">
+                              &#8358;{" "}
+                              {memberPaidNaira.toLocaleString(undefined, {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0,
+                              })}{" "}
+                              / &#8358; {minContribNaira.toLocaleString()}
+                            </p>
+                          </div>
+                          {metMinimum ? (
+                            <CheckCircleIcon
+                              className="w-4 h-4 text-green shrink-0"
+                              weight="bold"
+                            />
+                          ) : (
+                            <XCircleIcon
+                              className="w-4 h-4 text-red shrink-0"
+                              weight="bold"
+                            />
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -190,7 +278,8 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
         isShown={isPaying}
         onClick={() => updatePaymentStatus(false)}
         prompter="plan"
-        accountNumber={"000000000"}
+        planId={id}
+        accountNumber={String(clusterDetailsResponse?.accountNumber)}
       />
     </div>
   );

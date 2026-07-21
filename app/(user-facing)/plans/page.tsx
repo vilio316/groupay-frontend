@@ -6,6 +6,7 @@ import { PlusIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useMyPlans } from "@/app/hooks/queryHooks";
 import { CardSkeleton } from "@/app/components/Spinner";
+import InlineError from "@/app/components/InlineError";
 
 export interface PlanByUser {
   id: string;
@@ -20,7 +21,7 @@ export interface PlanByUser {
 }
 
 export default function PlansPage() {
-  const { isSuccess, isLoading, userPlans } = useMyPlans();
+  const { isSuccess, isLoading, userPlans, myPlansError, refetchMyPlans } = useMyPlans();
 
   return (
     <div className="min-h-full">
@@ -38,6 +39,12 @@ export default function PlansPage() {
           <span>New Plan</span>
         </Link>
       </div>
+      {myPlansError && (
+        <InlineError
+          message="Could not load your plans"
+          retry={refetchMyPlans}
+        />
+      )}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {isSuccess &&
           userPlans &&

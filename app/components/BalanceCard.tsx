@@ -102,8 +102,6 @@ export function BalanceCard({
   );
 }
 
-const DEFAULT_ACCOUNT_NUMBER = "1234567890";
-
 export function UserAccountModal({
   isShown,
   onClose,
@@ -118,7 +116,13 @@ export function UserAccountModal({
   const [loading, setLoading] = useState(false);
   const [showRequestForm, setShowRequestForm] = useState(false);
 
-  const { isFetching, isSuccess, accountDetails } = useMyAccountDetails();
+  const {
+    isFetching,
+    isSuccess,
+    accountDetails,
+    accountDetailsError,
+    refetchAccount,
+  } = useMyAccountDetails();
 
   if (!isShown) return null;
 
@@ -143,6 +147,22 @@ export function UserAccountModal({
           <XIcon className="w-6 h-6" weight="bold" />
         </button>
 
+        {accountDetailsError && (
+          <div className="py-8">
+            <div className="flex flex-col items-center gap-3">
+              <p className="text-red font-semibold">
+                Could not load account info
+              </p>
+              <button
+                onClick={() => refetchAccount()}
+                className="text-sm text-teal font-semibold hover:underline"
+              >
+                Try again
+              </button>
+            </div>
+          </div>
+        )}
+
         {isFetching ? (
           <div className="text-center py-10">
             <div className="animate-spin w-8 h-8 border-2 border-teal border-t-transparent rounded-full mx-auto" />
@@ -153,7 +173,9 @@ export function UserAccountModal({
             <div className="w-16 h-16 rounded-full bg-teal/10 flex items-center justify-center mx-auto mb-4">
               <BankIcon className="w-8 h-8 fill-teal" weight="fill" />
             </div>
-            <h3 className={`${soraClass} text-xl font-bold text-forest-text mb-2`}>
+            <h3
+              className={`${soraClass} text-xl font-bold text-forest-text mb-2`}
+            >
               Your Account
             </h3>
             <p className="text-sm text-ink-mid mb-6">
@@ -193,7 +215,9 @@ export function UserAccountModal({
             <div className="w-16 h-16 rounded-full bg-mist/20 flex items-center justify-center mx-auto mb-4">
               <BankIcon className="w-8 h-8 fill-mist" weight="duotone" />
             </div>
-            <h3 className={`${soraClass} text-xl font-bold text-forest-text mb-2`}>
+            <h3
+              className={`${soraClass} text-xl font-bold text-forest-text mb-2`}
+            >
               No Account Yet
             </h3>
             <p className="text-sm text-ink-mid mb-6">

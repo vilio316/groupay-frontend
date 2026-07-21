@@ -3,17 +3,26 @@ import PlanPage from "./PlanDetailsClient";
 import { useParams } from "next/navigation";
 import { usePlanDetails } from "@/app/hooks/queryHooks";
 import { BalanceSkeleton, ListSkeleton } from "@/app/components/Spinner";
+import InlineError from "@/app/components/InlineError";
 
 export default function PlanDetailsPage() {
   const { id, planID } = useParams();
 
-  const { planResponse, isSuccess, isLoading } = usePlanDetails(
+  const { planResponse, isSuccess, isLoading, planDetailsError, refetchPlan } = usePlanDetails(
     String(id),
     String(planID),
   );
 
   return (
     <>
+      {planDetailsError && (
+        <div className="p-4">
+          <InlineError
+            message="Could not load plan details"
+            retry={refetchPlan}
+          />
+        </div>
+      )}
       {isSuccess && planResponse && <PlanPage planObj={planResponse} />}
       {isLoading && (
         <div className="p-4 space-y-6">

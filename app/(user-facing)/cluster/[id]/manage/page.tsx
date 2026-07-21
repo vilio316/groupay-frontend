@@ -17,11 +17,12 @@ import { useClusterDetails } from "@/app/hooks/queryHooks";
 import { makeDate } from "@/app/(user-facing)/notifications/page";
 import PlanCard from "@/app/components/PlanCard";
 import { CardSkeleton, ListSkeleton } from "@/app/components/Spinner";
+import InlineError from "@/app/components/InlineError";
 
 export default function ManageClusterPage() {
   const [activeTabs, updateActiveTabs] = useState<string[]>([]);
   const { id } = useParams();
-  const { clusterDetailsResponse, isSuccess, isLoading } = useClusterDetails(
+  const { clusterDetailsResponse, isSuccess, isLoading, clusterDetailsError, refetchCluster } = useClusterDetails(
     String(id),
   );
 
@@ -63,6 +64,14 @@ export default function ManageClusterPage() {
 
   return (
     <>
+      {clusterDetailsError && (
+        <div className="p-4">
+          <InlineError
+            message="Could not load cluster details"
+            retry={refetchCluster}
+          />
+        </div>
+      )}
       {isSuccess && clusterDetailsResponse && (
         <div className="p-4 mx-4 border-2 border-card-border rounded-xl">
           <div className="flex gap-x-4">

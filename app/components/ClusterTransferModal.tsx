@@ -13,6 +13,7 @@ import { useSession } from "@/lib/authClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import PinVerifyModal from "./PinVerifyModal";
 import PinSetupModal from "./PinSetupModal";
+import InlineError from "./InlineError";
 
 export default function ClusterTransferModal({
   isShown,
@@ -22,7 +23,7 @@ export default function ClusterTransferModal({
   onClose: () => void;
 }) {
   const { data } = useSession();
-  const { clusterResponse, isSuccess } = useMyClusters();
+  const { clusterResponse, isSuccess, myClustersError, refetchMyClusters } = useMyClusters();
   const [selectedClusterId, setSelectedClusterId] = useState<string>("");
   const [amount, setAmount] = useState(1000);
   const [step, setStep] = useState<"select" | "confirm" | "done">("select");
@@ -119,6 +120,13 @@ export default function ClusterTransferModal({
         >
           <XIcon className="w-6 h-6" weight="bold" />
         </button>
+
+        {myClustersError && (
+          <InlineError
+            message="Could not load clusters"
+            retry={refetchMyClusters}
+          />
+        )}
 
         {step === "done" ? (
           <div className="text-center py-4">

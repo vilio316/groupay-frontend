@@ -20,6 +20,7 @@ import {
 import { useMyUserData, usePinStatus } from "@/app/hooks/queryHooks";
 import { useState } from "react";
 import PinSetupModal from "@/app/components/PinSetupModal";
+import InlineError from "@/app/components/InlineError";
 
 function ToggleCard({
   icon,
@@ -69,10 +70,21 @@ function Skeleton({ className }: { className?: string }) {
 
 export default function ProfilePage() {
   const session = useSession();
-  const { userDetails, isLoading, isSuccess } = useMyUserData();
-  const { hasPin } = usePinStatus();
+  const { userDetails, isLoading, isSuccess, myDataError, refetchUserData } = useMyUserData();
+  const { hasPin, PINError } = usePinStatus();
   const [showPinSetup, setShowPinSetup] = useState(false);
   const [loading, updateLoading] = useState(false);
+
+  if (myDataError) {
+    return (
+      <div className="p-6">
+        <InlineError
+          message="Could not load your profile"
+          retry={refetchUserData}
+        />
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -243,6 +255,11 @@ export default function ProfilePage() {
         <h2 className={`text-lg font-bold text-forest-text mb-4 ${soraClass}`}>
           Transaction PIN
         </h2>
+        {PINError ? (
+          <div className="p-4 border border-card-border rounded-xl">
+            <p className="text-red text-sm font-semibold">Could not check PIN status</p>
+          </div>
+        ) : (
         <div className="flex items-center justify-between p-4 border border-card-border rounded-xl hover:border-teal/30 transition-all">
           <div className="flex items-center gap-3">
             <div
@@ -278,6 +295,7 @@ export default function ProfilePage() {
             {hasPin ? "Change" : "Set PIN"}
           </button>
         </div>
+        )}
       </div>
 
       <PinSetupModal

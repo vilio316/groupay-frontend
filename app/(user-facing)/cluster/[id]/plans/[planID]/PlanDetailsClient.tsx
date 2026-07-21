@@ -16,13 +16,14 @@ import { redirect } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useClusterDetails } from "@/app/hooks/queryHooks";
 import { makeDate } from "@/app/(user-facing)/notifications/page";
+import InlineError from "@/app/components/InlineError";
 
 export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
   const [isPaying, updatePaymentStatus] = useState(false);
   const { data } = useSession();
   const userId = data?.user.id;
   const params = useParams();
-  const { clusterDetailsResponse, isLoading, isSuccess } = useClusterDetails(
+  const { clusterDetailsResponse, isLoading, isSuccess, clusterDetailsError, refetchCluster } = useClusterDetails(
     String(params.id),
   );
   const { name, desc, minimumContribution, id, members, planType, dueDate } =
@@ -124,6 +125,17 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
   );
   const paidCount = paidMembers.length;
   const totalCount = planObj.members.length;
+
+  if (clusterDetailsError) {
+    return (
+      <div className="p-4">
+        <InlineError
+          message="Could not load cluster details"
+          retry={refetchCluster}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-full">

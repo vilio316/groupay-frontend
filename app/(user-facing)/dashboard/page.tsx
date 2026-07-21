@@ -19,6 +19,7 @@ import { BalanceCard, UserAccountModal } from "@/app/components/BalanceCard";
 import ClusterTransferModal from "@/app/components/ClusterTransferModal";
 import PaymentModal from "@/app/components/PaymentModal";
 import PinReminderBanner from "@/app/components/PinReminderBanner";
+import InlineError from "@/app/components/InlineError";
 import { useSession } from "@/lib/authClient";
 import { usePinStatus } from "@/app/hooks/queryHooks";
 import gsap from "gsap";
@@ -63,17 +64,20 @@ export default function DashboardPage() {
   const [showUserAccount, setShowUserAccount] = useState(false);
   const [showClusterTransfer, setShowClusterTransfer] = useState(false);
   const { data } = useSession();
-  const { hasPin, isLoading: checkingPinStatus } = usePinStatus();
+  const { hasPin, isLoading: checkingPinStatus, PINError } = usePinStatus();
 
-  const { clusterResponse, isLoading, isSuccess } = useMyClusters();
+  const { clusterResponse, isLoading, isSuccess, myClustersError, refetchMyClusters } =
+    useMyClusters();
 
-  const { transactionData, transactionsGotten, isGettingTxns } =
+  const { transactionData, transactionsGotten, isGettingTxns, transactionsError, refetchTxns } =
     useTransactions(data?.user?.id);
 
   const {
     isFetching: loadingBalance,
     isSuccess: balanceRetrieved,
     accountDetails,
+    accountDetailsError,
+    refetchAccount,
   } = useMyAccountDetails();
 
   useGSAP(
@@ -220,7 +224,14 @@ export default function DashboardPage() {
         </div>
 
         <div className="dash-balance opacity-0">
-          {!loadingBalance ? (
+          {accountDetailsError ? (
+            <div className="rounded-2xl border border-card-border p-4">
+              <InlineError
+                message="Could not load your balance"
+                retry={refetchAccount}
+              />
+            </div>
+          ) : !loadingBalance ? (
             <BalanceCard
               balance={accountDetails.accountBalance}
               payFunct={(string: any) => {
@@ -295,7 +306,12 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {!checkingPinStatus && !hasPin && (
+      {PINError && (
+        <div className="px-6 mt-4">
+          <InlineError message="Could not check PIN status" />
+        </div>
+      )}
+      {!PINError && !checkingPinStatus && !hasPin && (
         <div className="px-6 mt-4">
           <PinReminderBanner />
         </div>
@@ -318,6 +334,12 @@ export default function DashboardPage() {
         </div>
 
         <div className="flex gap-4 overflow-x-auto pb-3 -mx-1 px-1 scrollbar-hide">
+          {myClustersError && (
+            <InlineError
+              message="Could not load your clusters"
+              retry={refetchMyClusters}
+            />
+          )}
           {isLoading &&
             Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="shrink-0 w-56">
@@ -349,6 +371,12 @@ export default function DashboardPage() {
         <p className={`${soraClass} font-bold text-forest-text text-lg`}>
           Recent Transactions
         </p>
+        {transactionsError && (
+          <InlineError
+            message="Could not load your transactions"
+            retry={refetchTxns}
+          />
+        )}
         {transactionsGotten &&
           transactionData &&
           transactionData.length > 0 &&

@@ -3,15 +3,24 @@ import ClusterDetailsClient from "./ClusterDetailsClient";
 import { useParams } from "next/navigation";
 import { useClusterDetails } from "@/app/hooks/queryHooks";
 import { BalanceSkeleton, CardSkeleton, ListSkeleton } from "@/app/components/Spinner";
+import InlineError from "@/app/components/InlineError";
 
 export default function ClusterPage() {
   const { id } = useParams();
 
-  const { isSuccess, isLoading, clusterDetailsResponse } = useClusterDetails(
+  const { isSuccess, isLoading, clusterDetailsResponse, clusterDetailsError, refetchCluster } = useClusterDetails(
     String(id),
   );
   return (
     <>
+      {clusterDetailsError && (
+        <div className="p-4">
+          <InlineError
+            message="Could not load cluster details"
+            retry={refetchCluster}
+          />
+        </div>
+      )}
       {isSuccess && clusterDetailsResponse && (
         <ClusterDetailsClient detailsObject={clusterDetailsResponse} />
       )}

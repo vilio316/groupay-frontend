@@ -162,13 +162,20 @@ export const useClusterDetails = (id: string) => {
     isSuccess,
     isLoading,
     isError: clusterDetailsError,
+    refetch: refetchCluster,
   } = useQuery({
     queryKey: ["cluster", id],
     queryFn: async () => await fetchCluster(id),
     staleTime: 1 * 60 * 60 * 1000,
   });
 
-  return { clusterDetailsResponse, isSuccess, isLoading, clusterDetailsError };
+  return {
+    clusterDetailsResponse,
+    isSuccess,
+    isLoading,
+    clusterDetailsError,
+    refetchCluster,
+  };
 };
 
 export const usePlanDetails = (clusterId: string, planId: string) => {
@@ -177,6 +184,7 @@ export const usePlanDetails = (clusterId: string, planId: string) => {
     isSuccess,
     isLoading,
     isError: planDetailsError,
+    refetch: refetchPlan,
   } = useQuery({
     queryKey: ["plan", planId],
     queryFn: async () => await fetchPlan(clusterId, planId),
@@ -185,7 +193,7 @@ export const usePlanDetails = (clusterId: string, planId: string) => {
     refetchOnWindowFocus: true,
   });
 
-  return { planResponse, isSuccess, isLoading, planDetailsError };
+  return { planResponse, isSuccess, isLoading, planDetailsError, refetchPlan };
 };
 
 export const useMyClusters = () => {
@@ -194,13 +202,20 @@ export const useMyClusters = () => {
     isLoading,
     isSuccess,
     isError: myClustersError,
+    refetch: refetchMyClusters,
   } = useQuery({
     queryKey: ["userClusters"],
     queryFn: getUserClusterDetails,
     staleTime: 1 * 60 * 60 * 1000,
   });
 
-  return { clusterResponse, isLoading, isSuccess, myClustersError };
+  return {
+    clusterResponse,
+    isLoading,
+    isSuccess,
+    myClustersError,
+    refetchMyClusters,
+  };
 };
 
 export const useMyPlans = () => {
@@ -209,6 +224,7 @@ export const useMyPlans = () => {
     isLoading,
     isSuccess,
     isError: myPlansError,
+    refetch: refetchMyPlans,
   } = useQuery({
     queryKey: ["userPlans"],
     queryFn: getUserPlans,
@@ -220,6 +236,7 @@ export const useMyPlans = () => {
     isLoading,
     isSuccess,
     myPlansError,
+    refetchMyPlans,
   };
 };
 
@@ -229,6 +246,7 @@ export const useMyUserData = () => {
     isLoading,
     isSuccess,
     isError: myDataError,
+    refetch: refetchUserData,
   } = useQuery({
     queryKey: ["userDetails"],
     queryFn: getUserDetails,
@@ -240,6 +258,7 @@ export const useMyUserData = () => {
     isLoading,
     isSuccess,
     myDataError,
+    refetchUserData,
   };
 };
 
@@ -250,6 +269,7 @@ export const useMyAccountDetails = () => {
     isSuccess,
     isLoading,
     isError: accountDetailsError,
+    refetch: refetchAccount,
   } = useQuery({
     queryKey: ["account_details"],
     queryFn: async () => {
@@ -276,6 +296,7 @@ export const useMyAccountDetails = () => {
     isFetching,
     isLoading,
     accountDetailsError,
+    refetchAccount,
   };
 };
 
@@ -317,6 +338,7 @@ export const useTransactions = (userId?: string) => {
     isLoading: isGettingTxns,
     isSuccess: transactionsGotten,
     isError: transactionsError,
+    refetch: refetchTxns,
   } = useQuery({
     queryKey: ["transactions", userId],
     queryFn: () => getTransactions(userId),
@@ -329,5 +351,6 @@ export const useTransactions = (userId?: string) => {
     isGettingTxns,
     transactionsGotten,
     transactionsError,
+    refetchTxns,
   };
 };

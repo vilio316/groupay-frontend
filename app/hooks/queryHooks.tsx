@@ -34,7 +34,7 @@ type UserDetails = User & {
 
 async function fetchCluster(id: string) {
   const clusterDetailsRequest = await fetch(
-    `http://localhost:3000/clusters/${id}`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/${id}`,
     {
       credentials: "include",
     },
@@ -46,7 +46,7 @@ async function fetchCluster(id: string) {
 
 async function fetchPlan(clusterId: string, planId: string) {
   const planDetailsRequest = await fetch(
-    `http://localhost:3000/clusters/${clusterId}/plans/${planId}`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/${clusterId}/plans/${planId}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -84,7 +84,7 @@ const getUserDetails = async () => {
   const { data } = await getSession();
   try {
     const userRequest = await fetch(
-      `http://localhost:3000/userData?id=${data?.user.id}`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/userData?id=${data?.user.id}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -103,7 +103,7 @@ const getUserDetails = async () => {
 async function getTransactions(userId?: string) {
   const query = userId ? `?userId=${encodeURIComponent(userId)}` : "";
   const transactionsRequest = await fetch(
-    `http://localhost:3000/transactions${query}`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/transactions${query}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -118,7 +118,7 @@ async function getTransactions(userId?: string) {
 async function getUserPlans() {
   const { data } = await getSession();
   const userPlansRequest = await fetch(
-    `http://localhost:3000/users/${data?.user.id}/plans`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/users/${data?.user.id}/plans`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -228,7 +228,7 @@ export const useMyAccountDetails = () => {
       try {
         const { data } = await getSession();
         const account_details_request = await fetch(
-          `http://localhost:3000/userData/account/${data?.user.id}`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/userData/account/${data?.user.id}`,
           {
             credentials: "include",
           },

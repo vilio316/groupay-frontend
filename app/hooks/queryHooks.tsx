@@ -33,51 +33,63 @@ type UserDetails = User & {
 };
 
 async function fetchCluster(id: string) {
-  const clusterDetailsRequest = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/${id}`,
-    {
-      credentials: "include",
-    },
-  );
-  const clusterDetailsResponse: clusterDetailsType =
-    await clusterDetailsRequest.json();
-  return clusterDetailsResponse;
+  try {
+    const clusterDetailsRequest = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/${id}`,
+      {
+        credentials: "include",
+      },
+    );
+    const clusterDetailsResponse: clusterDetailsType =
+      await clusterDetailsRequest.json();
+    return clusterDetailsResponse;
+  } catch (error) {
+    throw new Error("Cluster Details could not be fetched");
+  }
 }
 
 async function fetchPlan(clusterId: string, planId: string) {
-  const planDetailsRequest = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/${clusterId}/plans/${planId}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
+  try {
+    const planDetailsRequest = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/${clusterId}/plans/${planId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
       },
-      credentials: "include",
-    },
-  );
-  const planDetailsResponse: PlanDetails = await planDetailsRequest.json();
-  return planDetailsResponse;
+    );
+    const planDetailsResponse: PlanDetails = await planDetailsRequest.json();
+    return planDetailsResponse;
+  } catch (error) {
+    throw new Error("Plan details could not be fetched!");
+  }
 }
 
-async function eleba() {
-  const { data } = await getSession();
-  const postReq = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/myClusters`,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        userId: data?.user.id,
-      }),
-      headers: {
-        "Content-Type": "application/json",
+async function getUserClusterDetails() {
+  try {
+    const { data } = await getSession();
+    const postReq = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/myClusters`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          userId: data?.user.id,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
       },
-    },
-  );
-  const postRes = await postReq.json();
-  const fetchedClustIds = postRes.map((clust: any) => clust.clusterId);
-  const promise: clusterDetailsType[] = await Promise.all(
-    fetchedClustIds.map((clust: any) => fetchCluster(clust)),
-  );
-  return promise;
+    );
+    const postRes = await postReq.json();
+    const fetchedClustIds = postRes.map((clust: any) => clust.clusterId);
+    const promise: clusterDetailsType[] = await Promise.all(
+      fetchedClustIds.map((clust: any) => fetchCluster(clust)),
+    );
+    return promise;
+  } catch (error) {
+    throw new Error("User's clusters could not be found");
+  }
 }
 
 const getUserDetails = async () => {
@@ -95,45 +107,53 @@ const getUserDetails = async () => {
     const userResponse: UserDetails = await userRequest.json();
     return userResponse;
   } catch (error) {
-    console.log(error);
-    return null;
+    throw new Error("User Details could not be found");
   }
 };
 
 async function getTransactions(userId?: string) {
   const query = userId ? `?userId=${encodeURIComponent(userId)}` : "";
-  const transactionsRequest = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/transactions${query}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
+  try {
+    const transactionsRequest = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/transactions${query}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
       },
-      credentials: "include",
-    },
-  );
-  const transactionsResponse: Transaction[] = await transactionsRequest.json();
-  return transactionsResponse;
+    );
+    const transactionsResponse: Transaction[] =
+      await transactionsRequest.json();
+    return transactionsResponse;
+  } catch (error) {
+    throw new Error("Transaction data could not be retrieved");
+  }
 }
 
 async function getUserPlans() {
   const { data } = await getSession();
-  const userPlansRequest = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/users/${data?.user.id}/plans`,
-    {
-      headers: {
-        "Content-Type": "application/json",
+  try {
+    const userPlansRequest = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/users/${data?.user.id}/plans`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
       },
-    },
-  );
-  const userPlansResponse: PlanByUser[] = await userPlansRequest.json();
-  const requiredIds = userPlansResponse.map((plan) => ({
-    planId: plan.id,
-    clustId: plan.cluster.id,
-  }));
-  const results = await Promise.all(
-    requiredIds.map(({ planId, clustId }) => fetchPlan(clustId, planId)),
-  );
-  return results;
+    );
+    const userPlansResponse: PlanByUser[] = await userPlansRequest.json();
+    const requiredIds = userPlansResponse.map((plan) => ({
+      planId: plan.id,
+      clustId: plan.cluster.id,
+    }));
+    const results = await Promise.all(
+      requiredIds.map(({ planId, clustId }) => fetchPlan(clustId, planId)),
+    );
+    return results;
+  } catch (error) {
+    throw new Error("An error occurred. The user plans could not be retrieved");
+  }
 }
 
 export const useClusterDetails = (id: string) => {
@@ -141,13 +161,14 @@ export const useClusterDetails = (id: string) => {
     data: clusterDetailsResponse,
     isSuccess,
     isLoading,
+    isError: clusterDetailsError,
   } = useQuery({
     queryKey: ["cluster", id],
     queryFn: async () => await fetchCluster(id),
     staleTime: 1 * 60 * 60 * 1000,
   });
 
-  return { clusterDetailsResponse, isSuccess, isLoading };
+  return { clusterDetailsResponse, isSuccess, isLoading, clusterDetailsError };
 };
 
 export const usePlanDetails = (clusterId: string, planId: string) => {
@@ -155,6 +176,7 @@ export const usePlanDetails = (clusterId: string, planId: string) => {
     data: planResponse,
     isSuccess,
     isLoading,
+    isError: planDetailsError,
   } = useQuery({
     queryKey: ["plan", planId],
     queryFn: async () => await fetchPlan(clusterId, planId),
@@ -163,7 +185,7 @@ export const usePlanDetails = (clusterId: string, planId: string) => {
     refetchOnWindowFocus: true,
   });
 
-  return { planResponse, isSuccess, isLoading };
+  return { planResponse, isSuccess, isLoading, planDetailsError };
 };
 
 export const useMyClusters = () => {
@@ -171,13 +193,14 @@ export const useMyClusters = () => {
     data: clusterResponse,
     isLoading,
     isSuccess,
+    isError: myClustersError,
   } = useQuery({
     queryKey: ["userClusters"],
-    queryFn: eleba,
+    queryFn: getUserClusterDetails,
     staleTime: 1 * 60 * 60 * 1000,
   });
 
-  return { clusterResponse, isLoading, isSuccess };
+  return { clusterResponse, isLoading, isSuccess, myClustersError };
 };
 
 export const useMyPlans = () => {
@@ -185,6 +208,7 @@ export const useMyPlans = () => {
     data: userPlans,
     isLoading,
     isSuccess,
+    isError: myPlansError,
   } = useQuery({
     queryKey: ["userPlans"],
     queryFn: getUserPlans,
@@ -195,6 +219,7 @@ export const useMyPlans = () => {
     userPlans,
     isLoading,
     isSuccess,
+    myPlansError,
   };
 };
 
@@ -203,6 +228,7 @@ export const useMyUserData = () => {
     data: userDetails,
     isLoading,
     isSuccess,
+    isError: myDataError,
   } = useQuery({
     queryKey: ["userDetails"],
     queryFn: getUserDetails,
@@ -213,6 +239,7 @@ export const useMyUserData = () => {
     userDetails,
     isLoading,
     isSuccess,
+    myDataError,
   };
 };
 
@@ -222,6 +249,7 @@ export const useMyAccountDetails = () => {
     data: accountDetails,
     isSuccess,
     isLoading,
+    isError: accountDetailsError,
   } = useQuery({
     queryKey: ["account_details"],
     queryFn: async () => {
@@ -247,6 +275,7 @@ export const useMyAccountDetails = () => {
     isSuccess,
     isFetching,
     isLoading,
+    accountDetailsError,
   };
 };
 
@@ -257,6 +286,7 @@ export const usePinStatus = () => {
     isLoading,
     isSuccess,
     refetch,
+    isError: PINError,
   } = useQuery({
     queryKey: ["pinStatus"],
     queryFn: async () => {
@@ -272,7 +302,13 @@ export const usePinStatus = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  return { hasPin: pinStatus?.hasPin ?? false, isLoading, isSuccess, refetch };
+  return {
+    hasPin: pinStatus?.hasPin ?? false,
+    isLoading,
+    isSuccess,
+    refetch,
+    PINError,
+  };
 };
 
 export const useTransactions = (userId?: string) => {
@@ -280,6 +316,7 @@ export const useTransactions = (userId?: string) => {
     data: transactionData,
     isLoading: isGettingTxns,
     isSuccess: transactionsGotten,
+    isError: transactionsError,
   } = useQuery({
     queryKey: ["transactions", userId],
     queryFn: () => getTransactions(userId),
@@ -291,5 +328,6 @@ export const useTransactions = (userId?: string) => {
     transactionData,
     isGettingTxns,
     transactionsGotten,
+    transactionsError,
   };
 };

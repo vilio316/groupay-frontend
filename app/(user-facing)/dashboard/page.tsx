@@ -205,14 +205,14 @@ export default function DashboardPage() {
               {dateFunct()}
             </p>
             <h1
-              className={`${soraClass} text-2xl font-bold text-forest leading-tight`}
+              className={`${soraClass} text-2xl font-bold text-forest-text leading-tight`}
             >
               Good day, <span className="text-green">{firstName}</span> 👋
             </h1>
           </div>
           <Link
             href="#transactions"
-            className="hidden md:inline-flex items-center gap-2 text-sm font-semibold text-teal hover:text-forest border border-teal/30 hover:border-forest/30 px-4 py-2 rounded-xl transition-all duration-200 hover:bg-teal/5"
+            className="hidden md:inline-flex items-center gap-2 text-sm font-semibold text-teal hover:text-forest-text border border-teal/30 hover:border-forest/30 px-4 py-2 rounded-xl transition-all duration-200 hover:bg-teal/5"
           >
             Transactions
             <ArrowDownIcon className="w-4 h-4" weight="bold" />
@@ -255,7 +255,7 @@ export default function DashboardPage() {
               type: "transfer" as const,
               Icon: ArrowsLeftRightIcon,
               color:
-                "bg-forest/10 text-forest hover:bg-forest hover:text-white border border-forest/20",
+                "bg-forest/10 text-forest-text hover:bg-forest hover:text-white border border-forest/20",
             },
           ].map(({ label, type, Icon, color }) => (
             <button
@@ -304,13 +304,13 @@ export default function DashboardPage() {
       <div className="px-6 mt-6">
         <div className="flex items-center justify-between mb-3">
           <p
-            className={`section-heading ${soraClass} font-bold text-forest text-lg`}
+            className={`section-heading ${soraClass} font-bold text-forest-text text-lg`}
           >
             Your Clusters
           </p>
           <Link
             href="/clusters"
-            className="section-heading flex items-center gap-1.5 text-sm font-semibold text-teal hover:text-forest transition-colors"
+            className="section-heading flex items-center gap-1.5 text-sm font-semibold text-teal hover:text-forest-text transition-colors"
           >
             View all
             <ArrowRightIcon className="w-4 h-4" weight="bold" />
@@ -346,7 +346,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="md:px-6 px-2 md:mt-7 mt-3" id="transactions">
-        <p className={`${soraClass} font-bold text-forest text-lg`}>
+        <p className={`${soraClass} font-bold text-forest-text text-lg`}>
           Recent Transactions
         </p>
         {transactionsGotten &&

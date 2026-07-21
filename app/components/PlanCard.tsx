@@ -52,7 +52,7 @@ export default function PlanCard({
           </div>
           {minimumContribution && (
             <div className="text-right shrink-0 ml-2">
-              <p className="text-xs font-semibold text-forest">
+              <p className="text-xs font-semibold text-forest-text">
                 &#8358; {Number(minimumContribution).toLocaleString()}
               </p>
               <p className="text-[9px] text-ink-mid">Avg. Contribution</p>

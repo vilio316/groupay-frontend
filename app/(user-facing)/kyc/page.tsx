@@ -19,12 +19,12 @@ export default function KYCStartPage() {
         <div className="flex items-center gap-3 px-6 pt-6 pb-2">
           <button
             onClick={() => setShowWizard(false)}
-            className="p-2 rounded-xl hover:bg-gray-100 transition-colors text-ink-mid hover:text-forest"
+            className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-[#162c20] transition-colors text-ink-mid hover:text-forest-text"
           >
             <ArrowLeftIcon className="w-5 h-5" weight="bold" />
           </button>
           <div>
-            <h1 className="text-xl font-bold text-forest">KYC Verification</h1>
+            <h1 className="text-xl font-bold text-forest-text">KYC Verification</h1>
             <p className="text-sm text-ink-mid">Complete your identity verification</p>
           </div>
         </div>
@@ -43,7 +43,7 @@ export default function KYCStartPage() {
     <div className="min-h-screen bg-[#f7faf7] pb-24">
       <div className="bg-white border-b border-[#e8efe8] px-6 py-6">
         <h1
-          className={`text-2xl font-bold text-forest leading-tight`}
+          className={`text-2xl font-bold text-forest-text leading-tight`}
         >
           KYC Verification
         </h1>
@@ -61,7 +61,7 @@ export default function KYCStartPage() {
       </div>
 
       <div className="px-6 mt-8 max-w-2xl">
-        <h2 className="text-lg font-bold text-forest mb-3">How KYC Works</h2>
+        <h2 className="text-lg font-bold text-forest-text mb-3">How KYC Works</h2>
         <div className="space-y-3">
           {[
             { step: "1", title: "Phone Verification", desc: "Verify your phone number with a one-time password" },
@@ -79,7 +79,7 @@ export default function KYCStartPage() {
                 {step}
               </div>
               <div>
-                <p className="font-semibold text-forest text-sm">{title}</p>
+                <p className="font-semibold text-forest-text text-sm">{title}</p>
                 <p className="text-xs text-ink-mid mt-0.5">{desc}</p>
               </div>
             </div>

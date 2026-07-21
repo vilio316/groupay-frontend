@@ -20,7 +20,7 @@ export default function SignUpPage() {
     <div className="flex flex-col items-center justify-center py-12 px-10">
       <div className="w-full max-w-125 ">
         <div className="md:mb-8 mb:mt-4">
-          <p className={`text-3xl ${soraClass} font-bold text-forest mb-2`}>
+          <p className={`text-3xl ${soraClass} font-bold text-forest-text mb-2`}>
             Create Account
           </p>
           <p className="font-semibold text-ink-mid">
@@ -87,7 +87,7 @@ export default function SignUpPage() {
             <div className="mb-4">
               <label
                 htmlFor="firstName"
-                className="uppercase block text-sm font-semibold text-forest mb-1.5"
+                className="uppercase block text-sm font-semibold text-forest-text mb-1.5"
               >
                 First name
               </label>
@@ -104,7 +104,7 @@ export default function SignUpPage() {
             <div className="mb-4">
               <label
                 htmlFor="lastName"
-                className="uppercase block text-sm font-semibold text-forest mb-1.5"
+                className="uppercase block text-sm font-semibold text-forest-text mb-1.5"
               >
                 Last name
               </label>
@@ -122,7 +122,7 @@ export default function SignUpPage() {
           <div className="field mb-4">
             <label
               htmlFor="email"
-              className="uppercase block text-sm font-semibold text-forest mb-1.5"
+              className="uppercase block text-sm font-semibold text-forest-text mb-1.5"
             >
               Email address
             </label>
@@ -139,7 +139,7 @@ export default function SignUpPage() {
           <div className=" mb-4 ">
             <label
               htmlFor="phone"
-              className="text-forest mb-1.5 uppercase block text-sm font-semibold"
+              className="text-forest-text mb-1.5 uppercase block text-sm font-semibold"
             >
               Phone number{" "}
               <span className="text-ink-mid font-medium ">(optional)</span>
@@ -158,7 +158,7 @@ export default function SignUpPage() {
           <div className=" mb-4">
             <label
               htmlFor="password"
-              className=" text-forest mb-1.5 uppercase block text-sm font-semibold"
+              className=" text-forest-text mb-1.5 uppercase block text-sm font-semibold"
             >
               Password
             </label>

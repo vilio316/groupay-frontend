@@ -168,7 +168,7 @@ export function TransactionBlock({
                 <h3 className="text-lg font-bold">Transaction Details</h3>
                 <button
                   onClick={() => setModalOpen(false)}
-                  className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
+                  className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-[#162c20] rounded-full transition-colors"
                 >
                   <XIcon className="w-5 h-5 text-ink" weight="bold" />
                 </button>
@@ -179,7 +179,7 @@ export function TransactionBlock({
                   {statusIcon(status, "text-2xl text-green h-6 w-6")}
                 </div>
                 <div>
-                  <p className="font-semibold text-forest text-base">
+                  <p className="font-semibold text-forest-text text-base">
                     {transactionHeading}
                   </p>
                   <span
@@ -203,7 +203,7 @@ export function TransactionBlock({
               <div className="rounded-xl border border-card-border divide-y divide-card-border">
                 <div className="flex justify-between items-center py-3 px-4">
                   <span className="text-sm text-ink-mid">Amount</span>
-                  <span className="text-sm font-semibold text-forest">
+                  <span className="text-sm font-semibold text-forest-text">
                     &#8358; {formatAmount(amount, channel)}
                   </span>
                 </div>
@@ -255,7 +255,7 @@ function Row({
     <div className="flex justify-between items-center py-3 px-4">
       <span className="text-sm text-ink-mid">{label}</span>
       <span
-        className={`text-sm font-semibold text-forest text-right ${
+        className={`text-sm font-semibold text-forest-text text-right ${
           mono ? "font-mono text-xs tracking-tight" : ""
         }`}
       >

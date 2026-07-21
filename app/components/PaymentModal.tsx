@@ -126,7 +126,7 @@ export default function PaymentModal({
               initiate_type: "inline",
               currency: "NGN",
               customer_name: data?.user.name,
-              callback_url: `http://localhost:9909/cluster/${params.id}`,
+              callback_url: `${process.env.NEXT_PUBLIC_DEV_URL}/cluster/${params.id}`,
               payment_channels: ["transfer", "ussd", "card"],
               metadata: {
                 clusterId: params.id,
@@ -286,7 +286,7 @@ export default function PaymentModal({
           onClose={() => setShowPinSetup(false)}
           onSuccess={() => setShowPinSetup(false)}
         />
-        <div className="place-self-center md:w-2/5 w-4/5 md:max-h-[90vh] h-auto rounded-[20px] bg-white px-6 py-4 border border-card-border shadow-modal relative">
+        <div className="place-self-center md:w-2/5 w-4/5 md:max-h-[90vh] h-auto rounded-[20px] bg-white dark:bg-surface px-6 py-4 border border-card-border shadow-modal relative transition-colors">
           <span className="w-full text-right flex justify-end">
             <XIcon
               className="w-12 h-12 p-2 hover:text-red hover:scale-105 text-ink"
@@ -303,7 +303,7 @@ export default function PaymentModal({
             </button>
           )}
           <p
-            className={`${soraClass} text-2xl text-forest font-bold my-3 capitalize`}
+            className={`${soraClass} text-2xl text-forest-text font-bold my-3 capitalize`}
           >
             {prompter !== "plan" ? `${prompter} Money` : "Contribute to Plan"}
           </p>
@@ -312,7 +312,7 @@ export default function PaymentModal({
               <div className="w-16 h-16 rounded-full bg-amber/10 flex items-center justify-center mx-auto mb-4">
                 <LockIcon className="md:h-9 md:w-9 h-6 w-6" weight="bold" />
               </div>
-              <h3 className={`${soraClass} text-xl font-bold text-forest mb-2`}>
+              <h3 className={`${soraClass} text-xl font-bold text-forest-text mb-2`}>
                 PIN Required
               </h3>
               <p className="text-sm text-ink-mid mb-6 max-w-xs mx-auto leading-relaxed">
@@ -338,7 +338,7 @@ export default function PaymentModal({
           )}
           {prompter === "add" && paymentStage === 0 && !showPinRequired && (
             <div className="flex justify-center flex-col">
-              <p className="p-1 etxt-xl text-forest my-2">
+              <p className="p-1 etxt-xl text-forest-text my-2">
                 Choose Payment Method
               </p>
 
@@ -435,7 +435,7 @@ export default function PaymentModal({
             paymentStage === 1 &&
             paymentMethod === "squad" && (
               <div className="flex flex-col gap-y-4">
-                <p className={`${soraClass} text-xl text-forest font-bold`}>
+                <p className={`${soraClass} text-xl text-forest-text font-bold`}>
                   Transaction Details
                 </p>
 
@@ -449,7 +449,7 @@ export default function PaymentModal({
                       type="number"
                       id="trxAmount"
                       autoFocus
-                      className="h-12 rounded-xl border border-card-border px-4 text-sm text-forest outline-none focus:border-green transition-colors w-full"
+                      className="h-12 rounded-xl border border-card-border px-4 text-sm text-forest-text outline-none focus:border-green transition-colors w-full"
                       min={100}
                       max={1000000}
                       step={100}
@@ -489,16 +489,16 @@ export default function PaymentModal({
                 <p className="text-ink-mid">
                   Send the money to the account below:
                 </p>
-                <div className="rounded-xl border border-card-border bg-gray-50 p-4">
+                <div className="rounded-xl border border-card-border bg-gray-50 dark:bg-[#162c20] p-4">
                   <div className="flex justify-between items-center py-1">
                     <span className="text-sm text-ink-mid">Account Number</span>
-                    <span className="text-forest font-bold text-lg tracking-wider">
+                    <span className="text-forest-text font-bold text-lg tracking-wider">
                       {accountNumber}
                     </span>
                   </div>
                   <div className="flex justify-between items-center py-1">
                     <span className="text-sm text-ink-mid">Bank</span>
-                    <span className="text-forest font-semibold">GTBank</span>
+                    <span className="text-forest-text font-semibold">GTBank</span>
                   </div>
                 </div>
                 <button
@@ -531,7 +531,7 @@ export default function PaymentModal({
                 </div>
                 <div>
                   <h3
-                    className={`${soraClass} text-xl font-bold text-forest mb-2`}
+                    className={`${soraClass} text-xl font-bold text-forest-text mb-2`}
                   >
                     Pending Confirmation
                   </h3>
@@ -559,7 +559,7 @@ export default function PaymentModal({
             paymentMethod === "groupay" &&
             !showPinRequired && (
               <div className="flex flex-col gap-y-4">
-                <p className={`${soraClass} text-xl text-forest font-bold`}>
+                <p className={`${soraClass} text-xl text-forest-text font-bold`}>
                   Transaction Details
                 </p>
 
@@ -573,7 +573,7 @@ export default function PaymentModal({
                       type="number"
                       id="trxAmount"
                       autoFocus
-                      className="h-12 rounded-xl border border-card-border px-4 text-sm text-forest outline-none focus:border-green transition-colors w-full"
+                      className="h-12 rounded-xl border border-card-border px-4 text-sm text-forest-text outline-none focus:border-green transition-colors w-full"
                       min={100}
                       max={1000000}
                       step={100}
@@ -629,7 +629,7 @@ export default function PaymentModal({
                   />
                 </svg>
               </div>
-              <h3 className={`${soraClass} text-xl font-bold text-forest mb-2`}>
+              <h3 className={`${soraClass} text-xl font-bold text-forest-text mb-2`}>
                 Payment Successful
               </h3>
               <p className="text-sm text-ink-mid mb-6">
@@ -655,7 +655,7 @@ export default function PaymentModal({
 
           {prompter === "withdraw" && pathname.includes("cluster") && (
             <div className="flex flex-col gap-y-4">
-              <p className={`${soraClass} text-xl text-forest font-bold`}>
+              <p className={`${soraClass} text-xl text-forest-text font-bold`}>
                 Request Withdrawal
               </p>
               <input
@@ -678,7 +678,7 @@ export default function PaymentModal({
 
           {prompter === "withdraw" && pathname.includes("dashboard") && (
             <div className="flex flex-col gap-y-4">
-              <p className={`${soraClass} text-xl text-forest font-bold`}>
+              <p className={`${soraClass} text-xl text-forest-text font-bold`}>
                 Withdraw from your Wallet
               </p>
               <div>
@@ -722,7 +722,7 @@ export default function PaymentModal({
                 <input
                   type="number"
                   autoFocus
-                  className="h-12 rounded-xl border border-card-border px-4 text-sm text-forest outline-none focus:border-green transition-colors w-full"
+                  className="h-12 rounded-xl border border-card-border px-4 text-sm text-forest-text outline-none focus:border-green transition-colors w-full"
                   min={100}
                   max={1000000}
                   step={100}
@@ -825,7 +825,7 @@ export default function PaymentModal({
                   </svg>
                 </div>
                 <h3
-                  className={`${soraClass} text-xl font-bold text-forest mb-2`}
+                  className={`${soraClass} text-xl font-bold text-forest-text mb-2`}
                 >
                   Contribution Successful
                 </h3>
@@ -849,8 +849,8 @@ export default function PaymentModal({
                 <p className="text-ink-mid">
                   Send the money to the account below:
                 </p>
-                <div className="rounded-xl border border-card-border bg-gray-50 p-4 w-full text-center">
-                  <p className="text-forest text-2xl font-bold tracking-wider">
+                <div className="rounded-xl border border-card-border bg-gray-50 dark:bg-[#162c20] p-4 w-full text-center">
+                  <p className="text-forest-text text-2xl font-bold tracking-wider">
                     {accountNumber}
                   </p>
                   <p className="text-ink text-base font-semibold mt-1 uppercase">
@@ -887,7 +887,7 @@ export default function PaymentModal({
                 </div>
                 <div>
                   <h3
-                    className={`${soraClass} text-xl font-bold text-forest mb-2`}
+                    className={`${soraClass} text-xl font-bold text-forest-text mb-2`}
                   >
                     Pending Confirmation
                   </h3>
@@ -958,7 +958,7 @@ export default function PaymentModal({
             contributionSource == "external" && (
               <div className="flex flex-col gap-y-4">
                 <p
-                  className={`${soraClass} text-xl text-forest font-bold capitalize`}
+                  className={`${soraClass} text-xl text-forest-text font-bold capitalize`}
                 >
                   Add Payment Details
                 </p>
@@ -999,7 +999,7 @@ export default function PaymentModal({
                 </div>
 
                 <p className="text-sm text-ink-mid font-medium">Account Name</p>
-                <p className="text-forest font-semibold">Account Result</p>
+                <p className="text-forest-text font-semibold">Account Result</p>
 
                 <div className="flex justify-center gap-x-4 mt-2">
                   <button
@@ -1026,7 +1026,7 @@ export default function PaymentModal({
             contributionSource === "groupay" &&
             !showPinRequired && (
               <div className="flex flex-col gap-y-4">
-                <p className={`${soraClass} text-xl text-forest font-bold`}>
+                <p className={`${soraClass} text-xl text-forest-text font-bold`}>
                   Send to GrouPay User
                 </p>
 
@@ -1103,7 +1103,7 @@ export default function PaymentModal({
                               )}
                             </div>
                             <div className="min-w-0">
-                              <p className="text-forest font-semibold truncate">
+                              <p className="text-forest-text font-semibold truncate">
                                 {u.name}
                               </p>
                               <p className="text-sm text-ink-mid truncate">
@@ -1161,7 +1161,7 @@ export default function PaymentModal({
                         )}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-forest font-semibold text-sm truncate">
+                        <p className="text-forest-text font-semibold text-sm truncate">
                           {selectedUser.name}
                         </p>
                         <p className="text-xs text-ink-mid truncate">
@@ -1191,7 +1191,7 @@ export default function PaymentModal({
                         <input
                           type="number"
                           autoFocus
-                          className="h-12 rounded-xl border border-card-border px-4 text-sm text-forest outline-none focus:border-green transition-colors w-full"
+                          className="h-12 rounded-xl border border-card-border px-4 text-sm text-forest-text outline-none focus:border-green transition-colors w-full"
                           min={100}
                           max={1000000}
                           step={100}
@@ -1276,7 +1276,7 @@ export default function PaymentModal({
                   </svg>
                 </div>
                 <h3
-                  className={`${soraClass} text-xl font-bold text-forest mb-2`}
+                  className={`${soraClass} text-xl font-bold text-forest-text mb-2`}
                 >
                   Transfer Successful
                 </h3>
@@ -1295,7 +1295,7 @@ export default function PaymentModal({
                       selectedUser.name?.charAt(0) || "?"
                     )}
                   </div>
-                  <span className="text-forest font-semibold">
+                  <span className="text-forest-text font-semibold">
                     {selectedUser.name}
                   </span>
                 </div>
@@ -1312,32 +1312,32 @@ export default function PaymentModal({
             prompter === "transfer" &&
             contributionSource === "external" && (
               <div className="flex flex-col gap-y-4">
-                <p className={`${soraClass} text-xl font-bold text-forest`}>
+                <p className={`${soraClass} text-xl font-bold text-forest-text`}>
                   Transaction Details
                 </p>
                 <div className="rounded-xl border border-card-border divide-y divide-card-border">
                   <div className="flex justify-between py-3 px-4">
                     <span className="text-sm text-ink-mid">Amount</span>
-                    <span className="font-bold text-forest">
+                    <span className="font-bold text-forest-text">
                       &#8358;{" "}
                       {Number((54603456.44234).toFixed(2)).toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between py-3 px-4">
                     <span className="text-sm text-ink-mid">Account Number</span>
-                    <span className="font-semibold text-forest">
+                    <span className="font-semibold text-forest-text">
                       1234567890
                     </span>
                   </div>
                   <div className="flex justify-between py-3 px-4">
                     <span className="text-sm text-ink-mid">Recipient Name</span>
-                    <span className="font-semibold text-forest">
+                    <span className="font-semibold text-forest-text">
                       ADIKA REGINALD SUKI
                     </span>
                   </div>
                   <div className="flex justify-between py-3 px-4">
                     <span className="text-sm text-ink-mid">Bank</span>
-                    <span className="font-semibold text-forest">
+                    <span className="font-semibold text-forest-text">
                       Moniepoint
                     </span>
                   </div>

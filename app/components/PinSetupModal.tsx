@@ -114,7 +114,7 @@ export default function PinSetupModal({
 
   return (
     <div className="fixed inset-0 z-70 flex items-center justify-center bg-forest/50 p-3">
-      <div className="bg-white rounded-[20px] max-w-100 w-full p-6 shadow-modal relative">
+      <div className="bg-white dark:bg-surface rounded-[20px] transition-colors max-w-100 w-full p-6 shadow-modal relative">
         <button
           onClick={handleReset}
           className="absolute top-4 right-4 text-ink hover:text-red transition-colors"
@@ -127,7 +127,7 @@ export default function PinSetupModal({
             <div className="w-16 h-16 rounded-full bg-green/10 flex items-center justify-center mx-auto mb-4">
               <CheckCircleIcon className="w-8 h-8 fill-green" weight="bold" />
             </div>
-            <h3 className={`${soraClass} text-xl font-bold text-forest mb-2`}>
+            <h3 className={`${soraClass} text-xl font-bold text-forest-text mb-2`}>
               PIN Set Successfully
             </h3>
             <p className="text-sm text-ink-mid mb-6">
@@ -150,7 +150,7 @@ export default function PinSetupModal({
               <div className="w-14 h-14 rounded-full bg-teal/10 flex items-center justify-center mx-auto mb-3">
                 <LockIcon className="w-7 h-7 fill-teal" weight="fill" />
               </div>
-              <h3 className={`${soraClass} text-xl font-bold text-forest mb-1`}>
+              <h3 className={`${soraClass} text-xl font-bold text-forest-text mb-1`}>
                 {step === "set" ? "Set Transaction PIN" : "Confirm Your PIN"}
               </h3>
               <p className="text-sm text-ink-mid">

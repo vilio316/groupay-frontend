@@ -45,7 +45,7 @@ function ToggleCard({
           {icon}
         </div>
         <div>
-          <p className="font-semibold text-sm text-forest">{label}</p>
+          <p className="font-semibold text-sm text-forest-text">{label}</p>
           <p className="text-xs text-ink-mid">{desc}</p>
         </div>
       </div>
@@ -95,7 +95,7 @@ export default function ProfilePage() {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className={`text-3xl font-bold text-forest ${soraClass}`}>
+        <h1 className={`text-3xl font-bold text-forest-text ${soraClass}`}>
           Your Profile
         </h1>
         <Link
@@ -115,7 +115,7 @@ export default function ProfilePage() {
           alt="Profile"
         />
         <div className="min-w-0 flex-1">
-          <p className="text-xl font-bold text-forest truncate">
+          <p className="text-xl font-bold text-forest-text truncate">
             {isSuccess && userDetails ? userDetails.name : "User Name"}
           </p>
           <p className="text-ink-mid text-sm font-medium truncate">
@@ -172,7 +172,7 @@ export default function ProfilePage() {
 
       {/* Notification Preferences */}
       <div className="border border-card-border rounded-xl p-6 shadow-card">
-        <h2 className={`text-lg font-bold text-forest mb-4 ${soraClass}`}>
+        <h2 className={`text-lg font-bold text-forest-text mb-4 ${soraClass}`}>
           Notification Preferences
         </h2>
         <p className="text-sm text-ink-mid mb-4">
@@ -203,18 +203,18 @@ export default function ProfilePage() {
 
       {/* Account Settings */}
       <div className="border border-card-border rounded-xl p-6 shadow-card">
-        <h2 className={`text-lg font-bold text-forest mb-4 ${soraClass}`}>
+        <h2 className={`text-lg font-bold text-forest-text mb-4 ${soraClass}`}>
           Account Settings
         </h2>
         <div className="space-y-3 text-sm text-ink-mid">
           <div className="flex items-center justify-between p-3 border border-card-border rounded-xl">
-            <span className="font-medium text-forest">Email</span>
+            <span className="font-medium text-forest-text">Email</span>
             <span className="text-ink-mid">
               {isSuccess && userDetails ? userDetails.email : "—"}
             </span>
           </div>
           <div className="flex items-center justify-between p-3 border border-card-border rounded-xl">
-            <span className="font-medium text-forest">Phone</span>
+            <span className="font-medium text-forest-text">Phone</span>
             <span className="text-ink-mid">
               {isSuccess && userDetails && userDetails.phone
                 ? userDetails.phone
@@ -222,7 +222,7 @@ export default function ProfilePage() {
             </span>
           </div>
           <div className="flex items-center justify-between p-3 border border-card-border rounded-xl">
-            <span className="font-medium text-forest">Joined</span>
+            <span className="font-medium text-forest-text">Joined</span>
             <span className="text-ink-mid">
               {isSuccess && userDetails
                 ? new Date(
@@ -240,7 +240,7 @@ export default function ProfilePage() {
 
       {/* Transaction PIN */}
       <div className="border border-card-border rounded-xl p-6 shadow-card">
-        <h2 className={`text-lg font-bold text-forest mb-4 ${soraClass}`}>
+        <h2 className={`text-lg font-bold text-forest-text mb-4 ${soraClass}`}>
           Transaction PIN
         </h2>
         <div className="flex items-center justify-between p-4 border border-card-border rounded-xl hover:border-teal/30 transition-all">
@@ -255,7 +255,7 @@ export default function ProfilePage() {
               )}
             </div>
             <div>
-              <p className="font-semibold text-sm text-forest">
+              <p className="font-semibold text-sm text-forest-text">
                 {hasPin ? "PIN Active" : "No PIN Set"}
               </p>
               <p className="text-xs text-ink-mid">

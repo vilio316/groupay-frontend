@@ -234,7 +234,7 @@ export default function PinPage() {
           <div className="w-16 h-16 rounded-full bg-green/10 flex items-center justify-center mx-auto mb-4">
             <CheckCircleIcon className="w-8 h-8 fill-green" weight="bold" />
           </div>
-          <h3 className={`${soraClass} text-xl font-bold text-forest mb-2`}>
+          <h3 className={`${soraClass} text-xl font-bold text-forest-text mb-2`}>
             {mode === "set" ? "PIN Set Successfully" : "PIN Changed Successfully"}
           </h3>
           <p className="text-sm text-ink-mid mb-6">{successMsg}</p>
@@ -269,7 +269,7 @@ export default function PinPage() {
 
         {mode === "change" && step === "current" && (
           <div className="mb-6">
-            <p className="text-sm font-semibold text-forest mb-3 text-center">
+            <p className="text-sm font-semibold text-forest-text mb-3 text-center">
               Enter Current PIN
             </p>
             {renderPinInputs(currentPin, "current")}
@@ -278,7 +278,7 @@ export default function PinPage() {
 
         {step === "new" && (
           <div className="mb-6">
-            <p className="text-sm font-semibold text-forest mb-3 text-center">
+            <p className="text-sm font-semibold text-forest-text mb-3 text-center">
               {mode === "change" ? "Enter New PIN" : "Enter PIN"}
             </p>
             {renderPinInputs(newPin, "new")}
@@ -287,7 +287,7 @@ export default function PinPage() {
 
         {step === "confirm" && (
           <div className="mb-6">
-            <p className="text-sm font-semibold text-forest mb-3 text-center">
+            <p className="text-sm font-semibold text-forest-text mb-3 text-center">
               Confirm PIN
             </p>
             {renderPinInputs(confirmPin, "confirm")}

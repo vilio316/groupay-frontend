@@ -29,7 +29,7 @@ export default function MembersClient({
     <div className="min-h-full">
       <div className="bg-white border border-card-border rounded-xl shadow-card p-6">
         <div className="flex items-center justify-between mb-6">
-          <h1 className={`${soraClass} text-xl font-bold text-forest`}>
+          <h1 className={`${soraClass} text-xl font-bold text-forest-text`}>
             {pathname.includes("plan") ? "Plan" : "Cluster"} Members
           </h1>
           <button className="h-11 px-5 flex items-center gap-2 rounded-[9999px] border border-card-border text-ink-mid text-xs font-semibold uppercase tracking-wider hover:bg-[rgba(229,55,58,0.08)] hover:text-red hover:border-red transition-all">

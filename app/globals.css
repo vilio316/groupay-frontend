@@ -1,12 +1,16 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --green: #49c635;
   --aqua: #54defd;
   --white: #fffbfa;
+  --surface: #ffffff;
   --teal: #00bd9d;
   --mist: #8bd7d2;
   --forest: #0d2b1f;
+  --forest-text: #0d2b1f;
   --ink: #1a1a1a;
   --ink-mid: #4a5568;
   --card-border: rgba(139, 215, 210, 0.4);
@@ -34,6 +38,26 @@
   --radius-pill: 9999px;
 }
 
+.dark {
+  --white: #0a1812;
+  --surface: #112218;
+  --ink: #e0ece4;
+  --ink-mid: #8fa89a;
+  --forest-text: #cce0d4;
+  --card-border: rgba(139, 215, 210, 0.12);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-modal: 0 8px 32px rgba(0, 0, 0, 0.6);
+
+  --paid-bg: rgba(73, 198, 53, 0.2);
+  --paid-text: #6dd85a;
+  --pending-bg: rgba(84, 222, 253, 0.18);
+  --pending-text: #7de5ff;
+  --overdue-bg: rgba(229, 55, 58, 0.2);
+  --overdue-text: #ff7070;
+  --partial-bg: rgba(0, 189, 157, 0.2);
+  --partial-text: #40dcc0;
+}
+
 .hero-bg {
   background:
     radial-gradient(
@@ -57,11 +81,13 @@
   --color-green: var(--green);
   --color-aqua: var(--aqua);
   --color-white: var(--white);
+  --color-surface: var(--surface);
   --color-teal: var(--teal);
   --color-mist: var(--mist);
   --color-ink: var(--ink);
   --color-forest: var(--forest);
   --color-ink-mid: var(--ink-mid);
+  --color-forest-text: var(--forest-text);
   --color-card-border: var(--card-border);
   --color-red: var(--red);
   --color-greener: var(--greener);
@@ -83,11 +109,16 @@
   --radius-pill: var(--radius-pill);
 }
 
+html {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
 body {
   background: var(--white);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* Base button styles (Section 7.1) */

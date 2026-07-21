@@ -19,7 +19,7 @@ export default function PinReminderBanner() {
           <ShieldCheckIcon className="w-5 h-5 fill-amber" weight="fill" />
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-forest group-hover:text-amber-800 transition-colors">
+          <p className="text-sm font-semibold text-forest-text group-hover:text-amber-800 transition-colors">
             Set up your transaction PIN
           </p>
           <p className="text-xs text-ink-mid truncate">

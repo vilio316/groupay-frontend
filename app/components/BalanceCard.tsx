@@ -135,7 +135,7 @@ export function UserAccountModal({
 
   return (
     <div className="fixed inset-0 z-70 flex items-center justify-center bg-forest/50 p-3">
-      <div className="bg-white rounded-[20px] max-w-130 w-full p-6 shadow-modal relative">
+      <div className="bg-white dark:bg-surface rounded-[20px] max-w-130 w-full p-6 shadow-modal relative transition-colors">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-ink hover:text-red transition-colors"
@@ -153,7 +153,7 @@ export function UserAccountModal({
             <div className="w-16 h-16 rounded-full bg-teal/10 flex items-center justify-center mx-auto mb-4">
               <BankIcon className="w-8 h-8 fill-teal" weight="fill" />
             </div>
-            <h3 className={`${soraClass} text-xl font-bold text-forest mb-2`}>
+            <h3 className={`${soraClass} text-xl font-bold text-forest-text mb-2`}>
               Your Account
             </h3>
             <p className="text-sm text-ink-mid mb-6">
@@ -165,7 +165,7 @@ export function UserAccountModal({
                 <p className="text-xs uppercase font-semibold text-ink-mid tracking-wider mb-1">
                   Account Name
                 </p>
-                <p className="text-forest font-bold text-lg">{userName}</p>
+                <p className="text-forest-text font-bold text-lg">{userName}</p>
               </div>
               <div className="border-t border-card-border/50" />
               <div>
@@ -173,7 +173,7 @@ export function UserAccountModal({
                   Account Number
                 </p>
                 <div className="flex items-center gap-2">
-                  <p className="text-forest font-bold text-lg tracking-widest">
+                  <p className="text-forest-text font-bold text-lg tracking-widest">
                     {accountDetails.accountNumber}
                   </p>
                   <CopyButton text={accountDetails.accountNumber} />
@@ -193,7 +193,7 @@ export function UserAccountModal({
             <div className="w-16 h-16 rounded-full bg-mist/20 flex items-center justify-center mx-auto mb-4">
               <BankIcon className="w-8 h-8 fill-mist" weight="duotone" />
             </div>
-            <h3 className={`${soraClass} text-xl font-bold text-forest mb-2`}>
+            <h3 className={`${soraClass} text-xl font-bold text-forest-text mb-2`}>
               No Account Yet
             </h3>
             <p className="text-sm text-ink-mid mb-6">
@@ -211,7 +211,7 @@ export function UserAccountModal({
             </button>
             <button
               onClick={onClose}
-              className="w-full py-3 rounded-full border border-card-border text-ink-mid font-semibold hover:bg-gray-50 transition-all"
+              className="w-full py-3 rounded-full border border-card-border text-ink-mid font-semibold hover:bg-gray-50 dark:hover:bg-[#162c20] transition-all"
             >
               Cancel
             </button>
@@ -327,7 +327,7 @@ function RequestAccountFormModal({
 
   return (
     <div className="fixed inset-0 z-70 flex items-center justify-center bg-forest/50 p-3">
-      <div className="bg-white rounded-[20px] max-w-130 w-full p-6 shadow-modal relative max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-surface rounded-[20px] max-w-130 w-full p-6 shadow-modal relative max-h-[90vh] overflow-y-auto transition-colors">
         <button
           onClick={onBack}
           className="absolute top-4 left-4 text-ink hover:text-teal transition-colors"
@@ -343,7 +343,7 @@ function RequestAccountFormModal({
         </button>
 
         <div className="text-center mb-6 mt-4">
-          <h3 className={`${soraClass} text-xl font-bold text-forest`}>
+          <h3 className={`${soraClass} text-xl font-bold text-forest-text`}>
             Request Account
           </h3>
           <p className="text-sm text-ink-mid mt-1">
@@ -406,7 +406,7 @@ function RequestAccountFormModal({
             <select
               value={formData.gender}
               onChange={(e) => updateField("gender", e.target.value)}
-              className="w-full rounded-xl border border-card-border px-4 py-2.5 text-sm text-forest bg-white focus:outline-none focus:ring-2 focus:ring-teal/40 focus:border-teal transition-all"
+              className="w-full rounded-xl border border-card-border px-4 py-2.5 text-sm text-forest-text bg-white dark:bg-[#0d1f17] focus:outline-none focus:ring-2 focus:ring-teal/40 focus:border-teal transition-all"
             >
               <option value="">Select gender</option>
               <option value="1">Male</option>
@@ -467,7 +467,7 @@ function FormField({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         maxLength={maxLength}
-        className="w-full rounded-xl border border-card-border px-4 py-2.5 text-sm text-forest bg-white focus:outline-none focus:ring-2 focus:ring-teal/40 focus:border-teal transition-all"
+        className="w-full rounded-xl border border-card-border px-4 py-2.5 text-sm text-forest-text bg-white dark:bg-[#0d1f17] focus:outline-none focus:ring-2 focus:ring-teal/40 focus:border-teal transition-all"
       />
     </div>
   );

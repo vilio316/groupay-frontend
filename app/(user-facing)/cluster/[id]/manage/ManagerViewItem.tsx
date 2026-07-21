@@ -26,7 +26,7 @@ export function ManagerViewCategory({
       onClick={() => click()}
     >
       <div
-        className={`rounded-xl category p-3 text-2xl font-bold text-forest ${soraClass}  flex items-center gap-x-3 my-2`}
+        className={`rounded-xl category p-3 text-2xl font-bold text-forest-text ${soraClass}  flex items-center gap-x-3 my-2`}
       >
         {icon}
         <p className="w-4/5">{categoryName}</p>

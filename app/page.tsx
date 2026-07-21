@@ -279,7 +279,7 @@ export default function HomePage() {
           <div className="flex items-center justify-between px-6 h-15">
             <Link
               href="/"
-              className={`${soraClass} font-bold text-forest flex items-center gap-2 text-xl`}
+              className={`${soraClass} font-bold text-forest-text flex items-center gap-2 text-xl`}
             >
               <div className="bg-green h-8 w-8 rounded-lg flex items-center justify-center shadow-md shadow-green/30">
                 <svg viewBox="0 0 20 20" className="fill-white h-4 w-4">
@@ -291,13 +291,13 @@ export default function HomePage() {
             <div className="hidden md:flex items-center gap-x-6">
               <Link
                 href="/#how-it-works"
-                className="text-sm font-medium text-ink-mid hover:text-forest transition-colors"
+                className="text-sm font-medium text-ink-mid hover:text-forest-text transition-colors"
               >
                 How it Works
               </Link>
               <Link
                 href="/#features"
-                className="text-sm font-medium text-ink-mid hover:text-forest transition-colors"
+                className="text-sm font-medium text-ink-mid hover:text-forest-text transition-colors"
               >
                 Features
               </Link>
@@ -305,7 +305,7 @@ export default function HomePage() {
             <div className="flex items-center gap-3">
               <a
                 href={data?.user ? "/dashboard" : "/auth/sign-in"}
-                className="text-[14px] font-semibold text-forest hover:text-teal transition-colors py-2"
+                className="text-[14px] font-semibold text-forest-text hover:text-teal transition-colors py-2"
               >
                 {data?.user ? data.user.name : "Log In"}
               </a>
@@ -354,13 +354,13 @@ export default function HomePage() {
 
         <div className="hero-content relative z-10 flex flex-col items-center max-w-5xl mx-auto">
           {/* opacity-0 here = CSS sets initial state, GSAP animates to opacity-1 */}
-          <div className="hero-badge opacity-0 inline-flex items-center gap-2 bg-aqua/10 border border-aqua/30 py-1.5 px-4 rounded-full text-sm font-semibold text-forest mb-8 backdrop-blur-sm">
+          <div className="hero-badge opacity-0 inline-flex items-center gap-2 bg-aqua/10 border border-aqua/30 py-1.5 px-4 rounded-full text-sm font-semibold text-forest-text mb-8 backdrop-blur-sm">
             <span className="w-2 h-2 bg-aqua rounded-full animate-pulse" />
             New: Multi-currency group goals are live!
           </div>
 
           <h1
-            className={`hero-title opacity-0 ${soraClass} font-bold text-forest tracking-tight mb-6`}
+            className={`hero-title opacity-0 ${soraClass} font-bold text-forest-text tracking-tight mb-6`}
             style={{ fontSize: "clamp(48px, 8vw, 80px)", lineHeight: 1.05 }}
           >
             Split bills.
@@ -410,7 +410,7 @@ export default function HomePage() {
             </a>
             <a
               href="#how-it-works"
-              className="inline-flex items-center gap-2 text-forest border border-forest/25 bg-white/60 hover:bg-white font-semibold px-8 py-4 rounded-full backdrop-blur-sm transition-all duration-200 hover:shadow-md"
+              className="inline-flex items-center gap-2 text-forest-text border border-forest/25 bg-white/60 hover:bg-white font-semibold px-8 py-4 rounded-full backdrop-blur-sm transition-all duration-200 hover:shadow-md"
             >
               See how it works
             </a>
@@ -434,7 +434,7 @@ export default function HomePage() {
             ].map(({ num, prefix, suffix, label, decimal }, i) => (
               <div key={i} className="stat opacity-0 text-center">
                 <div
-                  className={`${soraClass} text-[36px] font-bold text-forest leading-none flex items-end justify-center gap-0.5`}
+                  className={`${soraClass} text-[36px] font-bold text-forest-text leading-none flex items-end justify-center gap-0.5`}
                 >
                   {prefix && (
                     <span className="text-[24px] mb-1 text-ink-mid">
@@ -492,7 +492,7 @@ export default function HomePage() {
             />
 
             <div className="mockup-header flex items-center justify-between mb-5">
-              <div className={`${soraClass} font-bold text-forest text-lg`}>
+              <div className={`${soraClass} font-bold text-forest-text text-lg`}>
                 🏖️ Zanzibar Trip — June 2026
               </div>
               <span className="py-1.5 px-3.5 rounded-full text-xs font-bold tracking-wide uppercase bg-teal/10 text-teal border border-teal/20">
@@ -516,7 +516,7 @@ export default function HomePage() {
                   icon: (
                     <HouseIcon
                       weight="duotone"
-                      className="h-4 w-4 text-forest"
+                      className="h-4 w-4 text-forest-text"
                     />
                   ),
                   iconBg: "bg-green/20",
@@ -550,7 +550,7 @@ export default function HomePage() {
                     {row.icon}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-[14px] text-forest">
+                    <div className="font-semibold text-[14px] text-forest-text">
                       {row.name}
                     </div>
                     <div className="text-ink-mid text-xs mt-0.5">
@@ -559,7 +559,7 @@ export default function HomePage() {
                   </div>
                   <div className="text-right shrink-0">
                     <div
-                      className={`${soraClass} font-bold text-forest text-[15px]`}
+                      className={`${soraClass} font-bold text-forest-text text-[15px]`}
                     >
                       {row.amount}
                     </div>
@@ -578,7 +578,7 @@ export default function HomePage() {
 
             <div className="progress-section bg-stone-50 rounded-xl p-4 border border-card-border">
               <div className="flex justify-between items-center mb-3">
-                <span className="font-semibold text-sm text-forest">
+                <span className="font-semibold text-sm text-forest-text">
                   Group settlement
                 </span>
                 <span className="text-teal font-bold text-sm">
@@ -611,7 +611,7 @@ export default function HomePage() {
               Simple by design
             </div>
             <h2
-              className={`section-reveal opacity-0 ${soraClass} text-4xl font-bold text-forest mb-4`}
+              className={`section-reveal opacity-0 ${soraClass} text-4xl font-bold text-forest-text mb-4`}
             >
               Up and running in seconds
             </h2>
@@ -657,7 +657,7 @@ export default function HomePage() {
                 className={`step-card opacity-0 group relative bg-linear-to-br ${step.accent} border border-card-border p-8 rounded-2xl hover:border-teal/40 hover:shadow-lg transition-all duration-300 overflow-hidden`}
               >
                 <div
-                  className={`absolute -top-3 -right-1 ${soraClass} text-[80px] font-black text-forest/5 leading-none select-none pointer-events-none`}
+                  className={`absolute -top-3 -right-1 ${soraClass} text-[80px] font-black text-forest-text/5 leading-none select-none pointer-events-none`}
                 >
                   {step.num}
                 </div>
@@ -668,7 +668,7 @@ export default function HomePage() {
                   Step {step.num}
                 </div>
                 <h3
-                  className={`${soraClass} text-xl font-bold text-forest mb-3`}
+                  className={`${soraClass} text-xl font-bold text-forest-text mb-3`}
                 >
                   {step.title}
                 </h3>
@@ -804,7 +804,7 @@ export default function HomePage() {
             Free forever for personal use
           </div>
           <h2
-            className={`${soraClass} text-[clamp(32px,6vw,52px)] font-bold text-forest mb-4 leading-tight`}
+            className={`${soraClass} text-[clamp(32px,6vw,52px)] font-bold text-forest-text mb-4 leading-tight`}
           >
             Ready to end the awkwardness?
           </h2>

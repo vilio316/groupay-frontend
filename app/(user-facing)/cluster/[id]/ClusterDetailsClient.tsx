@@ -120,7 +120,7 @@ export default function ClusterDetailsClient({
     <div className="p-4 mx-auto">
       <div className="flex gap-x-4 items-center">
         <p
-          className={`${soraClass} md:w-5/6 w-2/3 md:text-3xl text-xl font-bold text-forest my-3`}
+          className={`${soraClass} md:w-5/6 w-2/3 md:text-3xl text-xl font-bold text-forest-text my-3`}
         >
           {detailsObject ? name : "ClusterName"}
         </p>
@@ -226,7 +226,7 @@ export default function ClusterDetailsClient({
             <button
               onClick={() => setTxPage((p) => Math.max(0, p - 1))}
               disabled={txPage === 0}
-              className="px-3 py-1.5 text-xs font-semibold rounded-full border border-card-border text-ink-mid hover:bg-gray-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              className="px-3 py-1.5 text-xs font-semibold rounded-full border border-card-border text-ink-mid hover:bg-gray-50 dark:hover:bg-[#162c20] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             >
               Prev
             </button>
@@ -237,7 +237,7 @@ export default function ClusterDetailsClient({
                 className={`w-7 h-7 text-xs font-semibold rounded-full transition-all ${
                   i === txPage
                     ? "bg-green text-white"
-                    : "border border-card-border text-ink-mid hover:bg-gray-50"
+                    : "border border-card-border text-ink-mid hover:bg-gray-50 dark:hover:bg-[#162c20]"
                 }`}
               >
                 {i + 1}
@@ -246,7 +246,7 @@ export default function ClusterDetailsClient({
             <button
               onClick={() => setTxPage((p) => Math.min(totalPages - 1, p + 1))}
               disabled={txPage === totalPages - 1}
-              className="px-3 py-1.5 text-xs font-semibold rounded-full border border-card-border text-ink-mid hover:bg-gray-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              className="px-3 py-1.5 text-xs font-semibold rounded-full border border-card-border text-ink-mid hover:bg-gray-50 dark:hover:bg-[#162c20] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             >
               Next
             </button>
@@ -257,7 +257,7 @@ export default function ClusterDetailsClient({
       {/* Account Modal */}
       {showAccountModal && (
         <div className="fixed inset-0 z-70 flex items-center justify-center bg-forest/50 p-3">
-          <div className="bg-white rounded-[20px] max-w-130 w-full p-6 shadow-modal relative">
+          <div className="bg-white dark:bg-surface rounded-[20px] max-w-130 w-full p-6 shadow-modal relative transition-colors">
             <button
               onClick={() => setShowAccountModal(false)}
               className="absolute top-4 right-4 text-ink hover:text-red transition-colors"
@@ -269,7 +269,7 @@ export default function ClusterDetailsClient({
               <div className="w-16 h-16 rounded-full bg-green/10 flex items-center justify-center mx-auto mb-4">
                 <BankIcon className="w-8 h-8 fill-green" weight="fill" />
               </div>
-              <h3 className={`${soraClass} text-xl font-bold text-forest mb-2`}>
+              <h3 className={`${soraClass} text-xl font-bold text-forest-text mb-2`}>
                 Cluster Account
               </h3>
               <p className="text-sm text-ink-mid mb-6">
@@ -281,7 +281,7 @@ export default function ClusterDetailsClient({
                   <p className="text-xs uppercase font-semibold text-ink-mid tracking-wider mb-1">
                     Account Name
                   </p>
-                  <p className="text-forest font-bold text-lg">{name}</p>
+                  <p className="text-forest-text font-bold text-lg">{name}</p>
                 </div>
                 <div className="border-t border-card-border/50" />
                 <div>
@@ -289,7 +289,7 @@ export default function ClusterDetailsClient({
                     Account Number
                   </p>
                   <div className="flex items-center gap-2">
-                    <p className="text-forest font-bold text-2xl tracking-widest font-mono">
+                    <p className="text-forest-text font-bold text-2xl tracking-widest font-mono">
                       {liveAccountNumber}
                     </p>
                     <button
@@ -377,7 +377,7 @@ function FormField({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         maxLength={maxLength}
-        className="w-full rounded-xl border border-card-border px-4 py-2.5 text-sm text-forest bg-white focus:outline-none focus:ring-2 focus:ring-green/40 focus:border-green transition-all"
+        className="w-full rounded-xl border border-card-border px-4 py-2.5 text-sm text-forest-text bg-white focus:outline-none focus:ring-2 focus:ring-green/40 focus:border-green transition-all"
       />
     </div>
   );
@@ -459,7 +459,7 @@ function RequestClusterAccountModal({
 
   return (
     <div className="fixed inset-0 z-70 flex items-center justify-center bg-forest/50 p-3">
-      <div className="bg-white rounded-[20px] max-w-130 w-full p-6 shadow-modal relative max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-surface rounded-[20px] max-w-130 w-full p-6 shadow-modal relative max-h-[90vh] overflow-y-auto transition-colors">
         <button
           onClick={onBack}
           className="absolute top-4 left-4 text-ink hover:text-green transition-colors"
@@ -475,7 +475,7 @@ function RequestClusterAccountModal({
         </button>
 
         <div className="text-center mb-6 mt-4">
-          <h3 className={`${soraClass} text-xl font-bold text-forest`}>
+          <h3 className={`${soraClass} text-xl font-bold text-forest-text`}>
             Request Account for {clusterName}
           </h3>
           <p className="text-sm text-ink-mid mt-1">

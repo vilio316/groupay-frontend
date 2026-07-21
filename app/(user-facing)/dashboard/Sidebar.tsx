@@ -17,6 +17,7 @@ import Link from "next/link";
 import { useNotifications } from "@/app/NotificationsProvider";
 import { useSession } from "@/lib/authClient";
 import { useState } from "react";
+import ThemeToggle from "@/app/components/ThemeToggle";
 
 const bottomLinks = [{ href: "/settings", label: "Settings", Icon: GearIcon }];
 
@@ -45,7 +46,7 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="flex flex-col h-screen w-72 mr-4 bg-white border-r border-[#e8efe8] px-3 py-4 shrink-0 z-20"
+      className="flex flex-col h-screen w-72 mr-4 bg-white dark:bg-surface border-r border-[#e8efe8] dark:border-[#1a2e24] px-3 py-4 shrink-0 z-20 transition-colors"
       style={{ boxShadow: "1px 0 0 0 #e8efe8" }}
     >
       {/* ── Logo ── */}
@@ -82,7 +83,7 @@ export default function Sidebar() {
                 ${
                   active
                     ? "bg-forest text-white shadow-md shadow-forest/20"
-                    : "text-ink-mid hover:bg-[#f0f7f0] hover:text-forest"
+                    : "text-ink-mid hover:bg-[#f0f7f0] dark:hover:bg-[#1a2e24] hover:text-forest"
                 }
               `}
             >
@@ -120,10 +121,12 @@ export default function Sidebar() {
       </nav>
 
       {/* ── Divider ── */}
-      <div className="my-3 h-px bg-[#e8efe8]" />
+      <div className="my-3 h-px bg-[#e8efe8] dark:bg-[#1a2e24]" />
 
-      {/* ── Bottom: Settings + Sign out ── */}
+      {/* ── Bottom: Theme + Settings + Sign out ── */}
       <div className="flex flex-col gap-0.5">
+        <ThemeToggle />
+
         {bottomLinks.map(({ href, label, Icon }) => {
           const active = isActive(href);
           return (
@@ -136,7 +139,7 @@ export default function Sidebar() {
                 ${
                   active
                     ? "bg-forest text-white shadow-md shadow-forest/20"
-                    : "text-ink-mid hover:bg-[#f0f7f0] hover:text-forest"
+                    : "text-ink-mid hover:bg-[#f0f7f0] dark:hover:bg-[#1a2e24] hover:text-forest"
                 }
               `}
             >
@@ -154,7 +157,7 @@ export default function Sidebar() {
         })}
 
         <button
-          className="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-ink-mid hover:bg-red-50 hover:text-red-600 transition-all duration-150 w-full text-left"
+          className="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-ink-mid hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-600 dark:hover:text-red-400 transition-all duration-150 w-full text-left"
           onClick={async (e) => {
             e.preventDefault();
             updateLoading(true);
@@ -175,7 +178,7 @@ export default function Sidebar() {
             </div>
           ) : (
             <>
-              <SignOutIcon className="h-4.5 w-4.5 shrink-0 text-ink-mid group-hover:text-red-500 group-hover:scale-110 transition-transform duration-150" />
+              <SignOutIcon className="h-4.5 w-4.5 shrink-0 text-ink-mid group-hover:text-red-500 dark:group-hover:text-red-400 group-hover:scale-110 transition-transform duration-150" />
               <span>Sign Out</span>
             </>
           )}
@@ -183,7 +186,7 @@ export default function Sidebar() {
       </div>
 
       {/* ── User pill at very bottom ── */}
-      <div className="mt-3 flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-[#f5faf5] border border-[#e8efe8]">
+      <div className="mt-3 flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-[#f5faf5] dark:bg-[#0f1f16] border border-[#e8efe8] dark:border-[#1a2e24] transition-colors">
         <div className="h-8 w-8 rounded-full bg-linear-to-br from-teal to-green flex items-center justify-center text-white text-xs font-bold shrink-0">
           U
         </div>
@@ -198,7 +201,7 @@ export default function Sidebar() {
           </p>
         </div>
         <Link
-          href="/settings"
+          href="/profile"
           className="shrink-0 text-ink-mid/50 hover:text-forest transition-colors"
           aria-label="Account settings"
         >

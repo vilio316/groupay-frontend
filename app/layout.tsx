@@ -4,6 +4,7 @@ import "./globals.css";
 import QueryProvider from "./QueryProvider";
 import NotificationsProvider from "./NotificationsProvider";
 import ServiceWorkerRegister from "./ServiceWorkerRegister";
+import ThemeProvider from "./components/ThemeProvider";
 
 export const metadata: Metadata = {
   title: "GrouPay - Collaborative finance for all",
@@ -26,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`h-full antialiased`}>
+    <html lang="en" className={`h-full antialiased`} suppressHydrationWarning>
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta
@@ -37,9 +38,11 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icon-192.svg" />
       </head>
       <body className={`min-h-full grid ${inter.className}`}>
-        <QueryProvider>
-          <NotificationsProvider>{children}</NotificationsProvider>
-        </QueryProvider>
+        <ThemeProvider>
+          <QueryProvider>
+            <NotificationsProvider>{children}</NotificationsProvider>
+          </QueryProvider>
+        </ThemeProvider>
         <div id="modal-portal" />
         <ServiceWorkerRegister />
       </body>

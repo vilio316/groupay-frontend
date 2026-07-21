@@ -17,7 +17,7 @@ export default function SignInPage() {
     <div className="p-6 grid items-center h-full justify-center md:justify-start">
       <div className="md:w-125">
         <div>
-          <p className={`${soraClass} text-3xl font-bold text-forest my-3 `}>
+          <p className={`${soraClass} text-3xl font-bold text-forest-text my-3 `}>
             Sign In
           </p>
           <p className="font-semibold text-ink-mid my-2">
@@ -44,7 +44,7 @@ export default function SignInPage() {
           <div className="mb-4">
             <label
               htmlFor="email"
-              className="uppercase block text-sm font-semibold text-forest mb-1.5"
+              className="uppercase block text-sm font-semibold text-forest-text mb-1.5"
             >
               Email
             </label>
@@ -62,7 +62,7 @@ export default function SignInPage() {
           <div className="mb-4 ">
             <label
               htmlFor="password"
-              className="uppercase block text-sm font-semibold text-forest mb-1.5"
+              className="uppercase block text-sm font-semibold text-forest-text mb-1.5"
             >
               Password
             </label>
@@ -123,7 +123,7 @@ export default function SignInPage() {
             onClick={async () => {
               await signIn.social({
                 provider: "google",
-                callbackURL: "http://localhost:9909/dashboard",
+                callbackURL: `${process.env.NEXT_PUBLIC_DEV_URL}/dashboard`,
               });
             }}
           >

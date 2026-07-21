@@ -7,7 +7,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="grid md:grid-cols-2 min-h-screen gap-x-4">
+    <div className="grid md:grid-cols-2 min-h-screen gap-x-4 bg-white dark:bg-[#0a1812] transition-colors">
       <AppOfferings />
       {children}
     </div>

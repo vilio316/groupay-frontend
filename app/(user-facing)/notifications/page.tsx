@@ -85,7 +85,7 @@ export function NotificationComponent({
       <div className="flex-1 min-w-0">
         <p
           className={`text-sm ${
-            isRead ? "text-ink-mid" : "text-forest font-semibold"
+            isRead ? "text-ink-mid" : "text-forest-text font-semibold"
           }`}
         >
           {message}
@@ -150,7 +150,7 @@ export default function NotificationsPage() {
               weight="duotone"
             />
           </div>
-          <p className="font-bold text-2xl text-forest mb-2">All Caught Up</p>
+          <p className="font-bold text-2xl text-forest-text mb-2">All Caught Up</p>
           <p className="text-ink-mid max-w-xs">
             You have no notifications right now. We'll let you know when
             something new comes in.

@@ -112,7 +112,7 @@ export default function ClusterTransferModal({
         onClose={() => setShowPinSetup(false)}
         onSuccess={() => setShowPinSetup(false)}
       />
-      <div className="bg-white rounded-[20px] max-w-130 w-full p-6 shadow-modal relative">
+      <div className="bg-white dark:bg-surface rounded-[20px] transition-colors max-w-130 w-full p-6 shadow-modal relative">
         <button
           onClick={handleReset}
           className="absolute top-4 right-4 text-ink hover:text-red transition-colors"
@@ -125,12 +125,12 @@ export default function ClusterTransferModal({
             <div className="w-16 h-16 rounded-full bg-green/10 flex items-center justify-center mx-auto mb-4">
               <CheckCircleIcon className="w-8 h-8 fill-green" weight="bold" />
             </div>
-            <h3 className={`${soraClass} text-xl font-bold text-forest mb-2`}>
+            <h3 className={`${soraClass} text-xl font-bold text-forest-text mb-2`}>
               Transfer Initiated
             </h3>
             <p className="text-sm text-ink-mid mb-6">
               &#8358; {amount.toLocaleString()} has been sent to{" "}
-              <span className="font-semibold text-forest">
+              <span className="font-semibold text-forest-text">
                 {selectedCluster?.name}
               </span>
               .
@@ -147,28 +147,28 @@ export default function ClusterTransferModal({
             <div className="w-16 h-16 rounded-full bg-teal/10 flex items-center justify-center mx-auto mb-4">
               <BankIcon className="w-8 h-8 fill-teal" weight="fill" />
             </div>
-            <h3 className={`${soraClass} text-xl font-bold text-forest mb-2`}>
+            <h3 className={`${soraClass} text-xl font-bold text-forest-text mb-2`}>
               Confirm Transfer
             </h3>
 
             <div className="border border-card-border rounded-xl p-4 mb-4 text-left space-y-3">
               <div className="flex justify-between">
                 <span className="text-sm text-ink-mid">Cluster</span>
-                <span className="text-sm font-semibold text-forest">
+                <span className="text-sm font-semibold text-forest-text">
                   {selectedCluster.name}
                 </span>
               </div>
               <div className="border-t border-card-border/50" />
               <div className="flex justify-between">
                 <span className="text-sm text-ink-mid">Amount</span>
-                <span className="text-lg font-bold text-forest">
+                <span className="text-lg font-bold text-forest-text">
                   &#8358; {amount.toLocaleString()}
                 </span>
               </div>
               <div className="border-t border-card-border/50" />
               <div className="flex justify-between">
                 <span className="text-sm text-ink-mid">From</span>
-                <span className="text-sm font-semibold text-forest">
+                <span className="text-sm font-semibold text-forest-text">
                   {data?.user?.name || "Your Wallet"}
                 </span>
               </div>
@@ -177,7 +177,7 @@ export default function ClusterTransferModal({
             <div className="flex gap-3">
               <button
                 onClick={() => setStep("select")}
-                className="flex-1 py-3 rounded-full border border-card-border text-ink-mid font-semibold hover:bg-gray-50 transition-all"
+                className="flex-1 py-3 rounded-full border border-card-border text-ink-mid font-semibold hover:bg-gray-50 dark:hover:bg-[#162c20] transition-all"
               >
                 Back
               </button>
@@ -193,7 +193,7 @@ export default function ClusterTransferModal({
         ) : (
           <div className="py-2">
             <div className="text-center mb-6">
-              <h3 className={`${soraClass} text-xl font-bold text-forest mb-2`}>
+              <h3 className={`${soraClass} text-xl font-bold text-forest-text mb-2`}>
                 Transfer to Cluster
               </h3>
               <p className="text-sm text-ink-mid">
@@ -218,7 +218,7 @@ export default function ClusterTransferModal({
                           : "border-card-border hover:border-teal/30"
                       }`}
                     >
-                      <p className="font-semibold text-sm text-forest">
+                      <p className="font-semibold text-sm text-forest-text">
                         {cluster.name}
                       </p>
                       <p className="text-xs text-ink-mid">
@@ -251,7 +251,7 @@ export default function ClusterTransferModal({
                   step={100}
                   value={amount}
                   onChange={(e) => setAmount(Number(e.target.value))}
-                  className="flex-1 text-forest text-xl font-bold outline-none bg-transparent"
+                  className="flex-1 text-forest-text text-xl font-bold outline-none bg-transparent"
                 />
               </div>
             </div>

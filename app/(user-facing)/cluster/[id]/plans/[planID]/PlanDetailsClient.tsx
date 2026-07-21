@@ -175,7 +175,7 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
         <div className="details">
           <div className="flex flex-col md:flex-row gap-x-4 items-center">
             <div className="details-text md:w-4/5 w-full space-y-2">
-              <p className="text-forest font-semibold">
+              <p className="text-forest-text font-semibold">
                 Your Contribution Amount: &#8358;{" "}
                 {Number(minimumContribution) > 0
                   ? Number(minimumContribution).toLocaleString()
@@ -225,7 +225,7 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
             <div className="transactions">
               {planObj.members.length > 0 && (
                 <div className="space-y-3 my-2">
-                  <p className="text-sm text-forest font-semibold">
+                  <p className="text-sm text-forest-text font-semibold">
                     Payment Status
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -245,7 +245,7 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
                             {member.user?.name?.charAt(0) || "?"}
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="truncate text-forest font-medium text-xs">
+                            <p className="truncate text-forest-text font-medium text-xs">
                               {member.user?.name || "Unknown"}
                             </p>
                             <p className="text-[10px] text-ink-mid/70">

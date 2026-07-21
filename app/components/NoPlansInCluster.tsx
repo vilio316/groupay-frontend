@@ -17,7 +17,7 @@ export default function NoPlansInCluster({
           weight="duotone"
         />
         <div>
-          <p className={`${soraClass} text-lg font-bold text-forest`}>
+          <p className={`${soraClass} text-lg font-bold text-forest-text`}>
             No Plans Yet
           </p>
           <p className="text-sm text-ink-mid mt-1 max-w-xs mx-auto leading-relaxed">

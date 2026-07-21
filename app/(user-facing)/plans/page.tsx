@@ -51,7 +51,7 @@ export default function PlansPage() {
         )}
         {isSuccess && userPlans?.length === 0 && (
           <div className="col-span-full text-center py-12">
-            <p className="text-2xl font-bold text-forest mb-2">No Plans Yet</p>
+            <p className="text-2xl font-bold text-forest-text mb-2">No Plans Yet</p>
             <p className="text-ink-mid mb-6">
               You haven't created or joined any plans yet.
             </p>

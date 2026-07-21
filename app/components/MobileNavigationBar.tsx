@@ -10,7 +10,7 @@ import Link from "next/link";
 
 export default function MobileNav() {
   return (
-    <div className="absolute -bottom-3 md:hidden p-1 grid-cols-5 grid z-50 bg-white w-screen justify-center justify-items-center items-center gap-x-4 text-[11px]">
+    <div className="absolute -bottom-3 md:hidden p-1 grid-cols-5 grid z-50 bg-white dark:bg-surface w-screen justify-center justify-items-center items-center gap-x-4 text-[11px] text-ink-mid dark:text-ink-mid transition-colors">
       <Link
         href="/dashboard"
         className="grid justify-center justify-items-center text-center p-1 hover:text-green "

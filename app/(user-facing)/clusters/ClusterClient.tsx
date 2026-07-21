@@ -36,7 +36,7 @@ export default function ClusterClient({
               weight="duotone"
             />
           </div>
-          <p className="text-center text-2xl font-bold text-forest my-2">No Clusters Yet</p>
+          <p className="text-center text-2xl font-bold text-forest-text my-2">No Clusters Yet</p>
           <p className="text-ink-mid">
             You haven't joined or created any clusters yet. Create your first
             cluster now and add other users too!

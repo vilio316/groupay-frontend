@@ -48,6 +48,7 @@ export interface PlanDetails {
   transactions: any[];
   planType: string;
   clusterId: string;
+  dueDate: string;
 }
 
 export interface ClusterMember {

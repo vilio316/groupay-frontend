@@ -13,7 +13,10 @@ import { useNotifications } from "@/app/NotificationsProvider";
 
 export function makeDate(date: string) {
   const dateVal = new Date(date);
-  return dateVal.toLocaleString();
+  return dateVal.toLocaleString("en-GB", {
+    day: "numeric",
+    month: "short",
+  });
 }
 
 function relativeTime(dateStr: string): string {

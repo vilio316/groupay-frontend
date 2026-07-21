@@ -15,6 +15,7 @@ import { useParams } from "next/navigation";
 import { redirect } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useClusterDetails } from "@/app/hooks/queryHooks";
+import { makeDate } from "@/app/(user-facing)/notifications/page";
 
 export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
   const [isPaying, updatePaymentStatus] = useState(false);
@@ -24,7 +25,8 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
   const { clusterDetailsResponse, isLoading, isSuccess } = useClusterDetails(
     String(params.id),
   );
-  const { name, desc, minimumContribution, id, members, planType } = planObj;
+  const { name, desc, minimumContribution, id, members, planType, dueDate } =
+    planObj;
 
   async function handlePlanMembership(isMember: boolean) {
     if (!isMember) {
@@ -76,7 +78,6 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
       });
     }
   }
-
   const queryClient = useQueryClient();
   const { isPending, mutateAsync: handleMembership } = useMutation({
     mutationFn: async () => {
@@ -183,6 +184,7 @@ export default function PlanPage({ planObj }: { planObj: PlanDetails }) {
               <p className="text-ink-mid">
                 Contribution Status: {userPercentPaid}%
               </p>
+              <p>Due Date: {makeDate(dueDate)}</p>
             </div>
 
             <div className="md:w-1/5 flex justify-end p-2 w-full">

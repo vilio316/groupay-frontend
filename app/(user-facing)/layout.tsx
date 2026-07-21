@@ -12,6 +12,7 @@ import { Suspense } from "react";
 
 gsap.registerPlugin(useGSAP);
 import { useNotifications } from "../NotificationsProvider";
+import { useSession } from "@/lib/authClient";
 
 export default function DashboardClient({
   children,
@@ -23,7 +24,7 @@ export default function DashboardClient({
   const topIconsRef = useRef<HTMLDivElement>(null);
 
   const { unreadCount } = useNotifications();
-
+  const {} = useSession();
   useGSAP(() => {
     gsap.from(sidebarRef.current, {
       x: -100,

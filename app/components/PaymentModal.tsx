@@ -10,12 +10,15 @@ import {
   MoneyWavyIcon,
 } from "@phosphor-icons/react";
 import { soraClass } from "../fonts";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useParams, usePathname } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/authClient";
 import type { User } from "../(user-facing)/cluster/[id]/ClusterDetailsClient";
+import PinVerifyModal from "./PinVerifyModal";
+import PinSetupModal from "./PinSetupModal";
+import { usePinStatus } from "../hooks/queryHooks";
 
 export default function PaymentModal({
   isShown,
@@ -47,14 +50,36 @@ export default function PaymentModal({
   const [planAmount, setPlanAmount] = useState(500);
   const [isPayingPlan, setIsPayingPlan] = useState(false);
   const [planPayError, setPlanPayError] = useState("");
-  const [isRegisteringPending, setIsRegisteringPending] = useState(false);
-  const [pendingRegError, setPendingRegError] = useState("");
+
+  const [showPinVerify, setShowPinVerify] = useState(false);
+  const [showPinSetup, setShowPinSetup] = useState(false);
+  const pinRef = useRef<string>("");
+  const pendingActionRef = useRef<() => void>(() => {});
+
+  const { hasPin, isLoading: checkingPin } = usePinStatus();
+
+  const requirePin = (action: () => void) => {
+    if (checkingPin) return;
+    if (hasPin) {
+      pendingActionRef.current = action;
+      setShowPinVerify(true);
+    } else {
+      action();
+    }
+  };
+
+  const onPinVerified = () => {
+    setShowPinVerify(false);
+    pinRef.current = "verified";
+    pendingActionRef.current();
+  };
 
   const handleClick = () => {
     onClick();
     updatePaymentStage(0);
     setSelectedUser(null);
     setGroupayTransferStep(0);
+    pinRef.current = "";
   };
 
   const {
@@ -128,6 +153,11 @@ export default function PaymentModal({
     if (!params.id) return;
 
     if (contributionSource !== "external") {
+      if (!pinRef.current && hasPin) {
+        pendingActionRef.current = handlePlanContribution;
+        setShowPinVerify(true);
+        return;
+      }
       setIsPayingPlan(true);
       setPlanPayError("");
       try {
@@ -144,6 +174,7 @@ export default function PaymentModal({
               amount: planAmount * 100,
               transactionHeading: "Plan Contribution",
               planId: planId || undefined,
+              pin: pinRef.current,
             }),
           },
         );
@@ -182,6 +213,7 @@ export default function PaymentModal({
             senderId: sessionData.user.id,
             recipientId: selectedUser.id,
             amount: trxAmount * 100,
+            pin: pinRef.current,
           }),
         },
       );
@@ -200,40 +232,6 @@ export default function PaymentModal({
     }
   };
 
-  const handleRegisterPendingTransaction = async () => {
-    setIsRegisteringPending(true);
-    setPendingRegError("");
-    try {
-      const { data } = await getSession();
-      if (!data?.user) throw new Error("Not authenticated");
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/${params.id}/pending-transaction`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({
-            userId: data.user.id,
-            amount: planAmount * 100,
-            planId: planId || params.planID || undefined,
-          }),
-        },
-      );
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.message || "Failed to register payment");
-      }
-      queryClient.invalidateQueries({ queryKey: ["plan", params.planID] });
-      queryClient.invalidateQueries({ queryKey: ["cluster", params.id] });
-      queryClient.invalidateQueries({ queryKey: ["userPlans"] });
-      updatePaymentStage(2);
-    } catch (e: any) {
-      setPendingRegError(e.message || "Something went wrong");
-    } finally {
-      setIsRegisteringPending(false);
-    }
-  };
-
   const handleGroupayPayment = async () => {
     setIsPayingFromAccount(true);
     setPayError("");
@@ -247,6 +245,7 @@ export default function PaymentModal({
           body: JSON.stringify({
             userId: data?.user.id,
             amount: trxAmount * 100,
+            pin: pinRef.current,
           }),
           credentials: "include",
         },
@@ -269,6 +268,19 @@ export default function PaymentModal({
   return (
     isShown && (
       <div className="fixed -top-12 left-0 min-h-screen w-full bg-forest/50 z-70 mx-auto grid p-3">
+        <PinVerifyModal
+          isShown={showPinVerify}
+          onClose={() => {
+            setShowPinVerify(false);
+            pinRef.current = "";
+          }}
+          onSuccess={onPinVerified}
+        />
+        <PinSetupModal
+          isShown={showPinSetup}
+          onClose={() => setShowPinSetup(false)}
+          onSuccess={() => setShowPinSetup(false)}
+        />
         <div className="place-self-center md:w-2/5 w-4/5 md:max-h-[90vh] h-auto rounded-[20px] bg-white px-6 py-4 border border-card-border shadow-modal relative">
           <span className="w-full text-right flex justify-end">
             <XIcon
@@ -449,13 +461,39 @@ export default function PaymentModal({
                 </div>
                 <button
                   className="bg-green text-center text-white font-semibold rounded-[9999px] md:py-3 md:px-6 py-1 px-2 uppercase hover:bg-greener transition-all mx-auto w-3/4"
-                  onClick={() => {
-                    alert("We'll look out for your payment!");
-                    updatePaymentStage(0);
-                    onClick();
-                  }}
+                  onClick={() => updatePaymentStage(2)}
                 >
                   I have sent the money
+                </button>
+              </div>
+            )}
+
+          {prompter === "add" &&
+            paymentStage === 2 &&
+            paymentMethod === "virtual" && (
+              <div className="flex flex-col gap-y-6 items-center py-8 text-center">
+                <div className="w-16 h-16 rounded-full bg-amber/10 flex items-center justify-center mx-auto">
+                  <svg className="w-8 h-8 text-amber" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className={`${soraClass} text-xl font-bold text-forest mb-2`}>
+                    Pending Confirmation
+                  </h3>
+                  <p className="text-sm text-ink-mid max-w-sm mx-auto leading-relaxed">
+                    Your contribution status will be updated once the GrouPay
+                    systems confirm receipt of your transfer.
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    queryClient.invalidateQueries({ queryKey: ["cluster", params.id] });
+                    handleClick();
+                  }}
+                  className="uppercase bg-green text-white font-semibold rounded-[9999px] py-3 px-8 hover:bg-greener transition-all"
+                >
+                  Done
                 </button>
               </div>
             )}
@@ -509,7 +547,7 @@ export default function PaymentModal({
 
                 <button
                   className="w-full flex justify-center uppercase bg-green text-white rounded-[9999px] md:py-3 md:px-6 py-1 px-2 font-semibold hover:bg-greener transition-all disabled:opacity-50"
-                  onClick={handleGroupayPayment}
+                  onClick={() => requirePin(handleGroupayPayment)}
                   disabled={isPayingFromAccount}
                 >
                   {isPayingFromAccount ? "Processing..." : "Confirm"}
@@ -762,42 +800,11 @@ export default function PaymentModal({
                     {`squad/{cluster name}`}
                   </p>
                 </div>
-                {pendingRegError && (
-                  <p className="text-sm text-red bg-red/5 rounded-xl px-3 py-2 w-full text-center">
-                    {pendingRegError}
-                  </p>
-                )}
                 <button
-                  className="bg-green text-white font-semibold rounded-[9999px] py-3 px-8 uppercase hover:bg-greener transition-all w-3/4 disabled:opacity-50"
-                  onClick={handleRegisterPendingTransaction}
-                  disabled={isRegisteringPending}
+                  className="bg-green text-white font-semibold rounded-[9999px] py-3 px-8 uppercase hover:bg-greener transition-all w-3/4"
+                  onClick={() => updatePaymentStage(2)}
                 >
-                  {isRegisteringPending ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <svg
-                        className="animate-spin h-4 w-4"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                        />
-                      </svg>
-                      Registering...
-                    </span>
-                  ) : (
-                    "I have sent the money"
-                  )}
+                  I have sent the money
                 </button>
               </div>
             )}
@@ -1155,7 +1162,7 @@ export default function PaymentModal({
                     )}
                     <button
                       className="w-full flex justify-center uppercase bg-green text-white rounded-[9999px] md:py-3 md:px-6 py-1 px-2 font-semibold hover:bg-greener transition-all mt-2 disabled:opacity-50"
-                      onClick={handleUserTransfer}
+                      onClick={() => requirePin(handleUserTransfer)}
                       disabled={isTransferring}
                     >
                       {isTransferring ? (

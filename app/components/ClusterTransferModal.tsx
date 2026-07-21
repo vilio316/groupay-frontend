@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   XIcon,
   ArrowRightIcon,
@@ -8,9 +8,11 @@ import {
   CheckCircleIcon,
 } from "@phosphor-icons/react";
 import { soraClass } from "../fonts";
-import { useMyClusters } from "../hooks/queryHooks";
+import { useMyClusters, usePinStatus } from "../hooks/queryHooks";
 import { useSession } from "@/lib/authClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import PinVerifyModal from "./PinVerifyModal";
+import PinSetupModal from "./PinSetupModal";
 
 export default function ClusterTransferModal({
   isShown,
@@ -24,6 +26,27 @@ export default function ClusterTransferModal({
   const [selectedClusterId, setSelectedClusterId] = useState<string>("");
   const [amount, setAmount] = useState(1000);
   const [step, setStep] = useState<"select" | "confirm" | "done">("select");
+  const [showPinVerify, setShowPinVerify] = useState(false);
+  const [showPinSetup, setShowPinSetup] = useState(false);
+  const pinRef = useRef<string>("");
+  const pinActionRef = useRef<() => void>(() => {});
+  const { hasPin, isLoading: checkingPin } = usePinStatus();
+
+  const requirePin = (action: () => void) => {
+    if (checkingPin) return;
+    if (hasPin) {
+      pinActionRef.current = action;
+      setShowPinVerify(true);
+    } else {
+      action();
+    }
+  };
+
+  const onPinVerified = () => {
+    setShowPinVerify(false);
+    pinRef.current = "verified";
+    pinActionRef.current();
+  };
 
   const selectedCluster = isSuccess
     ? clusterResponse?.find((c) => c.id === selectedClusterId)
@@ -43,6 +66,7 @@ export default function ClusterTransferModal({
           body: JSON.stringify({
             userId: data.user.id,
             amount: amount * 100,
+            pin: pinRef.current,
           }),
         },
       );
@@ -67,6 +91,7 @@ export default function ClusterTransferModal({
     setStep("select");
     setSelectedClusterId("");
     setAmount(1000);
+    pinRef.current = "";
     onClose();
   };
 
@@ -74,6 +99,19 @@ export default function ClusterTransferModal({
 
   return (
     <div className="fixed inset-0 z-70 flex items-center justify-center bg-forest/50 p-3">
+      <PinVerifyModal
+        isShown={showPinVerify}
+        onClose={() => {
+          setShowPinVerify(false);
+          pinRef.current = "";
+        }}
+        onSuccess={onPinVerified}
+      />
+      <PinSetupModal
+        isShown={showPinSetup}
+        onClose={() => setShowPinSetup(false)}
+        onSuccess={() => setShowPinSetup(false)}
+      />
       <div className="bg-white rounded-[20px] max-w-130 w-full p-6 shadow-modal relative">
         <button
           onClick={handleReset}
@@ -144,7 +182,7 @@ export default function ClusterTransferModal({
                 Back
               </button>
               <button
-                onClick={() => transfer()}
+                onClick={() => requirePin(() => transfer())}
                 disabled={isPending}
                 className="flex-1 py-3 rounded-full bg-teal text-white font-bold hover:bg-teal/90 transition-all disabled:opacity-50"
               >

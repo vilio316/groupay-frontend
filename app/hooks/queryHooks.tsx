@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getSession } from "@/lib/authClient";
+import { getSession, useSession } from "@/lib/authClient";
 import type { PlanByUser } from "../(user-facing)/plans/page";
 import {
   clusterDetailsType,
@@ -248,6 +248,31 @@ export const useMyAccountDetails = () => {
     isFetching,
     isLoading,
   };
+};
+
+export const usePinStatus = () => {
+  const { data: session } = useSession();
+  const {
+    data: pinStatus,
+    isLoading,
+    isSuccess,
+    refetch,
+  } = useQuery({
+    queryKey: ["pinStatus"],
+    queryFn: async () => {
+      if (!session?.user?.id) return { hasPin: false };
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/pin/status/${session.user.id}`,
+        { credentials: "include" },
+      );
+      if (!res.ok) return { hasPin: false };
+      return res.json();
+    },
+    enabled: !!session?.user?.id,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  return { hasPin: pinStatus?.hasPin ?? false, isLoading, isSuccess, refetch };
 };
 
 export const useTransactions = (userId?: string) => {

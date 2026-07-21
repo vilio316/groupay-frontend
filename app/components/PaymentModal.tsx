@@ -8,6 +8,7 @@ import {
   WalletIcon,
   XIcon,
   MoneyWavyIcon,
+  LockIcon,
 } from "@phosphor-icons/react";
 import { soraClass } from "../fonts";
 import { useState, useRef } from "react";
@@ -53,6 +54,7 @@ export default function PaymentModal({
 
   const [showPinVerify, setShowPinVerify] = useState(false);
   const [showPinSetup, setShowPinSetup] = useState(false);
+  const [showPinRequired, setShowPinRequired] = useState(false);
   const pinRef = useRef<string>("");
   const pendingActionRef = useRef<() => void>(() => {});
 
@@ -64,7 +66,7 @@ export default function PaymentModal({
       pendingActionRef.current = action;
       setShowPinVerify(true);
     } else {
-      action();
+      setShowPinRequired(true);
     }
   };
 
@@ -80,6 +82,7 @@ export default function PaymentModal({
     setSelectedUser(null);
     setGroupayTransferStep(0);
     pinRef.current = "";
+    setShowPinRequired(false);
   };
 
   const {
@@ -304,7 +307,36 @@ export default function PaymentModal({
           >
             {prompter !== "plan" ? `${prompter} Money` : "Contribute to Plan"}
           </p>
-          {prompter === "add" && paymentStage === 0 && (
+          {showPinRequired && (
+            <div className="text-center py-6">
+              <div className="w-16 h-16 rounded-full bg-amber/10 flex items-center justify-center mx-auto mb-4">
+                <LockIcon className="md:h-9 md:w-9 h-6 w-6" weight="bold" />
+              </div>
+              <h3 className={`${soraClass} text-xl font-bold text-forest mb-2`}>
+                PIN Required
+              </h3>
+              <p className="text-sm text-ink-mid mb-6 max-w-xs mx-auto leading-relaxed">
+                You need to set a transaction PIN before you can make wallet
+                transfers, fund clusters, or contribute to plans.
+              </p>
+              <a
+                href="/profile/pin"
+                className="inline-block w-full py-3 rounded-full bg-green text-white font-bold hover:bg-greener transition-all text-center"
+              >
+                Set Up PIN
+              </a>
+              <button
+                onClick={() => {
+                  setShowPinRequired(false);
+                  handleClick();
+                }}
+                className="w-full mt-2 py-2 text-sm text-ink-mid font-medium hover:text-ink transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+          {prompter === "add" && paymentStage === 0 && !showPinRequired && (
             <div className="flex justify-center flex-col">
               <p className="p-1 etxt-xl text-forest my-2">
                 Choose Payment Method
@@ -337,12 +369,21 @@ export default function PaymentModal({
                   </label>
                 )}
 
-                <label className="rounded-xl p-4 gap-x-3 has-checked:border-green has-checked:bg-green/5 md:w-4/5 flex items-center border border-card-border shadow-card hover:border-green transition-all cursor-pointer">
+                {accountNumber == "1234567890" && (
+                  <p className="font-semibold text-red text-sm">
+                    You need to create a GrouPay account before you can add
+                    money to your wallet
+                  </p>
+                )}
+                <label
+                  className={`${accountNumber == "1234567890" ? "border-red hover:border-red opacity-90" : ""} rounded-xl p-4 gap-x-3 has-checked:border-green has-checked:bg-green/5 md:w-4/5 flex items-center border border-card-border shadow-card hover:border-green transition-all cursor-pointer`}
+                >
                   <input
                     type="radio"
                     name="payment_method"
                     id="virtual_account"
                     className="accent-green"
+                    disabled={accountNumber == "1234567890"}
                     onChange={(e) => {
                       if (e.target.checked) {
                         updatePaymentMethod("virtual");
@@ -390,7 +431,6 @@ export default function PaymentModal({
               </div>
             </div>
           )}
-
           {prompter === "add" &&
             paymentStage === 1 &&
             paymentMethod === "squad" && (
@@ -434,7 +474,7 @@ export default function PaymentModal({
 
                 <button
                   className="w-full flex justify-center uppercase bg-green text-white rounded-[9999px] md:py-3 md:px-6 py-1 px-2 font-semibold hover:bg-greener transition-all disabled:opacity-50"
-                  onClick={() => requirePin(() => initiatePayment())}
+                  onClick={() => initiatePayment()}
                   disabled={isPending}
                 >
                   {isPending ? "Processing..." : "Confirm"}
@@ -475,12 +515,24 @@ export default function PaymentModal({
             paymentMethod === "virtual" && (
               <div className="flex flex-col gap-y-6 items-center py-8 text-center">
                 <div className="w-16 h-16 rounded-full bg-amber/10 flex items-center justify-center mx-auto">
-                  <svg className="w-8 h-8 text-amber" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg
+                    className="w-8 h-8 text-amber"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                 </div>
                 <div>
-                  <h3 className={`${soraClass} text-xl font-bold text-forest mb-2`}>
+                  <h3
+                    className={`${soraClass} text-xl font-bold text-forest mb-2`}
+                  >
                     Pending Confirmation
                   </h3>
                   <p className="text-sm text-ink-mid max-w-sm mx-auto leading-relaxed">
@@ -490,7 +542,9 @@ export default function PaymentModal({
                 </div>
                 <button
                   onClick={() => {
-                    queryClient.invalidateQueries({ queryKey: ["cluster", params.id] });
+                    queryClient.invalidateQueries({
+                      queryKey: ["cluster", params.id],
+                    });
                     handleClick();
                   }}
                   className="uppercase bg-green text-white font-semibold rounded-[9999px] py-3 px-8 hover:bg-greener transition-all"
@@ -502,7 +556,8 @@ export default function PaymentModal({
 
           {prompter === "add" &&
             paymentStage === 1 &&
-            paymentMethod === "groupay" && (
+            paymentMethod === "groupay" &&
+            !showPinRequired && (
               <div className="flex flex-col gap-y-4">
                 <p className={`${soraClass} text-xl text-forest font-bold`}>
                   Transaction Details
@@ -968,7 +1023,8 @@ export default function PaymentModal({
 
           {paymentStage === 1 &&
             prompter === "transfer" &&
-            contributionSource === "groupay" && (
+            contributionSource === "groupay" &&
+            !showPinRequired && (
               <div className="flex flex-col gap-y-4">
                 <p className={`${soraClass} text-xl text-forest font-bold`}>
                   Send to GrouPay User

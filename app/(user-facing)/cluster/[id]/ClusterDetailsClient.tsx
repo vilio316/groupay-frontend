@@ -4,6 +4,7 @@ import Avatars from "@/app/components/AvatarsCircles";
 import { BalanceCard } from "@/app/components/BalanceCard";
 import PaymentModal from "@/app/components/PaymentModal";
 import PlanCard from "@/app/components/PlanCard";
+import NoPlansInCluster from "@/app/components/NoPlansInCluster";
 import { soraClass } from "@/app/fonts";
 import { GearSixIcon, BankIcon, ArrowLeftIcon } from "@phosphor-icons/react";
 import {
@@ -184,14 +185,18 @@ export default function ClusterDetailsClient({
         <p className="font-semibold uppercase text-ink-mid my-2 px-2">
           Plans in this cluster ({plans.length})
         </p>
-        <div className="flex items-center gap-6">
-          <div className="flex items-center overflow-x-scroll gap-x-4 w-[90%]">
-            {plans.map((plan) => (
-              <PlanCard planObject={plan} key={plan.id} />
-            ))}
+        {plans.length > 0 ? (
+          <div className="flex items-center gap-6">
+            <div className="flex items-center overflow-x-scroll gap-x-4 w-[90%]">
+              {plans.map((plan) => (
+                <PlanCard planObject={plan} key={plan.id} />
+              ))}
+            </div>
+            <ArrowRightIcon className="w-6 h-6 hover:text-greener hover:scale-110 transition-all" />
           </div>
-          <ArrowRightIcon className="w-6 h-6 hover:text-greener hover:scale-110 transition-all" />
-        </div>
+        ) : (
+          <NoPlansInCluster clusterId={id} />
+        )}
       </div>
 
       <div className="my-3 p-3 rounded-2xl border border-card-border shadow-md shadow-card-border">

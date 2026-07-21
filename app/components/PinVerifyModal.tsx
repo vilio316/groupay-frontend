@@ -49,6 +49,9 @@ export default function PinVerifyModal({
       setPin(["", "", "", ""]);
       onSuccess(enteredPin);
     },
+    onError: (e: Error) => {
+      setError(e.message || "PIN verification failed");
+    },
   });
 
   const handleDigitInput = (value: string, index: number) => {

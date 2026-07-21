@@ -30,7 +30,11 @@ function setBg(status: string) {
 }
 
 function formatAmount(amount: number, channel?: string) {
-  if (channel === "SQUAD" || channel === "groupay-account") {
+  if (
+    channel === "SQUAD" ||
+    channel === "groupay-account" ||
+    channel === "groupay-wallet"
+  ) {
     return (Number(amount) / 100).toFixed(2);
   }
   return amount.toFixed(2);
@@ -120,7 +124,9 @@ export function TransactionBlock({
         className={`w-full grid grid-cols-12 gap-x-4 p-1 my-2 items-center border-card-border border bg-linear-to-r ${setBg(status)} to-zinc-200/20 rounded-xl hover:scale-x-102 hover:shadow-2xl hover:shadow-card-border transition-all cursor-pointer text-left`}
       >
         <div className="col-span-1 flex items-center justify-center">
-          <div className={`w-9 h-9 rounded-full flex items-center justify-center ${computedDirection === "inbound" ? "bg-green/10" : "bg-ink-mid/10"}`}>
+          <div
+            className={`w-9 h-9 rounded-full flex items-center justify-center ${computedDirection === "inbound" ? "bg-green/10" : "bg-ink-mid/10"}`}
+          >
             <DirIcon className={`text-sm ${dir.iconClass}`} weight="bold" />
           </div>
         </div>
@@ -201,15 +207,21 @@ export function TransactionBlock({
                     &#8358; {formatAmount(amount, channel)}
                   </span>
                 </div>
-              <Row label="Channel" value={channel || "—"} />
-              {computedDirection && <Row label="Direction" value={computedDirection === "inbound" ? "CREDIT (received)" : "DEBIT (sent)"} />}
-              <Row label="Date" value={makeDate(createdAt)} />
+                <Row label="Channel" value={channel || "—"} />
+                {computedDirection && (
+                  <Row
+                    label="Direction"
+                    value={
+                      computedDirection === "inbound"
+                        ? "CREDIT (received)"
+                        : "DEBIT (sent)"
+                    }
+                  />
+                )}
+                <Row label="Date" value={makeDate(createdAt)} />
                 {id && <Row label="Transaction ID" value={id} mono />}
                 {transactionRef && (
                   <Row label="Reference" value={transactionRef} mono />
-                )}
-                {transactionObject.type && (
-                  <Row label="Type" value={transactionObject.type} />
                 )}
               </div>
 

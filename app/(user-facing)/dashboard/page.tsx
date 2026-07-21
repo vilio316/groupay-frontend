@@ -4,9 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import {
   PlusIcon,
   ArrowRightIcon,
-  ArrowUpIcon,
   ArrowDownIcon,
-  ArrowsLeftRightIcon,
   ArrowSquareOutIcon,
   ShieldCheckIcon,
 } from "@phosphor-icons/react";
@@ -21,8 +19,7 @@ import { BalanceCard, UserAccountModal } from "@/app/components/BalanceCard";
 import ClusterTransferModal from "@/app/components/ClusterTransferModal";
 import PaymentModal from "@/app/components/PaymentModal";
 import PinReminderBanner from "@/app/components/PinReminderBanner";
-import { useQuery } from "@tanstack/react-query";
-import { useSession, getSession } from "@/lib/authClient";
+import { useSession } from "@/lib/authClient";
 import { usePinStatus } from "@/app/hooks/queryHooks";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -37,7 +34,6 @@ import {
   CardSkeleton,
   ListSkeleton,
 } from "@/app/components/Spinner";
-import { redirect } from "next/navigation";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -357,7 +353,7 @@ export default function DashboardPage() {
           transactionData &&
           transactionData.length > 0 &&
           transactionData.map((transaction: any) => (
-            <div key={transaction.id} className="transaction-item opacity-0">
+            <div key={transaction.id}>
               <TransactionBlock transactionObject={transaction} />
             </div>
           ))}

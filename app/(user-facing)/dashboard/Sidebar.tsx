@@ -16,6 +16,7 @@ import {
 import Link from "next/link";
 import { useNotifications } from "@/app/NotificationsProvider";
 import { useSession } from "@/lib/authClient";
+import { useState } from "react";
 
 const bottomLinks = [{ href: "/settings", label: "Settings", Icon: GearIcon }];
 
@@ -23,6 +24,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const { data } = useSession();
   const { unreadCount } = useNotifications();
+  const [loading, updateLoading] = useState(false);
 
   const navLinks = [
     { href: "/dashboard", label: "Home", Icon: HouseLineIcon },
@@ -155,15 +157,28 @@ export default function Sidebar() {
           className="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-ink-mid hover:bg-red-50 hover:text-red-600 transition-all duration-150 w-full text-left"
           onClick={async (e) => {
             e.preventDefault();
+            updateLoading(true);
             await signOut({
               fetchOptions: {
-                onSuccess: () => redirect("/auth/sign-in"),
+                onSuccess: () => {
+                  updateLoading(false);
+                  redirect("/auth/sign-in");
+                },
               },
             });
           }}
         >
-          <SignOutIcon className="h-4.5 w-4.5 shrink-0 text-ink-mid group-hover:text-red-500 group-hover:scale-110 transition-transform duration-150" />
-          <span>Sign Out</span>
+          {loading ? (
+            <div>
+              <span className="w-5 h-5 rounded-full animate-spin border-2 border-white border-t-red" />{" "}
+              Signing out...
+            </div>
+          ) : (
+            <>
+              <SignOutIcon className="h-4.5 w-4.5 shrink-0 text-ink-mid group-hover:text-red-500 group-hover:scale-110 transition-transform duration-150" />
+              <span>Sign Out</span>
+            </>
+          )}
         </button>
       </div>
 

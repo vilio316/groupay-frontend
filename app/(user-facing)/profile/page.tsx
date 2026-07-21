@@ -12,9 +12,14 @@ import {
 import { redirect } from "next/navigation";
 import { useSession } from "@/lib/authClient";
 import Link from "next/link";
-import { PencilSimpleLineIcon } from "@phosphor-icons/react";
-import { useMyUserData } from "@/app/hooks/queryHooks";
+import {
+  PencilSimpleLineIcon,
+  LockIcon,
+  LockOpenIcon,
+} from "@phosphor-icons/react";
+import { useMyUserData, usePinStatus } from "@/app/hooks/queryHooks";
 import { useState } from "react";
+import PinSetupModal from "@/app/components/PinSetupModal";
 
 function ToggleCard({
   icon,
@@ -65,6 +70,9 @@ function Skeleton({ className }: { className?: string }) {
 export default function ProfilePage() {
   const session = useSession();
   const { userDetails, isLoading, isSuccess } = useMyUserData();
+  const { hasPin } = usePinStatus();
+  const [showPinSetup, setShowPinSetup] = useState(false);
+  const [loading, updateLoading] = useState(false);
 
   if (isLoading) {
     return (
@@ -135,16 +143,30 @@ export default function ProfilePage() {
         </div>
         <button
           className="hidden md:inline-flex items-center gap-2 text-red border border-red/30 px-4 py-2 rounded-full text-sm font-semibold hover:bg-red hover:text-white transition-all shrink-0"
-          onClick={async () => {
+          onClick={async (e) => {
+            e.preventDefault();
+            updateLoading(true);
             await signOut({
               fetchOptions: {
-                onSuccess: () => redirect("/auth/sign-in"),
+                onSuccess: () => {
+                  updateLoading(false);
+                  redirect("/auth/sign-in");
+                },
               },
             });
           }}
         >
-          <SignOutIcon className="text-lg" />
-          Log Out
+          {loading ? (
+            <>
+              <span className="w-5 h-5 rounded-full animate-spin border-2 border-white border-t-red" />{" "}
+              <span>Signing out...</span>
+            </>
+          ) : (
+            <>
+              <SignOutIcon className="text-lg" />
+              <span>Log Out</span>
+            </>
+          )}
         </button>
       </div>
 
@@ -216,20 +238,82 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      {/* Transaction PIN */}
+      <div className="border border-card-border rounded-xl p-6 shadow-card">
+        <h2 className={`text-lg font-bold text-forest mb-4 ${soraClass}`}>
+          Transaction PIN
+        </h2>
+        <div className="flex items-center justify-between p-4 border border-card-border rounded-xl hover:border-teal/30 transition-all">
+          <div className="flex items-center gap-3">
+            <div
+              className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${hasPin ? "bg-green/10 text-green" : "bg-amber/10 text-amber"}`}
+            >
+              {hasPin ? (
+                <LockIcon weight="fill" className="text-xl" />
+              ) : (
+                <LockOpenIcon weight="fill" className="text-xl" />
+              )}
+            </div>
+            <div>
+              <p className="font-semibold text-sm text-forest">
+                {hasPin ? "PIN Active" : "No PIN Set"}
+              </p>
+              <p className="text-xs text-ink-mid">
+                {hasPin
+                  ? "Your transactions are PIN-protected"
+                  : "Secure your wallet transfers and contributions"}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              if (hasPin) {
+                window.location.href = "/profile/pin";
+              } else {
+                setShowPinSetup(true);
+              }
+            }}
+            className="inline-flex items-center gap-1.5 bg-teal text-white text-xs font-bold px-4 py-2 rounded-full hover:bg-teal/90 transition-all shrink-0"
+          >
+            {hasPin ? "Change" : "Set PIN"}
+          </button>
+        </div>
+      </div>
+
+      <PinSetupModal
+        isShown={showPinSetup}
+        onClose={() => setShowPinSetup(false)}
+        onSuccess={() => setShowPinSetup(false)}
+      />
+
       {/* Mobile logout */}
       <div className="md:hidden flex justify-center">
         <button
           className="inline-flex items-center gap-2 text-red border border-red/30 px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-red hover:text-white transition-all"
-          onClick={async () => {
+          onClick={async (e) => {
+            e.preventDefault();
+            updateLoading(true);
             await signOut({
               fetchOptions: {
-                onSuccess: () => redirect("/auth/sign-in"),
+                onSuccess: () => {
+                  updateLoading(false);
+                  redirect("/auth/sign-in");
+                },
               },
             });
           }}
         >
-          <SignOutIcon className="text-lg" />
-          Log Out
+          {loading ? (
+            <>
+              <span className="w-5 h-5 rounded-full animate-spin border-2 border-white border-t-red" />{" "}
+              <span>Signing out...</span>
+            </>
+          ) : (
+            <>
+              <SignOutIcon className="text-lg" />
+              <span>Log Out</span>
+            </>
+          )}
         </button>
       </div>
     </div>

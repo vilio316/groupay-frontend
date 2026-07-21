@@ -15,7 +15,7 @@ export default function PinVerifyModal({
 }: {
   isShown: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (pin: string) => void;
   title?: string;
   description?: string;
 }) {
@@ -45,8 +45,9 @@ export default function PinVerifyModal({
       return res.json();
     },
     onSuccess: () => {
+      const enteredPin = pin.join("");
       setPin(["", "", "", ""]);
-      onSuccess();
+      onSuccess(enteredPin);
     },
   });
 

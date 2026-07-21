@@ -21,7 +21,6 @@ import { BalanceCard, UserAccountModal } from "@/app/components/BalanceCard";
 import ClusterTransferModal from "@/app/components/ClusterTransferModal";
 import PaymentModal from "@/app/components/PaymentModal";
 import PinReminderBanner from "@/app/components/PinReminderBanner";
-import PinSetupModal from "@/app/components/PinSetupModal";
 import { useQuery } from "@tanstack/react-query";
 import { useSession, getSession } from "@/lib/authClient";
 import { usePinStatus } from "@/app/hooks/queryHooks";
@@ -67,7 +66,6 @@ export default function DashboardPage() {
   );
   const [showUserAccount, setShowUserAccount] = useState(false);
   const [showClusterTransfer, setShowClusterTransfer] = useState(false);
-  const [showPinSetup, setShowPinSetup] = useState(false);
   const { data } = useSession();
   const { hasPin, isLoading: checkingPinStatus } = usePinStatus();
 
@@ -195,11 +193,6 @@ export default function DashboardPage() {
         isShown={showClusterTransfer}
         onClose={() => setShowClusterTransfer(false)}
       />
-      <PinSetupModal
-        isShown={showPinSetup}
-        onClose={() => setShowPinSetup(false)}
-        onSuccess={() => setShowPinSetup(false)}
-      />
 
       <div className="bg-white border-b border-[#e8efe8] px-6 py-5">
         {balanceRetrieved && (
@@ -308,7 +301,7 @@ export default function DashboardPage() {
 
       {!checkingPinStatus && !hasPin && (
         <div className="px-6 mt-4">
-          <PinReminderBanner onSetPin={() => setShowPinSetup(true)} />
+          <PinReminderBanner />
         </div>
       )}
 

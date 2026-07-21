@@ -42,9 +42,9 @@ export default function ClusterTransferModal({
     }
   };
 
-  const onPinVerified = () => {
+  const onPinVerified = (pin: string) => {
     setShowPinVerify(false);
-    pinRef.current = "verified";
+    pinRef.current = pin;
     pinActionRef.current();
   };
 

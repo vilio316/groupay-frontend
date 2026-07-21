@@ -68,9 +68,9 @@ export default function PaymentModal({
     }
   };
 
-  const onPinVerified = () => {
+  const onPinVerified = (pin: string) => {
     setShowPinVerify(false);
-    pinRef.current = "verified";
+    pinRef.current = pin;
     pendingActionRef.current();
   };
 
@@ -132,6 +132,8 @@ export default function PaymentModal({
               },
               pass_charge: true,
               is_recurring: false,
+              userId: data?.user.id,
+              pin: pinRef.current,
             }),
           },
         );
@@ -164,7 +166,7 @@ export default function PaymentModal({
         const { data } = await getSession();
         if (!data?.user) throw new Error("Not authenticated");
         const res = await fetch(
-          `http://localhost:3000/clusters/${params.id}/pay-from-account`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/${params.id}/pay-from-account`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -432,7 +434,7 @@ export default function PaymentModal({
 
                 <button
                   className="w-full flex justify-center uppercase bg-green text-white rounded-[9999px] md:py-3 md:px-6 py-1 px-2 font-semibold hover:bg-greener transition-all disabled:opacity-50"
-                  onClick={() => initiatePayment()}
+                  onClick={() => requirePin(() => initiatePayment())}
                   disabled={isPending}
                 >
                   {isPending ? "Processing..." : "Confirm"}

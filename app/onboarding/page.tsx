@@ -1,4 +1,4 @@
-import AddressCapture from "@/claudeComps/AddressVerification";
+import AddressCapture from "@/kycComponents/AddressVerification";
 import { soraClass } from "../fonts";
 
 export default function OnboardingPage() {

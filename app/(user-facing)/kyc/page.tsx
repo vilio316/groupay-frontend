@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import KYCWizard from "@/claudeComps/KYCWizard";
-import { KYCDashboardBanner } from "@/claudeComps/KYCDashBanner";
-import { KYCTier, KYCStatus } from "@/claudeComps/tokens";
+import KYCWizard from "@/kycComponents/KYCWizard";
+import { KYCDashboardBanner } from "@/kycComponents/KYCDashBanner";
+import { KYCTier, KYCStatus } from "@/kycComponents/tokens";
 import { useRouter } from "next/navigation";
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 
@@ -23,9 +23,7 @@ export default function KYCStartPage() {
             <ArrowLeftIcon className="w-5 h-5" weight="bold" />
           </button>
           <div>
-            <h1 className="text-xl font-bold text-forest-text">
-              KYC Verification
-            </h1>
+            <h1 className="text-xl font-bold">KYC Verification</h1>
             <p className="text-sm text-ink-mid">
               Complete your identity verification
             </p>

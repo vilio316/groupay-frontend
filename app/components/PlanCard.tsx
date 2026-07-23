@@ -37,9 +37,7 @@ export default function PlanCard({
           </span>
         </p>
         <p className="hidden md:block text-ink-mid text-xs px-2 line-clamp-3 leading-relaxed">
-          {desc
-            ? desc
-            : "Plan Desc: Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem, tenetur iusto nostrum neque mollitia temporibus sequi molestias dolorum dolores sit."}
+          {desc ? desc : "plan description here"}
         </p>
         <div className="flex items-end self-end w-full mt-auto">
           <div className="flex-1 min-w-0">

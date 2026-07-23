@@ -30,7 +30,7 @@ export default async function MembersPage({
         </div>
       }
     >
-      <MembersClient members={members.reverse()} />
+      <MembersClient clusterId={id} members={members.reverse()} />
     </Suspense>
   );
 }

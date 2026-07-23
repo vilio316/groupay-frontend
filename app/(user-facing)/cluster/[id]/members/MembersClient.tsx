@@ -4,17 +4,21 @@ import { soraClass } from "@/app/fonts";
 import { ClusterMember } from "../ClusterDetailsClient";
 import { MemberCard } from "@/app/components/MemberCard";
 import { usePathname } from "next/navigation";
-import { SignOut } from "@phosphor-icons/react";
+import { SignOut, UserPlus } from "@phosphor-icons/react";
 import { useSession } from "@/lib/authClient";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import InviteMemberModal from "@/app/components/InviteMemberModal";
 
 export default function MembersClient({
+  clusterId,
   members,
 }: {
+  clusterId: string;
   members: ClusterMember[];
 }) {
   const pathname = usePathname();
   const { data } = useSession();
+  const [inviteOpen, setInviteOpen] = useState(false);
 
   const sortedMembers = useMemo(() => {
     if (!data?.user.id) return members;
@@ -32,11 +36,26 @@ export default function MembersClient({
           <h1 className={`${soraClass} text-xl font-bold text-forest-text`}>
             {pathname.includes("plan") ? "Plan" : "Cluster"} Members
           </h1>
-          <button className="h-11 px-5 flex items-center gap-2 rounded-[9999px] border border-card-border text-ink-mid text-xs font-semibold uppercase tracking-wider hover:bg-[rgba(229,55,58,0.08)] hover:text-red hover:border-red transition-all">
-            <SignOut className="w-4 h-4" weight="bold" />
-            Exit {pathname.includes("plan") ? "Plan" : "Cluster"}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setInviteOpen(true)}
+              className="h-11 px-5 flex items-center gap-2 rounded-[9999px] border border-card-border text-ink-mid text-xs font-semibold uppercase tracking-wider hover:bg-teal/10 hover:text-teal hover:border-teal transition-all"
+            >
+              <UserPlus className="w-4 h-4" weight="bold" />
+              Invite
+            </button>
+            <button className="h-11 px-5 flex items-center gap-2 rounded-[9999px] border border-card-border text-ink-mid text-xs font-semibold uppercase tracking-wider hover:bg-[rgba(229,55,58,0.08)] hover:text-red hover:border-red transition-all">
+              <SignOut className="w-4 h-4" weight="bold" />
+              Exit {pathname.includes("plan") ? "Plan" : "Cluster"}
+            </button>
+          </div>
         </div>
+
+        <InviteMemberModal
+          open={inviteOpen}
+          clusterId={clusterId}
+          onClose={() => setInviteOpen(false)}
+        />
 
         <div className="mb-5">
           <input

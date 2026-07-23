@@ -1,6 +1,7 @@
 "use client";
 
 import Avatars from "@/app/components/AvatarsCircles";
+import { FormField } from "@/app/components/FormField";
 import { BalanceCard } from "@/app/components/BalanceCard";
 import PaymentModal from "@/app/components/PaymentModal";
 import PlanCard from "@/app/components/PlanCard";
@@ -270,7 +271,9 @@ export default function ClusterDetailsClient({
               <div className="w-16 h-16 rounded-full bg-green/10 flex items-center justify-center mx-auto mb-4">
                 <BankIcon className="w-8 h-8 fill-green" weight="fill" />
               </div>
-              <h3 className={`${soraClass} text-xl font-bold text-forest-text mb-2`}>
+              <h3
+                className={`${soraClass} text-xl font-bold text-forest-text mb-2`}
+              >
                 Cluster Account
               </h3>
               <p className="text-sm text-ink-mid mb-6">
@@ -347,38 +350,6 @@ export default function ClusterDetailsClient({
         accountNumber={accountNumber}
         isShown={isModalShown}
         prompter={promptButton}
-      />
-    </div>
-  );
-}
-
-function FormField({
-  label,
-  value,
-  onChange,
-  placeholder,
-  type = "text",
-  maxLength,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-  type?: string;
-  maxLength?: number;
-}) {
-  return (
-    <div>
-      <label className="block text-xs uppercase font-semibold text-ink-mid tracking-wider mb-1">
-        {label}
-      </label>
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        maxLength={maxLength}
-        className="w-full rounded-xl border border-card-border px-4 py-2.5 text-sm text-forest-text bg-white focus:outline-none focus:ring-2 focus:ring-green/40 focus:border-green transition-all"
       />
     </div>
   );

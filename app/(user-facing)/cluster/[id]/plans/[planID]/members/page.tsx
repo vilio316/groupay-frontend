@@ -18,5 +18,5 @@ export default async function MembersPage({
   );
   const planResponse: PlanDetails = await planRequest.json();
   const { members: planMembers } = planResponse;
-  return <MembersClient members={planMembers} />;
+  return <MembersClient clusterId={id} members={planMembers} />;
 }

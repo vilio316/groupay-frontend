@@ -50,7 +50,7 @@ export function BalanceCard({
           {balance ? (balance / 100).toLocaleString() : (0).toLocaleString()}
         </p>
       </div>
-      <div className="col-span-4 justify-end flex items-center gap-x-4 text-center">
+      <div className="col-span-4 justify-end md:flex grid grid-cols-2 items-center gap-x-4 text-center my-2">
         {isDashboard && onAccountClick && (
           <button title="My Account">
             <div className="flex justify-center">

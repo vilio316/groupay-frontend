@@ -36,7 +36,7 @@ export default function ThemeToggle() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-ink-mid hover:bg-[#f0f7f0] dark:hover:bg-[#1a2e24] hover:text-forest dark:hover:text-forest transition-all duration-150 w-full"
+        className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-ink-mid hover:bg-[#f0f7f0] dark:hover:bg-[#1a2e24]  transition-all duration-150 w-full"
         aria-label="Toggle theme"
       >
         <IconComponent className="h-4.5 w-4.5 shrink-0" weight="regular" />
@@ -57,7 +57,7 @@ export default function ThemeToggle() {
               }}
               className={`flex items-center gap-3 w-full px-3 py-2.5 text-sm transition-colors ${
                 theme === value
-                  ? "bg-[#f0f7f0] dark:bg-[#1a2e24] text-forest font-medium"
+                  ? "bg-[#f0f7f0] dark:bg-[#1a2e24]  font-medium"
                   : "text-ink-mid hover:bg-[#f5faf5] dark:hover:bg-[#162c20]"
               }`}
             >

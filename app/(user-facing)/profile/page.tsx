@@ -70,7 +70,8 @@ function Skeleton({ className }: { className?: string }) {
 
 export default function ProfilePage() {
   const session = useSession();
-  const { userDetails, isLoading, isSuccess, myDataError, refetchUserData } = useMyUserData();
+  const { userDetails, isLoading, isSuccess, myDataError, refetchUserData } =
+    useMyUserData();
   const { hasPin, PINError } = usePinStatus();
   const [showPinSetup, setShowPinSetup] = useState(false);
   const [loading, updateLoading] = useState(false);
@@ -88,7 +89,7 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="p-6 space-y-6">
+      <div className="md:p-6 md:space-y-6 p-3 space-y-3">
         <Skeleton className="h-8 w-48" />
         <div className="flex items-center gap-4 p-4 border border-card-border rounded-xl">
           <Skeleton className="h-28 w-28 rounded-full" />
@@ -104,7 +105,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="md:p-6 md:space-y-6 p-3 space-y-3">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className={`text-3xl font-bold text-forest-text ${soraClass}`}>
@@ -257,44 +258,46 @@ export default function ProfilePage() {
         </h2>
         {PINError ? (
           <div className="p-4 border border-card-border rounded-xl">
-            <p className="text-red text-sm font-semibold">Could not check PIN status</p>
+            <p className="text-red text-sm font-semibold">
+              Could not check PIN status
+            </p>
           </div>
         ) : (
-        <div className="flex items-center justify-between p-4 border border-card-border rounded-xl hover:border-teal/30 transition-all">
-          <div className="flex items-center gap-3">
-            <div
-              className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${hasPin ? "bg-green/10 text-green" : "bg-amber/10 text-amber"}`}
+          <div className="flex items-center justify-between p-4 border border-card-border rounded-xl hover:border-teal/30 transition-all">
+            <div className="flex items-center gap-3">
+              <div
+                className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${hasPin ? "bg-green/10 text-green" : "bg-amber/10 text-amber"}`}
+              >
+                {hasPin ? (
+                  <LockIcon weight="fill" className="text-xl" />
+                ) : (
+                  <LockOpenIcon weight="fill" className="text-xl" />
+                )}
+              </div>
+              <div>
+                <p className="font-semibold text-sm text-forest-text">
+                  {hasPin ? "PIN Active" : "No PIN Set"}
+                </p>
+                <p className="text-xs text-ink-mid">
+                  {hasPin
+                    ? "Your transactions are PIN-protected"
+                    : "Secure your wallet transfers and contributions"}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                if (hasPin) {
+                  window.location.href = "/profile/pin";
+                } else {
+                  setShowPinSetup(true);
+                }
+              }}
+              className="inline-flex items-center gap-1.5 bg-teal text-white text-xs font-bold px-4 py-2 rounded-full hover:bg-teal/90 transition-all shrink-0"
             >
-              {hasPin ? (
-                <LockIcon weight="fill" className="text-xl" />
-              ) : (
-                <LockOpenIcon weight="fill" className="text-xl" />
-              )}
-            </div>
-            <div>
-              <p className="font-semibold text-sm text-forest-text">
-                {hasPin ? "PIN Active" : "No PIN Set"}
-              </p>
-              <p className="text-xs text-ink-mid">
-                {hasPin
-                  ? "Your transactions are PIN-protected"
-                  : "Secure your wallet transfers and contributions"}
-              </p>
-            </div>
+              {hasPin ? "Change" : "Set PIN"}
+            </button>
           </div>
-          <button
-            onClick={() => {
-              if (hasPin) {
-                window.location.href = "/profile/pin";
-              } else {
-                setShowPinSetup(true);
-              }
-            }}
-            className="inline-flex items-center gap-1.5 bg-teal text-white text-xs font-bold px-4 py-2 rounded-full hover:bg-teal/90 transition-all shrink-0"
-          >
-            {hasPin ? "Change" : "Set PIN"}
-          </button>
-        </div>
         )}
       </div>
 

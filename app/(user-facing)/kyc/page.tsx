@@ -5,7 +5,6 @@ import { KYCDashboardBanner } from "@/claudeComps/KYCDashBanner";
 import { KYCTier, KYCStatus } from "@/claudeComps/tokens";
 import { useRouter } from "next/navigation";
 import { ArrowLeftIcon } from "@phosphor-icons/react";
-import Link from "next/link";
 
 export default function KYCStartPage() {
   const router = useRouter();
@@ -15,7 +14,7 @@ export default function KYCStartPage() {
 
   if (showWizard) {
     return (
-      <div className="min-h-screen bg-white pb-24">
+      <div className="min-h-screen pb-24">
         <div className="flex items-center gap-3 px-6 pt-6 pb-2">
           <button
             onClick={() => setShowWizard(false)}
@@ -24,8 +23,12 @@ export default function KYCStartPage() {
             <ArrowLeftIcon className="w-5 h-5" weight="bold" />
           </button>
           <div>
-            <h1 className="text-xl font-bold text-forest-text">KYC Verification</h1>
-            <p className="text-sm text-ink-mid">Complete your identity verification</p>
+            <h1 className="text-xl font-bold text-forest-text">
+              KYC Verification
+            </h1>
+            <p className="text-sm text-ink-mid">
+              Complete your identity verification
+            </p>
           </div>
         </div>
         <KYCWizard
@@ -40,11 +43,9 @@ export default function KYCStartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f7faf7] pb-24">
-      <div className="bg-white border-b border-[#e8efe8] px-6 py-6">
-        <h1
-          className={`text-2xl font-bold text-forest-text leading-tight`}
-        >
+    <div className="min-h-screen pb-24">
+      <div className="border-b border-[#e8efe8] px-6 py-6">
+        <h1 className={`text-2xl font-bold text-forest-text leading-tight`}>
           KYC Verification
         </h1>
         <p className="text-sm text-ink-mid mt-1">
@@ -61,15 +62,41 @@ export default function KYCStartPage() {
       </div>
 
       <div className="px-6 mt-8 max-w-2xl">
-        <h2 className="text-lg font-bold text-forest-text mb-3">How KYC Works</h2>
+        <h2 className="text-lg font-bold text-forest-text mb-3">
+          How KYC Works
+        </h2>
         <div className="space-y-3">
           {[
-            { step: "1", title: "Phone Verification", desc: "Verify your phone number with a one-time password" },
-            { step: "2", title: "BVN / NIN Verification", desc: "Link your BVN or NIN to confirm your identity" },
-            { step: "3", title: "Government ID Upload", desc: "Upload a valid government-issued ID document" },
-            { step: "4", title: "Address Verification", desc: "Provide your residential address and proof" },
-            { step: "5", title: "Next of Kin", desc: "Add an emergency contact person" },
-            { step: "6", title: "Liveness Check", desc: "Facial verification to confirm your identity" },
+            {
+              step: "1",
+              title: "Phone Verification",
+              desc: "Verify your phone number with a one-time password",
+            },
+            {
+              step: "2",
+              title: "BVN / NIN Verification",
+              desc: "Link your BVN or NIN to confirm your identity",
+            },
+            {
+              step: "3",
+              title: "Government ID Upload",
+              desc: "Upload a valid government-issued ID document",
+            },
+            {
+              step: "4",
+              title: "Address Verification",
+              desc: "Provide your residential address and proof",
+            },
+            {
+              step: "5",
+              title: "Next of Kin",
+              desc: "Add an emergency contact person",
+            },
+            {
+              step: "6",
+              title: "Liveness Check",
+              desc: "Facial verification to confirm your identity",
+            },
           ].map(({ step, title, desc }) => (
             <div
               key={step}
@@ -79,7 +106,9 @@ export default function KYCStartPage() {
                 {step}
               </div>
               <div>
-                <p className="font-semibold text-forest-text text-sm">{title}</p>
+                <p className="font-semibold text-forest-text text-sm">
+                  {title}
+                </p>
                 <p className="text-xs text-ink-mid mt-0.5">{desc}</p>
               </div>
             </div>

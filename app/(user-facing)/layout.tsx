@@ -105,7 +105,7 @@ export default function DashboardClient({
 
           <div
             ref={contentRef}
-            className="flex-1 ml-5 overflow-y-auto p-2 md:p-6 bg-white dark:bg-[#0a1812] transition-colors"
+            className="flex-1 md:ml-5 ml-2 overflow-y-auto p-2 md:p-6 bg-white dark:bg-[#0a1812] transition-colors"
           >
             <Suspense
               fallback={

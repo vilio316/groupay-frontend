@@ -19,7 +19,7 @@ import { useSession } from "@/lib/authClient";
 import { useState } from "react";
 import ThemeToggle from "@/app/components/ThemeToggle";
 
-const bottomLinks = [{ href: "/settings", label: "Settings", Icon: GearIcon }];
+const bottomLinks = [{ href: "/profile", label: "Settings", Icon: GearIcon }];
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -58,7 +58,7 @@ export default function Sidebar() {
         </div>
         <Link
           href="/dashboard"
-          className={`${soraClass} font-bold text-forest text-[18px] leading-none tracking-tight`}
+          className={`${soraClass} font-bold text-[18px] leading-none tracking-tight`}
         >
           GrouPay
         </Link>
@@ -82,8 +82,8 @@ export default function Sidebar() {
                 transition-all duration-150
                 ${
                   active
-                    ? "bg-forest text-white shadow-md shadow-forest/20"
-                    : "text-ink-mid hover:bg-[#f0f7f0] dark:hover:bg-[#1a2e24] hover:text-forest"
+                    ? "bg-forest text-white shadow-md shadow-forest/20 dark:text-white font-semibold"
+                    : "text-ink-mid dark:text-green hover:bg-[#f0f7f0] dark:hover:bg-[#1a2e24] hover:font-bold"
                 }
               `}
             >
@@ -95,9 +95,7 @@ export default function Sidebar() {
               <Icon
                 weight={active ? "fill" : "regular"}
                 className={`h-4.5 w-4.5 shrink-0 transition-transform duration-150 ${
-                  active
-                    ? "text-white"
-                    : "text-ink-mid group-hover:text-forest group-hover:scale-110"
+                  active ? "text-white" : "text-ink-mid group-hover:scale-110"
                 }`}
               />
 
@@ -192,7 +190,7 @@ export default function Sidebar() {
         </div>
         <div className="flex-1 min-w-0">
           <p
-            className={`${soraClass} text-[13px] font-semibold text-forest truncate leading-tight`}
+            className={`${soraClass} text-[13px] font-semibold truncate leading-tight`}
           >
             {data?.user.name ? data.user.name : "User Account"}
           </p>

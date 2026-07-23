@@ -66,11 +66,21 @@ export default function DashboardPage() {
   const { data } = useSession();
   const { hasPin, isLoading: checkingPinStatus, PINError } = usePinStatus();
 
-  const { clusterResponse, isLoading, isSuccess, myClustersError, refetchMyClusters } =
-    useMyClusters();
+  const {
+    clusterResponse,
+    isLoading,
+    isSuccess,
+    myClustersError,
+    refetchMyClusters,
+  } = useMyClusters();
 
-  const { transactionData, transactionsGotten, isGettingTxns, transactionsError, refetchTxns } =
-    useTransactions(data?.user?.id);
+  const {
+    transactionData,
+    transactionsGotten,
+    isGettingTxns,
+    transactionsError,
+    refetchTxns,
+  } = useTransactions(data?.user?.id);
 
   const {
     isFetching: loadingBalance,
@@ -184,7 +194,7 @@ export default function DashboardPage() {
   const firstName = data?.user.name ? data.user.name.split(" ")[0] : "there";
 
   return (
-    <div ref={rootRef} className="min-h-screen bg-[#f7faf7] pb-24">
+    <div ref={rootRef} className="min-h-screen pb-24">
       <UserAccountModal
         isShown={showUserAccount}
         onClose={() => setShowUserAccount(false)}
@@ -246,42 +256,6 @@ export default function DashboardPage() {
         </div>
 
         <div className="dash-quick-actions md:flex-row md:flex grid grid-cols-2 gap-3 mt-4">
-          {/* {[
-            {
-              label: "Add Money",
-              type: "add" as const,
-              Icon: ArrowDownIcon,
-              color:
-                "bg-green/10 text-green hover:bg-green hover:text-white border border-green/20",
-            },
-            {
-              label: "Withdraw",
-              type: "withdraw" as const,
-              Icon: ArrowUpIcon,
-              color:
-                "bg-teal/10 text-teal hover:bg-teal hover:text-white border border-teal/20",
-            },
-            {
-              label: "Transfer",
-              type: "transfer" as const,
-              Icon: ArrowsLeftRightIcon,
-              color:
-                "bg-forest/10 text-forest-text hover:bg-forest hover:text-white border border-forest/20",
-            },
-          ].map(({ label, type, Icon, color }) => (
-            <button
-              key={type}
-              onClick={() => {
-                updateModalState(true);
-                updatePrompter(type);
-              }}
-              className={`action-btn opacity-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-px hover:shadow-md ${color}`}
-            >
-              <Icon weight="bold" className="w-4 h-4" />
-              {label}
-            </button>
-          ))} */}
-
           <button
             onClick={() => setShowClusterTransfer(true)}
             className={`action-btn opacity-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-px hover:shadow-md bg-teal/10 text-teal hover:bg-teal hover:text-white border border-teal/20`}

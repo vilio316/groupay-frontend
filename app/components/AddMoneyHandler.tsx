@@ -31,8 +31,6 @@ export default function AddMoneyHandler({
   const [trxAmount, updateAmount] = useState(500);
   const [transactionHeading, updateHeading] = useState("Cluster Funding");
   const queryClient = useQueryClient();
-  const [payError, setPayError] = useState("");
-  const [isPayingFromAccount, setIsPayingFromAccount] = useState(false);
   const [showPinVerify, setShowPinVerify] = useState(false);
   const [showPinSetup, setShowPinSetup] = useState(false);
   const [showPinRequired, setShowPinRequired] = useState(false);
@@ -56,10 +54,8 @@ export default function AddMoneyHandler({
     pinActionRef.current();
   };
 
-  const handleGroupayPayment = async () => {
-    setIsPayingFromAccount(true);
-    setPayError("");
-    try {
+  const groupayPaymentMutation = useMutation({
+    mutationFn: async () => {
       const { data } = await getSession();
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/${params.id}/pay-from-account`,
@@ -78,16 +74,14 @@ export default function AddMoneyHandler({
         const err = await res.json().catch(() => null);
         throw new Error(err?.message || "Payment failed");
       }
+    },
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cluster", params.id] });
       queryClient.invalidateQueries({ queryKey: ["account_details"] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       updatePaymentStage(2);
-    } catch (e: any) {
-      setPayError(e.message || "Something went wrong");
-    } finally {
-      setIsPayingFromAccount(false);
-    }
-  };
+    },
+  });
 
   const { mutateAsync: initiatePayment, isPending } = useMutation({
     mutationFn: async () => {
@@ -352,18 +346,18 @@ export default function AddMoneyHandler({
             />
           </div>
 
-          {payError && (
+          {groupayPaymentMutation.error && (
             <p className="text-sm text-red bg-red/5 rounded-xl px-3 py-2">
-              {payError}
+              {groupayPaymentMutation.error.message}
             </p>
           )}
 
           <button
             className="w-full flex justify-center uppercase bg-green text-white rounded-[9999px] md:py-3 md:px-6 py-1 px-2 font-semibold hover:bg-greener transition-all disabled:opacity-50"
-            onClick={() => requirePin(handleGroupayPayment)}
-            disabled={isPayingFromAccount}
+            onClick={() => requirePin(() => groupayPaymentMutation.mutate())}
+            disabled={groupayPaymentMutation.isPending}
           >
-            {isPayingFromAccount ? "Processing..." : "Confirm"}
+            {groupayPaymentMutation.isPending ? "Processing..." : "Confirm"}
           </button>
         </div>
       )}

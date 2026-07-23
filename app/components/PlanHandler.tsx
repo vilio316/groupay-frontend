@@ -4,7 +4,7 @@ import { AtIcon, BankIcon } from "@phosphor-icons/react";
 import { useParams } from "next/navigation";
 import { usePinStatus } from "../hooks/queryHooks";
 import { getSession } from "@/lib/authClient";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import PinSetupModal from "./PinSetupModal";
 import PinVerifyModal from "./PinVerifyModal";
 
@@ -28,60 +28,58 @@ export default function PlanHandler({
   const pinRef = useRef<string>("");
   const pendingActionRef = useRef<() => void>(() => {});
   const { hasPin } = usePinStatus();
-  const [isPayingPlan, setIsPayingPlan] = useState(false);
-  const [planPayError, setPlanPayError] = useState("");
   const queryClient = useQueryClient();
   const [showPinVerify, setShowPinVerify] = useState(false);
   const [showPinSetup, setShowPinSetup] = useState(false);
   const [showPinRequired, setShowPinRequired] = useState(false);
+
   const onPinVerified = (pin: string) => {
     setShowPinVerify(false);
     pinRef.current = pin;
     pendingActionRef.current();
   };
 
-  const handlePlanContribution = async () => {
-    if (!params.id) return;
+  const planContributionMutation = useMutation({
+    mutationFn: async () => {
+      const { data } = await getSession();
+      if (!data?.user) throw new Error("Not authenticated");
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/${params.id}/pay-from-account`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            userId: data.user.id,
+            amount: planAmount * 100,
+            transactionHeading: "Plan Contribution",
+            planId: params.planID || undefined,
+            pin: pinRef.current,
+          }),
+        },
+      );
+      if (!res.ok) {
+        const err = await res.json().catch(() => null);
+        throw new Error(err?.message || "Payment failed");
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cluster", params.id] });
+      queryClient.invalidateQueries({ queryKey: ["account_details"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      updateStage(1);
+    },
+  });
 
+  const handlePlanContribution = () => {
+    if (!params.id) return;
     if (source !== "external") {
       if (!pinRef.current && hasPin) {
         pendingActionRef.current = handlePlanContribution;
         setShowPinVerify(true);
         return;
       }
-      setIsPayingPlan(true);
-      setPlanPayError("");
-      try {
-        const { data } = await getSession();
-        if (!data?.user) throw new Error("Not authenticated");
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/clusters/${params.id}/pay-from-account`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify({
-              userId: data.user.id,
-              amount: planAmount * 100,
-              transactionHeading: "Plan Contribution",
-              planId: params.planID || undefined,
-              pin: pinRef.current,
-            }),
-          },
-        );
-        if (!res.ok) {
-          const err = await res.json().catch(() => null);
-          throw new Error(err?.message || "Payment failed");
-        }
-        queryClient.invalidateQueries({ queryKey: ["cluster", params.id] });
-        queryClient.invalidateQueries({ queryKey: ["account_details"] });
-        queryClient.invalidateQueries({ queryKey: ["transactions"] });
-        updateStage(1);
-      } catch (e: any) {
-        setPlanPayError(e.message || "Something went wrong");
-      } finally {
-        setIsPayingPlan(false);
-      }
+      planContributionMutation.mutate();
     } else {
       updateStage(1);
     }
@@ -154,18 +152,18 @@ export default function PlanHandler({
             </label>
           </div>
 
-          {planPayError && (
+          {planContributionMutation.error && (
             <p className="text-sm text-red bg-red/5 rounded-xl px-3 py-2">
-              {planPayError}
+              {planContributionMutation.error.message}
             </p>
           )}
 
           <button
             className="w-full text-white md:py-3 md:px-6 py-1 px-2 bg-green font-semibold uppercase rounded-[9999px] hover:bg-greener transition-all disabled:opacity-50"
             onClick={handlePlanContribution}
-            disabled={isPayingPlan}
+            disabled={planContributionMutation.isPending}
           >
-            {isPayingPlan ? (
+            {planContributionMutation.isPending ? (
               <span className="flex items-center justify-center gap-2">
                 <svg
                   className="animate-spin h-4 w-4"

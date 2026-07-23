@@ -3,7 +3,7 @@ import { AtIcon, BankIcon, ArrowRightIcon } from "@phosphor-icons/react";
 import { Dispatch, SetStateAction, useState } from "react";
 import { User } from "../(user-facing)/cluster/[id]/ClusterDetailsClient";
 import { getSession } from "@/lib/authClient";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
 import PinVerifyModal from "./PinVerifyModal";
 import PinSetupModal from "./PinSetupModal";
@@ -19,8 +19,8 @@ export default function TransferMoneyHandler({
   setSelectedUser,
 }: {
   paymentStage: number;
-  changeHandler: (param: string) => void; //should receive a function to update payment source ("external, groupay, etc")
-  clickHandler: (number: number) => void; //should receive a function to update payment stage
+  changeHandler: (param: string) => void;
+  clickHandler: (number: number) => void;
   source: string;
   resetFunction: () => void;
   selectedUser: User | null;
@@ -34,8 +34,6 @@ export default function TransferMoneyHandler({
   const [showPinVerify, setShowPinVerify] = useState(false);
   const [showPinSetup, setShowPinSetup] = useState(false);
   const [showPinRequired, setShowPinRequired] = useState(false);
-  const [isTransferring, setIsTransferring] = useState(false);
-  const [transferError, setTransferError] = useState("");
   const pendingActionRef = useRef<() => void>(() => {});
   const { hasPin, isLoading: checkingPin } = usePinStatus();
 
@@ -57,11 +55,9 @@ export default function TransferMoneyHandler({
     pendingActionRef.current();
   };
 
-  const handleUserTransfer = async () => {
-    if (!selectedUser) return;
-    setIsTransferring(true);
-    setTransferError("");
-    try {
+  const userTransferMutation = useMutation({
+    mutationFn: async () => {
+      if (!selectedUser) return;
       const { data: sessionData } = await getSession();
       if (!sessionData?.user) throw new Error("Not authenticated");
       const res = await fetch(
@@ -82,16 +78,14 @@ export default function TransferMoneyHandler({
         const err = await res.json().catch(() => null);
         throw new Error(err?.message || "Transfer failed");
       }
+    },
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["account_details"] });
       queryClient.invalidateQueries({ queryKey: ["userDetails"] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       clickHandler(2);
-    } catch (e: any) {
-      setTransferError(e.message || "Something went wrong");
-    } finally {
-      setIsTransferring(false);
-    }
-  };
+    },
+  });
 
   const {
     data: userResults,
@@ -421,17 +415,17 @@ export default function TransferMoneyHandler({
               </div>
 
               {/* error handling behaviour on mutation */}
-              {transferError && (
+              {userTransferMutation.error && (
                 <p className="text-sm text-red bg-red/5 rounded-xl px-3 py-2">
-                  {transferError}
+                  {userTransferMutation.error.message}
                 </p>
               )}
               <button
                 className="w-full flex justify-center uppercase bg-green text-white rounded-[9999px] md:py-3 md:px-6 py-1 px-2 font-semibold hover:bg-greener transition-all mt-2 disabled:opacity-50"
-                onClick={() => requirePin(handleUserTransfer)}
-                disabled={isTransferring}
+                onClick={() => requirePin(() => userTransferMutation.mutate())}
+                disabled={userTransferMutation.isPending}
               >
-                {isTransferring ? (
+                {userTransferMutation.isPending ? (
                   <span className="flex items-center gap-2">
                     <svg
                       className="animate-spin h-4 w-4"

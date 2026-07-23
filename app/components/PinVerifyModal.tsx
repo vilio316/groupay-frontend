@@ -5,6 +5,7 @@ import { XIcon, LockIcon, WarningCircleIcon } from "@phosphor-icons/react";
 import { soraClass } from "../fonts";
 import { useMutation } from "@tanstack/react-query";
 import { getSession } from "@/lib/authClient";
+import RateLimitError from "./RateLimitError";
 
 export default function PinVerifyModal({
   isShown,
@@ -21,6 +22,7 @@ export default function PinVerifyModal({
 }) {
   const [pin, setPin] = useState(["", "", "", ""]);
   const [error, setError] = useState("");
+  const [rateLimited, setRateLimited] = useState(false);
 
   const { mutateAsync: verify, isPending } = useMutation({
     mutationFn: async () => {
@@ -39,6 +41,7 @@ export default function PinVerifyModal({
         },
       );
       if (!res.ok) {
+        if (res.status === 429) throw new Error("RATE_LIMITED");
         const err = await res.json().catch(() => null);
         throw new Error(err?.message || "PIN verification failed");
       }
@@ -50,7 +53,11 @@ export default function PinVerifyModal({
       onSuccess(enteredPin);
     },
     onError: (e: Error) => {
-      setError(e.message || "PIN verification failed");
+      if (e.message === "RATE_LIMITED") {
+        setRateLimited(true);
+      } else {
+        setError(e.message);
+      }
     },
   });
 
@@ -86,6 +93,7 @@ export default function PinVerifyModal({
   const handleReset = () => {
     setPin(["", "", "", ""]);
     setError("");
+    setRateLimited(false);
     onClose();
   };
 
@@ -103,6 +111,10 @@ export default function PinVerifyModal({
           <XIcon className="w-6 h-6" weight="bold" />
         </button>
 
+        {rateLimited ? (
+          <RateLimitError onDismiss={handleReset} />
+        ) : (
+          <>
         <div className="text-center mb-6 mt-2">
           <div className="w-14 h-14 rounded-full bg-amber/10 flex items-center justify-center mx-auto mb-3">
             <LockIcon className="w-7 h-7 fill-amber" weight="fill" />
@@ -159,6 +171,8 @@ export default function PinVerifyModal({
         >
           Cancel
         </button>
+          </>
+        )}
       </div>
     </div>
   );

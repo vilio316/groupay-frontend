@@ -5,6 +5,7 @@ import { XIcon, CheckCircleIcon, LockIcon } from "@phosphor-icons/react";
 import { soraClass } from "../fonts";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getSession } from "@/lib/authClient";
+import RateLimitError from "./RateLimitError";
 
 export default function PinSetupModal({
   isShown,
@@ -19,6 +20,7 @@ export default function PinSetupModal({
   const [confirmPin, setConfirmPin] = useState(["", "", "", ""]);
   const [step, setStep] = useState<"set" | "confirm" | "done">("set");
   const [error, setError] = useState("");
+  const [rateLimited, setRateLimited] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -39,6 +41,7 @@ export default function PinSetupModal({
         },
       );
       if (!res.ok) {
+        if (res.status === 429) throw new Error("RATE_LIMITED");
         const err = await res.json().catch(() => null);
         throw new Error(err?.message || "Failed to set PIN");
       }
@@ -47,6 +50,13 @@ export default function PinSetupModal({
     onSuccess: () => {
       setStep("done");
       queryClient.invalidateQueries({ queryKey: ["pinStatus"] });
+    },
+    onError: (e: Error) => {
+      if (e.message === "RATE_LIMITED") {
+        setRateLimited(true);
+      } else {
+        setError(e.message);
+      }
     },
   });
 
@@ -107,6 +117,7 @@ export default function PinSetupModal({
     setConfirmPin(["", "", "", ""]);
     setStep("set");
     setError("");
+    setRateLimited(false);
     onClose();
   };
 
@@ -122,7 +133,9 @@ export default function PinSetupModal({
           <XIcon className="w-6 h-6" weight="bold" />
         </button>
 
-        {step === "done" ? (
+        {rateLimited ? (
+          <RateLimitError onDismiss={handleReset} />
+        ) : step === "done" ? (
           <div className="text-center py-4">
             <div className="w-16 h-16 rounded-full bg-green/10 flex items-center justify-center mx-auto mb-4">
               <CheckCircleIcon className="w-8 h-8 fill-green" weight="bold" />

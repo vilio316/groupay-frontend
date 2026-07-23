@@ -1,7 +1,7 @@
 "use client";
 import { useSession } from "@/lib/authClient";
 import { ClusterMember } from "../(user-facing)/cluster/[id]/ClusterDetailsClient";
-import { CheckCircleIcon } from "@phosphor-icons/react";
+import { CheckCircleIcon, CrownIcon } from "@phosphor-icons/react";
 
 function getInitials(name: string) {
   return name
@@ -16,6 +16,7 @@ function getInitials(name: string) {
 export function MemberCard({ member }: { member: ClusterMember }) {
   const { data } = useSession();
   const isYou = data?.user.id === member.user.id;
+  const isOwner = member.role === "owner";
   const name = member.user.name || "Unknown";
   const emailName = member.user.email.split("@")[0];
   const hasImage = !!member.user.image;
@@ -46,6 +47,12 @@ export function MemberCard({ member }: { member: ClusterMember }) {
         <p className="text-xs text-[#4a5568] truncate">@{emailName}</p>
       </div>
       <div className="shrink-0 flex items-center gap-2">
+        {isOwner && (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-[9999px] text-[11px] font-semibold bg-amber-100 text-amber-800">
+            <CrownIcon className="w-3 h-3" weight="bold" />
+            Owner
+          </span>
+        )}
         {isYou && (
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-[9999px] text-[11px] font-semibold bg-[rgba(73,198,53,0.15)] text-[#1a6b0e]">
             <CheckCircleIcon className="w-3 h-3" weight="bold" />

@@ -58,6 +58,7 @@ export interface ClusterMember {
   userId: string;
   clusterId: string;
   user: User;
+  role?: string;
 }
 
 export interface User {

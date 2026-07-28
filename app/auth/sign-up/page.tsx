@@ -5,8 +5,9 @@ import { CreditCardIcon } from "@phosphor-icons/react/dist/ssr";
 import { soraClass } from "@/app/fonts";
 import Link from "next/link";
 import { signUp, signIn } from "@/lib/authClient";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { redirect } from "next/navigation";
+import AuthErrorBanner from "@/app/components/AuthErrorBanner";
 
 export default function SignUpPage() {
   const [email, setEmail] = useState("");
@@ -15,6 +16,25 @@ export default function SignUpPage() {
   const [phone, updatePhone] = useState("");
   const [lastName, setLastName] = useState("");
   const [isPasswordShown, togglePasswordShow] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [termsAccepted, setTermsAccepted] = useState(false);
+
+  const validate = useCallback(() => {
+    const errs: Record<string, string> = {};
+    if (!firstName.trim()) errs.firstName = "First name is required";
+    if (!lastName.trim()) errs.lastName = "Last name is required";
+    if (!email.trim()) errs.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(email)) errs.email = "Enter a valid email address";
+    if (!password) errs.password = "Password is required";
+    else if (password.length < 8) errs.password = "Must be at least 8 characters";
+    if (!termsAccepted) errs.terms = "You must agree to the Terms of Use";
+    setFieldErrors(errs);
+    return Object.keys(errs).length === 0;
+  }, [firstName, lastName, email, password, termsAccepted]);
+
+  const clearFieldError = (field: string) => setFieldErrors((p) => ({ ...p, [field]: "" }));
 
   return (
     <div className="flex flex-col items-center justify-center py-12 px-10">
@@ -35,12 +55,13 @@ export default function SignUpPage() {
           <button
             className="oauth-btn flex-1 flex items-center justify-center gap-2 rounded-[10px] border border-solid border-card-border font-semibold text-ink cursor-pointer hover:border-mist transition-all hover: shadow-sm hover:shadow-teal/25 p-3"
             onClick={async () => {
-              const data = await signIn.social(
+              await signIn.social(
                 {
                   provider: "google",
                 },
                 {
                   onSuccess: () => redirect("/dashboard"),
+                  onError: (e) => setError(e.error.message),
                 },
               );
             }}
@@ -66,7 +87,20 @@ export default function SignUpPage() {
             Google
           </button>
 
-          <button className="oauth-btn  flex-1 flex items-center justify-center gap-2 rounded-[10px] border border-solid border-card-border font-semibold text-ink cursor-pointer hover:border-mist transition-all hover: shadow-sm hover:shadow-teal/25 p-3">
+          <button
+            className="oauth-btn flex-1 flex items-center justify-center gap-2 rounded-[10px] border border-solid border-card-border font-semibold text-ink cursor-pointer hover:border-mist transition-all hover: shadow-sm hover:shadow-teal/25 p-3"
+            onClick={async () => {
+              await signIn.social(
+                {
+                  provider: "apple",
+                },
+                {
+                  onSuccess: () => redirect("/dashboard"),
+                  onError: (e) => setError(e.error.message),
+                },
+              );
+            }}
+          >
             <svg
               viewBox="0 0 24 24"
               fill="currentColor"
@@ -82,7 +116,9 @@ export default function SignUpPage() {
           or sign up with email
         </div>
 
-        <form id="signUp">
+        <AuthErrorBanner error={error} />
+
+        <form id="signUp" onSubmit={(e) => e.preventDefault()}>
           <div className="grid md:grid-cols-2 gap-x-2">
             <div className="mb-4">
               <label
@@ -92,13 +128,14 @@ export default function SignUpPage() {
                 First name
               </label>
               <input
-                className="h-12 px-3 outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border border-card-border rounded-xl"
+                className={`h-12 px-3 outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border rounded-xl w-full ${fieldErrors.firstName ? "border-red focus:border-red" : "border-card-border"}`}
                 type="text"
                 id="firstName"
-                onChange={(e) => setFirstName(e.target.value)}
+                onChange={(e) => { setFirstName(e.target.value); clearFieldError("firstName"); }}
                 placeholder="Amara"
                 autoComplete="given-name"
               />
+              {fieldErrors.firstName && <p className="text-xs text-red mt-1">{fieldErrors.firstName}</p>}
             </div>
 
             <div className="mb-4">
@@ -109,13 +146,14 @@ export default function SignUpPage() {
                 Last name
               </label>
               <input
-                className="h-12 px-3 outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border border-card-border rounded-xl"
+                className={`h-12 px-3 outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border rounded-xl w-full ${fieldErrors.lastName ? "border-red focus:border-red" : "border-card-border"}`}
                 type="text"
                 id="lastName"
-                onChange={(e) => setLastName(e.target.value)}
+                onChange={(e) => { setLastName(e.target.value); clearFieldError("lastName"); }}
                 placeholder="Okafor"
                 autoComplete="family-name"
               />
+              {fieldErrors.lastName && <p className="text-xs text-red mt-1">{fieldErrors.lastName}</p>}
             </div>
           </div>
 
@@ -127,13 +165,14 @@ export default function SignUpPage() {
               Email address
             </label>
             <input
-              className="h-12 px-3 w-full outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border border-card-border rounded-xl"
+              className={`h-12 px-3 w-full outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border rounded-xl ${fieldErrors.email ? "border-red focus:border-red" : "border-card-border"}`}
               type="email"
               id="email"
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => { setEmail(e.target.value); clearFieldError("email"); }}
               placeholder="amara@example.com"
               autoComplete="email"
             />
+            {fieldErrors.email && <p className="text-xs text-red mt-1">{fieldErrors.email}</p>}
           </div>
 
           <div className=" mb-4 ">
@@ -164,10 +203,10 @@ export default function SignUpPage() {
             </label>
             <div className="password-wrap relative">
               <input
-                className="h-12 px-11 w-full outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border border-card-border rounded-xl"
-                type={isPasswordShown ? `text` : "password"}
+                className={`h-12 px-11 w-full outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border rounded-xl ${fieldErrors.password ? "border-red focus:border-red" : "border-card-border"}`}
+                type={isPasswordShown ? "text" : "password"}
                 id="password"
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => { setPassword(e.target.value); clearFieldError("password"); }}
                 placeholder="At least 8 characters"
                 autoComplete="new-password"
               />
@@ -175,14 +214,15 @@ export default function SignUpPage() {
                 type="button"
                 className="toggle-pw"
                 aria-label="Show/hide password"
+                onClick={() => togglePasswordShow(!isPasswordShown)}
               >
                 <EyeIcon
                   weight="light"
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 flex border-0 h-4.5 w-4.5"
-                  onClick={() => togglePasswordShow(!isPasswordShown)}
                 />
               </button>
             </div>
+            {fieldErrors.password && <p className="text-xs text-red mt-1">{fieldErrors.password}</p>}
           </div>
 
           <div>
@@ -196,18 +236,22 @@ export default function SignUpPage() {
           </p>
 
           <div className="checkbox-field flex items-start justify-center gap-2.5 mb-6">
-              <input type="checkbox" id="terms" className="h-5 w-5" />
-              <label htmlFor="terms">
-                I have read and agree to GrouPay's Terms of Use and Privacy
-                Policy
+              <input
+                type="checkbox"
+                id="terms"
+                className="h-5 w-5"
+                checked={termsAccepted}
+                onChange={(e) => { setTermsAccepted(e.target.checked); clearFieldError("terms"); }}
+              />
+              <label htmlFor="terms" className={fieldErrors.terms ? "text-red text-sm" : "text-sm"}>
+                I have read and agree to GrouPay's Terms of Use and Privacy Policy
               </label>
             </div>
 
             <div className="checkbox-field flex items-start justify-center gap-2.5 mb-6">
               <input type="checkbox" id="updates" className="h-5 w-5" />
-              <label htmlFor="updates">
-                Send me product updates and money-saving tips (unsubscribe
-                anytime)
+              <label htmlFor="updates" className="text-sm">
+                Send me product updates and money-saving tips (unsubscribe anytime)
               </label>
             </div>
           </div>
@@ -215,6 +259,9 @@ export default function SignUpPage() {
           <button
             onClick={async (e) => {
               e.preventDefault();
+              if (!validate()) return;
+              setError("");
+              setLoading(true);
               await signUp.email(
                 {
                   email,
@@ -224,14 +271,28 @@ export default function SignUpPage() {
                 },
                 {
                   onSuccess: () => redirect("/auth/sign-in"),
+                  onError: (e) => {
+                    setLoading(false);
+                    setError(e.error.message);
+                  },
                 },
               );
             }}
-            type="button"
-            className="submit-btn h-13 w-full rounded-full bg-green text-white font-bold hover:bg-[#3db029] hover:-translate-y-px flex  hover:shadow-sm hover:shadow-card-border/40 items-center justify-center gap-2 "
+            type="submit"
+            disabled={loading}
+            className="submit-btn h-13 w-full rounded-full bg-green text-white font-bold hover:bg-[#3db029] hover:-translate-y-px flex hover:shadow-sm hover:shadow-card-border/40 items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            <UsersIcon weight="light" />
-            Create my account
+            {loading ? (
+              <span className="flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full animate-spin border-2 border-white border-t-transparent" />
+                Creating account...
+              </span>
+            ) : (
+              <>
+                <UsersIcon weight="light" />
+                Create my account
+              </>
+            )}
           </button>
         </form>
 

@@ -3,15 +3,26 @@ import { soraClass } from "@/app/fonts";
 import Link from "next/link";
 import { signIn } from "@/lib/authClient";
 import { redirect } from "next/navigation";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { EyeIcon, EyeClosedIcon } from "@phosphor-icons/react";
+import AuthErrorBanner from "@/app/components/AuthErrorBanner";
 
 export default function SignInPage() {
   const [email, updateEmail] = useState("");
   const [password, updatePassword] = useState("");
   const [error, updateError] = useState("");
   const [loading, updateLoadState] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
   const [isPasswordShown, showPassword] = useState(false);
+
+  const validate = useCallback(() => {
+    const errs: { email?: string; password?: string } = {};
+    if (!email.trim()) errs.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(email)) errs.email = "Enter a valid email address";
+    if (!password) errs.password = "Password is required";
+    setFieldErrors(errs);
+    return Object.keys(errs).length === 0;
+  }, [email, password]);
 
   return (
     <div className="p-6 grid items-center h-full justify-center md:justify-start">
@@ -28,7 +39,10 @@ export default function SignInPage() {
           className="grid my-4"
           onSubmit={async (e: any) => {
             e.preventDefault();
+            if (!validate()) return;
             updateLoadState(true);
+            updateError("");
+            setFieldErrors({});
             await signIn.email(
               { email, password },
               {
@@ -36,11 +50,16 @@ export default function SignInPage() {
                   updateLoadState(false);
                   redirect("/dashboard");
                 },
-                onError: (e) => updateError(e.error.message),
+                onError: (e) => {
+                  updateLoadState(false);
+                  updateError(e.error.message);
+                },
               },
             );
           }}
         >
+          <AuthErrorBanner error={error} />
+
           <div className="mb-4">
             <label
               htmlFor="email"
@@ -52,11 +71,12 @@ export default function SignInPage() {
               type="email"
               id="email"
               name="emailAddress"
-              onChange={(e) => updateEmail(e.target.value)}
+              onChange={(e) => { updateEmail(e.target.value); setFieldErrors((p) => ({ ...p, email: undefined })); }}
               autoFocus
               placeholder="johndoe@emailcompany.com"
-              className="h-12 px-3 outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border border-card-border rounded-xl w-full"
+              className={`h-12 px-3 outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border rounded-xl w-full ${fieldErrors.email ? "border-red focus:border-red" : "border-card-border"}`}
             />
+            {fieldErrors.email && <p className="text-xs text-red mt-1">{fieldErrors.email}</p>}
           </div>
 
           <div className="mb-4 ">
@@ -72,20 +92,16 @@ export default function SignInPage() {
                 id="password"
                 name="password"
                 minLength={8}
-                onChange={(e) => updatePassword(e.target.value)}
+                onChange={(e) => { updatePassword(e.target.value); setFieldErrors((p) => ({ ...p, password: undefined })); }}
                 placeholder="Your password here..."
-                className={`h-12 invalid:border-red px-3 outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border border-card-border rounded-xl w-full`}
+                className={`h-12 invalid:border-red px-3 outline-none transition-colors placeholder:text-[#bobec5] focus:border-green border rounded-xl w-full ${fieldErrors.password ? "border-red focus:border-red" : "border-card-border"}`}
               />
-              <button onClick={() => showPassword(!isPasswordShown)}>
+              <button onClick={() => showPassword(!isPasswordShown)} type="button">
                 {isPasswordShown ? <EyeClosedIcon /> : <EyeIcon />}
               </button>
             </div>
+            {fieldErrors.password && <p className="text-xs text-red mt-1">{fieldErrors.password}</p>}
           </div>
-          <p
-            className={`${error.length > 1 ? "text-red text-xl font-medium" : "hidden"}`}
-          >
-            {error}
-          </p>
           <button className="submit-btn p-3 rounded-2xl bg-green text-white font-bold hover:bg-[#3db029] hover:-translate-y-px flex  hover:shadow-sm hover:shadow-card-border/40 items-center justify-center gap-2 md:w-1/2 w-3/4 my-4">
             {loading ? (
               <span className="flex items-center gap-2">

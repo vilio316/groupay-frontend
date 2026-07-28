@@ -2,21 +2,31 @@
 
 import { soraClass } from "@/app/fonts";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { ArrowLeftIcon } from "@phosphor-icons/react";
+import { authClient } from "@/lib/authClient";
+import AuthErrorBanner from "@/app/components/AuthErrorBanner";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [fieldError, setFieldError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
+    if (!email.trim()) { setFieldError("Enter your email address"); return; }
+    if (!/\S+@\S+\.\S+/.test(email)) { setFieldError("Enter a valid email address"); return; }
+    setFieldError("");
+    setError("");
     setLoading(true);
-    // Simulate sending reset email
-    await new Promise((r) => setTimeout(r, 1500));
+    const { error: forgotError } = await authClient.forgetPassword({ email, redirectTo: `${process.env.NEXT_PUBLIC_DEV_URL}/auth/reset-password` });
     setLoading(false);
+    if (forgotError) {
+      setError(forgotError.message || forgotError.statusText || "Something went wrong. Try again.");
+      return;
+    }
     setSent(true);
   };
 

@@ -55,6 +55,7 @@ export default function PlanHandler({
             transactionHeading: "Plan Contribution",
             planId: params.planID || undefined,
             pin: pinRef.current,
+            idempotencyKey: crypto.randomUUID(),
           }),
         },
       );

@@ -71,6 +71,7 @@ export default function TransferMoneyHandler({
             recipientId: selectedUser.id,
             amount: trxAmount * 100,
             pin: pinRef.current,
+            idempotencyKey: crypto.randomUUID(),
           }),
         },
       );

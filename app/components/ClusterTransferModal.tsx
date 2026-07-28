@@ -68,6 +68,7 @@ export default function ClusterTransferModal({
             userId: data.user.id,
             amount: amount * 100,
             pin: pinRef.current,
+            idempotencyKey: crypto.randomUUID(),
           }),
         },
       );

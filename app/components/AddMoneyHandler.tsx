@@ -66,6 +66,7 @@ export default function AddMoneyHandler({
             userId: data?.user.id,
             amount: trxAmount * 100,
             pin: pinRef.current,
+            idempotencyKey: crypto.randomUUID(),
           }),
           credentials: "include",
         },
